@@ -1,0 +1,175 @@
+body,
+#content
+{
+    background-color : #fff;
+}
+
+footer
+{
+    height   : 51px;
+    overflow : hidden;
+}
+
+.container-fluid
+{
+    min-height : calc(100vh - 51px);
+}
+
+/* Helpers */
+.relative
+{
+    position : relative;
+}
+
+.pointer
+{
+    cursor : pointer;
+}
+
+.radius-0
+{
+    border-radius : 0;
+}
+
+/* END Helpers */
+
+/* Bootstrap */
+.thead-inverse th
+{
+    background-color : #2d2d2d;
+}
+
+.table tr td[data-element]
+{
+    white-space : nowrap;
+}
+
+.hover-show-btn button
+{
+    display : none;
+}
+
+.hover-show-btn:hover button
+{
+    display : block;
+}
+
+.alert-messages
+{
+    position : fixed;
+    right    : 0;
+    top      : 1rem;
+    z-index  : 100;
+}
+
+.card
+{
+    margin-bottom : .75rem;
+}
+
+/* END Bootstrap */
+
+/* Icons */
+.fa-download:before,
+.fa-downloads:before
+{
+    content : "\f019";
+}
+
+.fa-music:before,
+.fa-lyrics:before
+{
+    content : "\f001";
+}
+
+/* END Icons */
+
+/* Nav Left */
+footer,
+#nav-left,
+#nav-left > nav,
+#nav-top
+{
+    background-color : #2d2d2d;
+    color            : #fff;
+}
+
+#nav-left > nav
+{
+    position : fixed;
+    left     : 0;
+    top      : 0;
+    bottom   : 0;
+    z-index  : 1;
+}
+
+#nav-left .footer
+{
+    text-align : center;
+    position   : absolute;
+    bottom     : 0;
+    left       : 0;
+    right      : 0;
+    z-index    : 2;
+}
+
+#nav-left .brand
+{
+    text-align : center;
+    font-size  : 1.8rem;
+    margin-top : 1rem;
+}
+
+#nav-left .nav-item.active,
+#nav-top .nav-item.active
+{
+    background-color : rgba(62, 62, 62, .8);
+}
+
+#nav-left .nav-link,
+#nav-top .nav-link
+{
+    padding       : .8rem 1rem;
+    display       : block;
+    color         : #fff !important;
+    border-radius : 0;
+}
+
+#nav-top .nav-link
+{
+    border-top : 10px solid transparent;
+}
+
+#nav-left .nav-link i,
+#nav-top .nav-link i
+{
+    margin-right : .8rem;
+}
+
+#nav-left .nav-item.active .nav-link
+{
+    border-left : 10px solid #d46c00;
+}
+
+#nav-top .nav-item.active .nav-link
+{
+    border-top : 10px solid #d46c00;
+}
+
+/* END Nav Left */
+
+/* Table view */
+td.hover-show-btn button
+{
+    position : absolute;
+    right    : 5px;
+    top      : 5px;
+    z-index  : 2;
+}
+
+td.hover-show-btn > div
+{
+    padding-right : 120px;
+}
+
+/* END Table view */
