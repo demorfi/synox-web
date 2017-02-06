@@ -1,10 +1,10 @@
 {
   "name": "ht-synox",
   "displayname": "Synox",
-  "description": "Synox: Download torrent files (repository plugin https://github.com/demorfi/synox)",
-  "version": "2.0",
-  "site": "http://rutracker.org",
-  "hostprefix": "rutracker.org",
+  "description": "Download torrent files",
+  "version": "1.0",
+  "site": "https://github.com/demorfi/synox",
+  "hostprefix": "synox.loc",
   "authentication": "yes",
   "module": "SynoFileHostingSynox.php",
   "class": "SynoFileHostingSynox"

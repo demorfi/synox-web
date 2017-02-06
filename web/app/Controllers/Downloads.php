@@ -140,7 +140,7 @@ class Downloads extends Controller
             return ($this->response->json(['success' => false, 'error' => 'Download package not found!']));
         }
 
-        $url     = $this->request->getData()->get('url');
+        $url     = urldecode($this->request->getData()->get('url'));
         $journal = StorageJournal::getInstance();
         $torrent = new Torrent();
 

@@ -4,19 +4,19 @@
  * Synox console.
  *
  * @author demorfi <demorfi@gmail.com>
- * @version 1.0
+ * @version 1.2
  * @source https://github.com/demorfi/synox
  * @license http://opensource.org/licenses/MIT Licensed under MIT License
  */
 
-include('lib/common.php');
-include('lib/SynoInterface.php');
-include('lib/SynoAbstract.php');
+require('lib/common.php');
+require('lib/SynoxInterface.php');
+require('lib/SynoxAbstract.php');
 
-$modulePrefix = isset($argv[1]) ? $argv[1] : false;
-$moduleName   = isset($argv[2]) ? $argv[2] : false;
-
-if (empty($moduleName) || empty($modulePrefix)) {
+$moduleType = (isset($argv[1]) ? $argv[1] : null);
+$moduleName = (isset($argv[2]) ? $argv[2] : null);
+// TODO: This
+if (empty($moduleName) || empty($moduleType)) {
     echo 'for search: php syno.php bt "module name" "search query" ["username"] [:"password"]' . PHP_EOL
         . 'for download: php syno.php ht "module name" "url torrent file" ["username"] [:"password"]' . PHP_EOL
         . 'for lyrics: php syno.php au "module name" "artist song" "title song"' . PHP_EOL;
@@ -27,14 +27,14 @@ $first  = isset($argv[3]) ? $argv[3] : '';
 $second = isset($argv[4]) ? $argv[4] : null;
 $third  = isset($argv[5]) ? $argv[5] : null;
 
-$moduleName = $modulePrefix . '-' . $moduleName;
+$moduleName = $moduleType . '-' . $moduleName;
 $modulePath = __DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
 $infoObj    = json_decode(file_get_contents($modulePath . $moduleName . DIRECTORY_SEPARATOR . 'INFO'));
 
 include($modulePath . $moduleName . DIRECTORY_SEPARATOR . $infoObj->module);
 
 $curl = curl_init();
-curl_setopt($curl, CURLOPT_HEADER, true);
+curl_setopt($curl, CURLOPT_HEADER, false);
 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
@@ -44,9 +44,9 @@ curl_setopt($curl, CURLOPT_TIMEOUT, DOWNLOAD_TIMEOUT);
 curl_setopt($curl, CURLOPT_USERAGENT, DOWNLOAD_STATION_USER_AGENT);
 
 // Work module dlm
-if ($modulePrefix === 'bt') {
+if ($moduleType === 'bt') {
 
-    /* @var $moduleObj SynoInterface */
+    /* @var $moduleObj SynoxInterface */
     $moduleObj = new $infoObj->class();
     $moduleObj->prepare($curl, $first, $second, $third);
 
@@ -54,20 +54,19 @@ if ($modulePrefix === 'bt') {
     $response = curl_exec($curl);
     curl_close($curl);
 
-    $count = $moduleObj->parse(new SynoAbstract(), $response);
+    $count = $moduleObj->parse(new SynoxAbstract(), $response);
     echo 'count:' . $count . PHP_EOL;
 }
 
 // Work module host
-if ($modulePrefix === 'ht') {
+if ($moduleType === 'ht') {
 
-    /* @var $moduleObj SynoInterface */
+    /* @var $moduleObj SynoxInterface */
     $moduleObj = new $infoObj->class($first, $second, $third, array());
     $download  = $moduleObj->GetDownloadInfo();
     var_dump($download);
 
     curl_setopt($curl, CURLOPT_HEADER, 0);
-    curl_setopt($curl, CURLOPT_COOKIEFILE, $download[DOWNLOAD_COOKIE]);
     curl_setopt($curl, CURLOPT_URL, $download[DOWNLOAD_URL]);
     $response = curl_exec($curl);
 
@@ -78,10 +77,10 @@ if ($modulePrefix === 'ht') {
 }
 
 // Work module aum
-if ($modulePrefix === 'au') {
-    $interface = new SynoAbstract();
+if ($moduleType === 'au') {
+    $interface = new SynoxAbstract();
 
-    /* @var $moduleObj SynoInterface */
+    /* @var $moduleObj SynoxInterface */
     $moduleObj = new $infoObj->class();
 
     echo 'count:' . $moduleObj->getLyricsList($first, $second, $interface) . PHP_EOL;

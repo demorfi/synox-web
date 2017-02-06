@@ -1,10 +1,10 @@
 # Synox
 -------
-Unofficial synology plugins repository.
+Proxy plugins for your Synology Station
 
 Required
 ========
-* DSM 5.1
+* DSM >= 6.0
 
 Includes
 ========

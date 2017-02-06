@@ -69,6 +69,6 @@ class TestDownload extends Package implements Download
      */
     public function fetch($url, Torrent $file)
     {
-        $file->create('test.torrent', 'test content');
+        $file->create('test.torrent', 'announce');
     }
 }

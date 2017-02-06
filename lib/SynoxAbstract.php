@@ -3,14 +3,13 @@
 /**
  * Synox Abstract.
  *
- * @author demorfi <demorfi@gmail.com>
- * @version 1.0
+ * @author  demorfi <demorfi@gmail.com>
+ * @version 1.1
  * @source https://github.com/demorfi/synox
  * @license http://opensource.org/licenses/MIT Licensed under MIT License
  */
-class SynoAbstract
+class SynoxAbstract
 {
-
     /**
      * Lyric id.
      *
@@ -33,14 +32,14 @@ class SynoAbstract
     /**
      * Add torrent file in list.
      *
-     * @param string $title Title torrent
+     * @param string $title    Title torrent
      * @param string $download Url to download torrent
-     * @param float $size Size files in torrent
+     * @param float  $size     Size files in torrent
      * @param string $datetime Date create torrent
-     * @param string $page Url torrent page
-     * @param string $hash Hash item
-     * @param int $seeds Count torrent seeds
-     * @param int $leeches Count torrent leeches
+     * @param string $page     Url torrent page
+     * @param string $hash     Hash item
+     * @param int    $seeds    Count torrent seeds
+     * @param int    $leeches  Count torrent leeches
      * @param string $category Torrent category
      * @access public
      * @return void
@@ -67,9 +66,9 @@ class SynoAbstract
     /**
      * Add torrent json in list.
      *
-     * @param string $response Content
-     * @param string $rersultKey Key
-     * @param array $fieldmapping Mapping json
+     * @param string $response     Content
+     * @param string $rersultKey   Key
+     * @param array  $fieldmapping Mapping json
      * @access public
      * @return void
      */
@@ -107,9 +106,9 @@ class SynoAbstract
     /**
      * Add song in list.
      *
-     * @param string $artist Artist song
-     * @param string $title Title song
-     * @param string $id Id song
+     * @param string $artist        Artist song
+     * @param string $title         Title song
+     * @param string $id            Id song
      * @param string $partialLyrics Partial lyric song
      * @access public
      * @return void
@@ -133,7 +132,7 @@ class SynoAbstract
      * Add lyrics in list.
      *
      * @param string $lyric Lyric content
-     * @param string $id Lyric id
+     * @param string $id    Lyric id
      * @access public
      * @return void
      */

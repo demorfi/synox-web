@@ -3,21 +3,20 @@
 /**
  * Synox Interface.
  *
- * @author demorfi <demorfi@gmail.com>
- * @version 1.0
+ * @author  demorfi <demorfi@gmail.com>
+ * @version 1.1
  * @source https://github.com/demorfi/synox
  * @license http://opensource.org/licenses/MIT Licensed under MIT License
  */
-interface SynoInterface
+interface SynoxInterface
 {
-
     /**
      * Send query to tracker.
      *
-     * @param resource $curl Resource curl
-     * @param string $query Search query
-     * @param string $username Username for auth
-     * @param string $password Password for auth
+     * @param resource $curl     Resource curl
+     * @param string   $query    Search query
+     * @param string   $username Username for auth
+     * @param string   $password Password for auth
      * @access public
      * @return bool
      */
@@ -26,8 +25,8 @@ interface SynoInterface
     /**
      * Add torrent file in list.
      *
-     * @param SynoAbstract $plugin Synology abstract
-     * @param string $response Content tracker page
+     * @param SynoxAbstract $plugin   Synology abstract
+     * @param string        $response Content tracker page
      * @access public
      * @return int
      */
@@ -44,9 +43,9 @@ interface SynoInterface
     /**
      * Search lyrics.
      *
-     * @param string $artist Artist song
-     * @param string $title Title song
-     * @param SynoAbstract $plugin Synology abstract
+     * @param string        $artist Artist song
+     * @param string        $title  Title song
+     * @param SynoxAbstract $plugin Synology abstract
      * @access public
      * @return int
      */
@@ -55,8 +54,8 @@ interface SynoInterface
     /**
      * Add lyrics.
      *
-     * @param string $id Id found lyric
-     * @param SynoAbstract $plugin Synology abstract
+     * @param string        $id     Id found lyric
+     * @param SynoxAbstract $plugin Synology abstract
      * @access public
      * @return bool
      */

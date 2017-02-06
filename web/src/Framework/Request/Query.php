@@ -99,7 +99,7 @@ class Query extends Data
      *
      * @return string
      */
-    public function getHost()
+    public static function getHost()
     {
         $data = filter_input_array(
             INPUT_SERVER,

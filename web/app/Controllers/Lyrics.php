@@ -139,7 +139,7 @@ class Lyrics extends Controller
             return ($this->response->json(['success' => false, 'error' => 'Lyric package not found!']));
         }
 
-        $url     = $this->request->getData()->get('url');
+        $url     = urldecode($this->request->getData()->get('url'));
         $journal = StorageJournal::getInstance();
         $content = new Content();
 

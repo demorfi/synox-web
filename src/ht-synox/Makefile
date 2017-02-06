@@ -1,6 +1,6 @@
 BUILDDIR := build
-SOURCE   := INFO SynoFileHostingRutracker.php
-PKGNAME  := rutracker.host
+SOURCE   := INFO SynoFileHostingSynox.php
+PKGNAME  := synox.host
 PKGFILES := $(addprefix ${BUILDDIR}/,${SOURCE})
 
 .PHONY: all clean distribute

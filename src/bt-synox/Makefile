@@ -1,6 +1,6 @@
 BUILDDIR := build
-SOURCE   := INFO SynoDLMSearchSynox.php SynoDLMSearchSynoxItem.php
-PKGNAME  := fasttorrent.dlm
+SOURCE   := INFO SynoDLMSearchSynox.php
+PKGNAME  := synox.dlm
 PKGFILES := $(addprefix ${BUILDDIR}/,${SOURCE})
 
 .PHONY: all clean distribute

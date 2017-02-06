@@ -16,6 +16,10 @@ class Api extends Controller
      */
     public function defaultAction()
     {
+        if ($this->hasApiKey()) {
+            return ($this->response->json(['success' => true]));
+        }
+
         return ($this->response->json(['success' => false, 'error' => 'API method not found!']));
     }
 

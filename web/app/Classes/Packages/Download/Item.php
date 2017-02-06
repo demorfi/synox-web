@@ -47,6 +47,11 @@ class Item extends _Item
     protected $size;
 
     /**
+     * @var float
+     */
+    protected $_size;
+
+    /**
      * @return string
      */
     public function getTitle()
@@ -162,7 +167,7 @@ class Item extends _Item
      */
     public function setDate(\DateTime $date)
     {
-        $this->date = $date->format('Y-m-d');
+        $this->date = $date->format('Y-m-d H:m:s');
     }
 
     /**
@@ -179,6 +184,7 @@ class Item extends _Item
      */
     public function setSize($size)
     {
-        $this->size = $this->getSizeFormat((float)$size);
+        $this->_size = (float)$size;
+        $this->size  = $this->getSizeFormat($this->_size);
     }
 }
