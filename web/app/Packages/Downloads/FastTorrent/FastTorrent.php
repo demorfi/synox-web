@@ -7,11 +7,16 @@ use Classes\Abstracts\Package;
 use Classes\Packages\Download\Stack;
 use Classes\Packages\Download\Item;
 use Classes\Packages\Download\Torrent;
+use Framework\Traits\Client;
+use Framework\Components\Client\Curl as CurlClient;
 
 class FastTorrent extends Package implements Download
 {
+    use Client;
+
     private $name = 'Fast-Torrent';
-    private $shortDescription = 'Torrent http://fast-torrent.ru';
+    private $shortDescription = 'Torrent tracker http://fast-torrent.ru';
+    protected $urlQuery = 'http://www.fast-torrent.ru/search/%s/50/%d.html';
 
     public function getName()
     {
@@ -30,7 +35,10 @@ class FastTorrent extends Package implements Download
 
     public function searchByName($name, Stack $stack)
     {
+        $client = new CurlClient;
+        $response = $this->sendGet($client, sprintf($this->urlQuery, urlencode($name), 1));
 
+        // phpQuery($response)
     }
 
     /**

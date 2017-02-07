@@ -29,3 +29,22 @@ if (!function_exists('config')) {
         return (new Config($name));
     }
 }
+
+if (!function_exists('phpQuery')) {
+
+    /**
+     * phpQuery is a server-side, chainable, CSS3 selector driven
+     * Document Object Model (DOM) API based on jQuery JavaScript Library.
+     *
+     * @param string $markup
+     * @param string $contentType
+     * @return phpQueryObject
+     */
+    function phpQuery($markup = null, $contentType = null)
+    {
+        if (!class_exists('phpQuery', false)) {
+            include_once(APP_PATH . '/Classes/Vendors/phpQuery/phpQuery.php');
+        }
+        return (phpQuery::newDocument($markup, $contentType));
+    }
+}
