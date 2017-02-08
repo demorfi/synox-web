@@ -15,30 +15,28 @@ class SynoFileHostingSynox
 
     protected $username;
 
-    protected $password;
-
-    protected $maskFetch = '%s/api/download?type=fetch&id=%s&url=%s&api-key=%s';
-
-    protected $maskVerify = '%s/api/?api-key=%s';
+    protected $id;
 
     protected $url;
 
-    public function __construct($url, $username, $password)
+    protected $searchQuery = '%s/downloads/search';
+
+    protected $fetchQuery = '%s/downloads/fetch';
+
+    public function __construct($url, $username)
     {
         $query = [];
         parse_str(parse_url($url, PHP_URL_QUERY), $query);
-        list($id, $fetch) = [$query['id'], urlencode($query['fetch'])];
+        list($this->id, $this->url) = [$query['id'], urlencode($query['fetch'])];
 
         $this->username = rtrim(trim($username), '/');
-        $this->password = trim($password);
-        $this->url      = sprintf($this->maskFetch, $this->username, $id, $fetch, $this->password);
+        $this->curl     = curl_init();
 
-        $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_HEADER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, DOWNLOAD_TIMEOUT);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, DOWNLOAD_TIMEOUT);
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 0);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, 0);
         curl_setopt($this->curl, CURLOPT_USERAGENT, DOWNLOAD_STATION_USER_AGENT);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
@@ -47,12 +45,14 @@ class SynoFileHostingSynox
     public function Verify()
     {
         $curl = curl_copy_handle($this->curl);
-        curl_setopt($curl, CURLOPT_URL, sprintf($this->maskVerify, $this->username, $this->password));
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->username));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['name' => 'verify']));
 
         $response = @json_decode(curl_exec($curl), true);
         curl_close($curl);
 
-        return (isset($response['success']) && $response['success'] == true ? USER_IS_PREMIUM : LOGIN_FAIL);
+        return (isset($response['success'], $response['hash']) ? USER_IS_PREMIUM : LOGIN_FAIL);
     }
 
     /**
@@ -66,13 +66,15 @@ class SynoFileHostingSynox
         if ($this->Verify() === USER_IS_PREMIUM) {
 
             $curl = curl_copy_handle($this->curl);
-            curl_setopt($curl, CURLOPT_URL, $this->url);
+            curl_setopt($curl, CURLOPT_URL, sprintf($this->fetchQuery, $this->username));
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['id' => $this->id, 'url' => $this->url]));
 
             $response = @json_decode(curl_exec($curl), true);
             curl_close($curl);
 
-            if (isset($response['success']) && $response['success'] == true) {
-                return ([DOWNLOAD_URL => $response['file']]);
+            if (isset($response['success'], $response['file'])) {
+                return ([DOWNLOAD_URL => ($this->username . $response['file']['url'])]);
             }
 
             return ([DOWNLOAD_ERROR => ERR_FILE_NO_EXIST]);

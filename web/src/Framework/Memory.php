@@ -319,7 +319,7 @@ class Memory implements \JsonSerializable
      */
     public function size()
     {
-        $stack = shm_get_var($this->shmId, $this->offset);
+        $stack = @shm_get_var($this->shmId, $this->offset);
         if ($stack !== false) {
             return (sizeof($stack));
         }

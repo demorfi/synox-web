@@ -3,20 +3,10 @@
     <div class="row main">
         <div class="col-12">
             <div class="jumbotron jumbotron-fluid pb-0 mb-0 pl-3 pr-3">
-                <div class="row">
-                    <div class="col-8">
-                        <h1 class="display-4"><i class="fa fa-archive" aria-hidden="true"></i> Packages</h1>
-                        <p class="lead mb-0">
-                            <i class="fa fa-info-circle" aria-hidden="true"></i> Include the packages you need.
-                        </p>
-                    </div>
-                    <div class="col-4">
-                        <blockquote class="blockquote blockquote-reverse">
-                            <p class="mb-0 small">Your API Key</p>
-                            <p class="small"><kbd><?php print(config('system')->get('api-key')) ?></kbd></p>
-                        </blockquote>
-                    </div>
-                </div>
+                <h1 class="display-4"><i class="fa fa-archive" aria-hidden="true"></i> Packages</h1>
+                <p class="lead mb-0">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i> Include the packages you need.
+                </p>
                 <hr class="my-3">
                 <ul class="nav nav-pills mb-3">
                     <?php foreach ($this->packages as $items) { ?>
