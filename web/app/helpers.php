@@ -30,7 +30,7 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('phpQuery')) {
+if (!function_exists('pqInstance')) {
 
     /**
      * phpQuery is a server-side, chainable, CSS3 selector driven
@@ -40,11 +40,29 @@ if (!function_exists('phpQuery')) {
      * @param string $contentType
      * @return phpQueryObject
      */
-    function phpQuery($markup = null, $contentType = null)
+    function pqInstance($markup = null, $contentType = null)
     {
         if (!class_exists('phpQuery', false)) {
             include_once(APP_PATH . '/Classes/Vendors/phpQuery/phpQuery.php');
         }
         return (phpQuery::newDocument($markup, $contentType));
+    }
+}
+
+if (!function_exists('pqElement')) {
+
+    /**
+     * phpQuery is a server-side, chainable, CSS3 selector driven
+     * Document Object Model (DOM) API based on jQuery JavaScript Library.
+     *
+     * @param mixed $element
+     * @return phpQueryObject
+     */
+    function pqElement($element)
+    {
+        if (!class_exists('phpQuery', false)) {
+            include_once(APP_PATH . '/Classes/Vendors/phpQuery/phpQuery.php');
+        }
+        return (phpQuery::pq($element));
     }
 }
