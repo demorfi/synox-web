@@ -4,6 +4,8 @@ namespace Classes\Packages\Download;
 
 class Torrent implements \JsonSerializable
 {
+    const FILE_EXTENSION = '.torrent';
+
     /**
      * Url to file.
      *
@@ -59,8 +61,9 @@ class Torrent implements \JsonSerializable
      */
     public function create($name, $content)
     {
-        $this->name = ltrim($name, DIRECTORY_SEPARATOR);
-        if (file_put_contents($this->path . $this->name, $content, LOCK_EX)) {
+        $this->name = $this->cleanFileName(ltrim($name, DIRECTORY_SEPARATOR));
+        $filePath   = $this->path . $this->name . self::FILE_EXTENSION;
+        if ($this->is($content) && file_put_contents($filePath, $content, LOCK_EX)) {
             $this->available = true;
         }
 
@@ -75,8 +78,8 @@ class Torrent implements \JsonSerializable
      */
     public function open($name)
     {
-        $this->name = ltrim($name, DIRECTORY_SEPARATOR);
-        $filePath   = $this->path . $this->name;
+        $this->name = $this->cleanFileName(ltrim($name, DIRECTORY_SEPARATOR));
+        $filePath   = $this->path . $this->name . self::FILE_EXTENSION;
         if (is_readable($filePath) && filesize($filePath)) {
             $this->available = true;
         }
@@ -138,5 +141,111 @@ class Torrent implements \JsonSerializable
         unset($vars['path']);
 
         return (array_merge($vars, ['url' => $this->getFileUrl()]));
+    }
+
+    public function is($content)
+    {
+        $sign = substr($content, 0, 11);
+        return (in_array($sign, ['d8:announce', 'd10:created', 'd13:creatio', 'd13:announc', 'd12:_info_l'])
+            || substr($sign, 0, 10) == 'd7:comment'
+            || substr($sign, 0, 7) == 'd4:info'
+            || substr($sign, 0, 3) == 'd9:');
+    }
+
+    public function decode($content)
+    {
+        $pos = 0;
+        return ($this->read($content, $pos));
+    }
+
+    protected function cleanFileName($fileName)
+    {
+        return (strtr(
+            mb_convert_encoding($fileName, 'ASCII'),
+            ' ,;:?*#!§$%&/(){}<>=`´|\\\'"',
+            '____________________________'
+        ));
+    }
+
+    protected function read($content, &$pos)
+    {
+        $length = strlen($content);
+        if ($pos < 0 || $pos >= $length) {
+            return (null);
+        }
+
+        switch ($content{$pos}) {
+            case ('i'):
+                $pos++;
+                $nLength = strspn($content, '-0123456789', $pos);
+                $posLeft = $pos;
+
+                $pos += $nLength;
+                if ($pos >= $length || $content{$pos} != 'e') {
+                    return (null);
+                }
+
+                $pos++;
+                return (intval(substr($content, $posLeft, $nLength)));
+
+            case ('d'):
+                $pos++;
+
+                $info = [];
+                while ($pos < $length) {
+                    if ($content{$pos} == 'e') {
+                        $pos++;
+                        return ($info);
+                    }
+
+                    if (($key = $this->read($content, $pos)) == null
+                        || ($value = $this->read($content, $pos)) == null
+                    ) {
+                        break;
+                    }
+
+                    if (!is_array($key)) {
+                        $info[$key] = $value;
+                    }
+                }
+                return (null);
+
+            case ('l'):
+                $pos++;
+
+                $info = [];
+                while ($pos < $length) {
+                    if ($content{$pos} == 'e') {
+                        $pos++;
+                        return ($info);
+                    }
+
+                    if (($value = $this->read($content, $pos)) == null) {
+                        break;
+                    }
+
+                    $info[] = $value;
+                }
+                return (null);
+
+            default:
+                $nLength = strspn($content, '0123456789', $pos);
+                $posLeft = $pos;
+
+                $pos += $nLength;
+                if ($pos >= $length || $content{$pos} != ':') {
+                    return (null);
+                }
+
+                $vLength = intval(substr($content, $posLeft, $nLength));
+                $pos++;
+
+                if (strlen($value = substr($content, $pos, $vLength)) != $vLength) {
+                    return (null);
+                }
+
+                $pos += $vLength;
+                return ($value);
+        }
     }
 }

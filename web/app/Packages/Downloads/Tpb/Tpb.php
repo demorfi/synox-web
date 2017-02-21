@@ -6,11 +6,20 @@ use Classes\Abstracts\Package;
 use Classes\Interfaces\Download;
 use Classes\Packages\Download\Stack;
 use Classes\Packages\Download\Torrent;
+use Framework\Components\Client\Curl as CurlClient;
+use Framework\Traits\Client;
 
 class Tpb extends Package implements Download
 {
+    use Client;
+
+    const SITE_PREFIX = 'https://thepiratebayz.org';
+
     private $name = 'The Pirate Bay';
-    private $shortDescription = 'Torrent http://thepiratebay.se';
+
+    private $shortDescription = 'Torrent tracker ' . self::SITE_PREFIX;
+
+    protected $urlQuery = self::SITE_PREFIX . '/search/%s/%d/7/';
 
     public function getName()
     {
@@ -29,7 +38,10 @@ class Tpb extends Package implements Download
 
     public function searchByName($name, Stack $stack)
     {
-        // TODO: Implement searchByName() method.
+        $client   = new CurlClient;
+        $response = $this->sendGet($client, sprintf($this->urlQuery, urlencode($name), 0));
+        $html = pqInstance($response);
+        // TODO This
     }
 
     public function fetch($url, Torrent $file)

@@ -14,19 +14,13 @@ class FastTorrent extends Package implements Download
 {
     use Client;
 
+    const SITE_PREFIX = 'http://fast-torrent.ru';
+
     private $name = 'Fast-Torrent';
 
-    private $shortDescription = 'Torrent tracker http://fast-torrent.ru';
+    private $shortDescription = 'Torrent tracker ' . self::SITE_PREFIX;
 
-    protected $urlQuery = 'http://www.fast-torrent.ru/search/%s/50/%d.html';
-
-    /**
-     * Prefix url.
-     *
-     * @var string
-     * @access protected
-     */
-    protected $pagePrefix = 'http://www.fast-torrent.ru';
+    protected $urlQuery = self::SITE_PREFIX . '/search/%s/50/%d.html';
 
     public function getName()
     {
@@ -50,79 +44,91 @@ class FastTorrent extends Package implements Download
 
         $html = pqInstance($response);
 
-        $founds      = (int)$html->find('#search_result i b:first')->text();
-        $itemsInPage = $this->foundItems($html);
-        $countItems  = sizeof($itemsInPage);
+        $total       = (int)$html->find('#search_result i b:first')->text();
+        $inPage      = $this->foundElements($html);
+        $totalInPage = sizeof($inPage);
+        $countPages  = (int)ceil($total / ($totalInPage > 1 ? $totalInPage : 1));
 
-        $countPages = (int)ceil($founds / ($countItems > 1 ? $countItems : 1));
         if ($countPages > 1) {
             for ($i = 2; $i <= $countPages; $i++) {
-                $response    = $this->sendGet($client, sprintf($this->urlQuery, urlencode($name), $i));
-                $itemsInPage = array_merge($itemsInPage, $this->foundItems(pqInstance($response)));
+                $response = $this->sendGet($client, sprintf($this->urlQuery, urlencode($name), $i));
+                $inPage   = array_merge($inPage, $this->foundElements(pqInstance($response)));
             }
         }
 
-        foreach ($itemsInPage as $urlItem) {
-            $page = pqInstance($this->sendGet($client, $urlItem));
-            foreach ($page->find('.torrent-row') as $row) {
-                $item = $this->createItem(pqElement($row));
-
-                // Page torrent
-                $item->setPage($urlItem);
-
-                // Category torrent
-                $category = trim($page->find('.info div p a[href]:first')->text());
-                $item->setCategory((!empty($category) ? $category : 'unknown'));
-
-                $stack->push($item);
+        foreach ($inPage as $url => $element) {
+            $page = pqInstance($this->sendGet($client, $url));
+            foreach ($this->createItem($url, $element, $page) as $item) {
+                if ($item instanceof Item) {
+                    $stack->push($item);
+                }
             }
         }
+
+        return (true);
     }
 
-    protected function foundItems(\phpQueryObject $dom)
+    protected function foundElements(\phpQueryObject $dom)
     {
         $items = [];
         foreach ($dom->find('.film-list .film-item') as $item) {
-            $items[] = ($this->pagePrefix . pqElement($item)->find('a.film-download')->attr('href'));
+            $item = pqElement($item);
+            $url  = self::SITE_PREFIX . $item->find('a.film-download')->attr('href');
+
+            $items[$url] = $item;
         }
 
         return ($items);
     }
 
-    protected function createItem(\phpQueryObject $dom)
+    protected function createItem($url, \phpQueryObject $element, \phpQueryObject $page)
     {
-        $item = new Item($this);
-
-        // Title torrent
-        $title = trim(str_replace('.torrent', '', $dom->find('.torrent-info a[href^=/download/torrent/]')->text()));
-        if (!empty($title)) {
-            $translation = trim($dom->find('.upload1 .c2:first')->text());
-            $title .= (!empty($translation) ? ' [' . $translation . ']' : '');
-        } else {
-            $title = 'unknown';
+        // Category torrent
+        $category = trim($page->find('.info div p a[href]:first')->text());
+        if (empty($category)) {
+            $category = 'unknown';
         }
 
-        $item->setTitle($title);
+        // Torrents rows
+        foreach ($page->find('.torrent-row') as $row) {
+            $row  = pqElement($row);
+            $item = new Item($this);
 
-        // Url download torrent
-        $download = $dom->find('.torrent-info a[href^=/download/torrent/]')->attr('href');
-        $item->setFetch((!empty($download) ? ($this->pagePrefix . $download) : 'unknown'));
+            // Page torrent
+            $item->setPage($url);
+            $item->setCategory($category);
 
-        // Torrent size
-        $item->setSize((float)$dom->attr('size'));
+            // Title torrent
+            $title = trim(str_replace('.torrent', '', $row->find('.torrent-info a[href^=/download/torrent/]')->text()));
+            if (!empty($title)) {
+                $translation = trim($row->find('.upload1 .c2:first')->text());
+                $title .= (!empty($translation) ? ' [' . $translation . ']' : '');
+            } else {
+                $title = 'unknown';
+            }
 
-        // Torrent count seeds
-        $item->setSeeds((int)trim($dom->attr('seeders')));
+            $item->setTitle($title);
 
-        // Torrent count peers
-        $matches = [];
-        preg_match('/(?P<peers>\d+)/', $dom->find('.upload1 .c6 font:last')->text(), $matches);
-        $item->setPeers((isset($matches['peers']) ? (int)trim($matches['peers']) : 0));
+            // Url download torrent
+            $download = $row->find('.torrent-info a[href^=/download/torrent/]')->attr('href');
+            $item->setFetch((!empty($download) ? (self::SITE_PREFIX . $download) : 'unknown'));
 
-        // Date created torrent
-        $item->setDate((new \DateTime())->setTimestamp((int)$dom->attr('date')));
+            // Torrent size
+            $item->setSize((float)$row->attr('size'));
 
-        return ($item);
+            // Torrent count seeds
+            $item->setSeeds((int)trim($row->attr('seeders')));
+
+            // Torrent count peers
+            $matches = [];
+            preg_match('/(?P<peers>\d+)/', $row->find('.upload1 .c6 font:last')->text(), $matches);
+            $item->setPeers((isset($matches['peers']) ? (int)trim($matches['peers']) : 0));
+
+            // Date created torrent
+            $item->setDate((new \DateTime())->setTimestamp((int)$row->attr('date')));
+
+            yield $item;
+        }
     }
 
     /**
@@ -130,8 +136,16 @@ class FastTorrent extends Package implements Download
      */
     public function fetch($url, Torrent $file)
     {
+        $client  = new CurlClient;
+        $content = $this->sendGet($client, $url);
 
+        if ($file->is($content)) {
+            $torrent = $file->decode($content);
+            if (!empty($torrent) && isset($torrent['info']['name'])) {
+                $file->create($torrent['info']['name'], $content);
+            }
+        }
+
+        return ($file->isAvailable());
     }
-
-
 }

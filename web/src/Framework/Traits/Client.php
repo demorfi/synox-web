@@ -8,7 +8,6 @@ trait Client
 {
     protected function sendPost(_Client $client, $url, $fields = [])
     {
-        $client->clean();
         $client->setUrl($url);
 
         foreach ($fields as $name => $value) {
@@ -21,7 +20,6 @@ trait Client
 
     protected function sendGet(_Client $client, $url, $fields = [])
     {
-        $client->clean();
         $client->setUrl($url);
 
         foreach ($fields as $name => $value) {
