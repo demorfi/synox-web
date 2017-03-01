@@ -198,8 +198,8 @@ class Torrent implements \JsonSerializable
                         return ($info);
                     }
 
-                    if (($key = $this->read($content, $pos)) == null
-                        || ($value = $this->read($content, $pos)) == null
+                    if (($key = $this->read($content, $pos)) === null
+                        || ($value = $this->read($content, $pos)) === null
                     ) {
                         break;
                     }
@@ -220,7 +220,7 @@ class Torrent implements \JsonSerializable
                         return ($info);
                     }
 
-                    if (($value = $this->read($content, $pos)) == null) {
+                    if (($value = $this->read($content, $pos)) === null) {
                         break;
                     }
 

@@ -25,7 +25,7 @@ class Content implements \JsonSerializable
     public function add($string)
     {
         $this->content = $this->filter($string);
-        if (mb_strlen($this->content)) {
+        if (strlen($this->content)) {
             $this->available = true;
         }
     }

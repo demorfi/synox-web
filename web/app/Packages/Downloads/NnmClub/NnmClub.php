@@ -14,31 +14,60 @@ class NnmClub extends Package implements Download
 {
     use Client;
 
+    /**
+     * @var string
+     */
     const SITE_PREFIX = 'http://nnm-club.me/forum';
 
+    /**
+     * @var string
+     */
     private $name = 'NNM Club';
 
+    /**
+     * @var string
+     */
     private $shortDescription = 'Torrent tracker ' . self::SITE_PREFIX;
 
+    /**
+     * @var string
+     */
     protected $urlQuery = self::SITE_PREFIX . '/tracker.php?nm=%s';
 
+    /**
+     * @var string
+     */
     protected $urlLogin = self::SITE_PREFIX . '/login.php';
 
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return ($this->name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getShortDescription()
     {
         return ($this->shortDescription);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function hasAuth()
     {
         return (true);
     }
 
+    /**
+     * Check available account.
+     *
+     * @return bool
+     */
     protected function isAvailableAccount()
     {
         $client = new CurlClient;
@@ -65,19 +94,21 @@ class NnmClub extends Package implements Download
         return (true);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function searchByName($name, Stack $stack)
     {
         if ($this->isAvailableAccount()) {
             $client = new CurlClient;
             $client->useCookie(__CLASS__);
             $response = $this->sendGet($client, sprintf($this->urlQuery, urlencode($name)));
-
-            $html = pqInstance($response);
+            $html     = pqInstance($response);
 
             $matches = [];
             preg_match('/(?P<result>\d+)\s+\(max/is', $html->find('#search_form table .nav')->text(), $matches);
 
-            $total       = (!empty($matches['result']) ? (int)trim($matches['result']) : 1);
+            $total       = (isset($matches['result']) ? (int)trim($matches['result']) : 1);
             $inPage      = $this->foundElements($html);
             $totalInPage = sizeof($inPage);
             $countPages  = (int)ceil($total / ($totalInPage > 1 ? $totalInPage : 1));
@@ -114,6 +145,12 @@ class NnmClub extends Package implements Download
         return (false);
     }
 
+    /**
+     * Founds elements in page.
+     *
+     * @param \phpQueryObject $dom
+     * @return array
+     */
     protected function foundElements(\phpQueryObject $dom)
     {
         $items = [];
@@ -127,6 +164,14 @@ class NnmClub extends Package implements Download
         return ($items);
     }
 
+    /**
+     * Create item.
+     *
+     * @param string          $url
+     * @param \phpQueryObject $element
+     * @param \phpQueryObject $page
+     * @return \Generator
+     */
     protected function createItem($url, \phpQueryObject $element, \phpQueryObject $page)
     {
         $item  = new Item($this);
@@ -162,6 +207,9 @@ class NnmClub extends Package implements Download
         yield $item;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function fetch($url, Torrent $file)
     {
         if ($this->isAvailableAccount()) {

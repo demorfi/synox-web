@@ -66,3 +66,23 @@ if (!function_exists('pqElement')) {
         return (phpQuery::pq($element));
     }
 }
+
+if (!function_exists('deUnicode')) {
+
+    /**
+     * Unicode to UTF-8.
+     *
+     * @param string $string
+     * @return string
+     */
+    function deUnicode($string)
+    {
+        return (preg_replace_callback(
+            '/\\\\u([0-9a-fA-F]{4})/',
+            function ($match) {
+                return (mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UTF-16BE'));
+            },
+            $string
+        ));
+    }
+}

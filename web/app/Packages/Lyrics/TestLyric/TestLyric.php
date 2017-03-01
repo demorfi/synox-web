@@ -54,6 +54,7 @@ class TestLyric extends Package implements Lyric
             $item = new Item($this);
             $item->setTitle('Test ' . $name . ' ' . $index);
             $item->setArtist('Test artist ' . $index);
+            $item->setLyrics('Test lyrics short ' . $index);
             $item->setPage('http:/test/page?id=' . $index);
             $item->setFetch('http:/test/lyric?id=' . $index);
             $stack->push($item);

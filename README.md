@@ -20,7 +20,6 @@ Includes
 * Rutor *(Search torrent files to http://rutor.org)*
 * Rutracker *(Search torrent files to http://rutracker.org)*
 * The Pirate Bay *(Search torrent files to http://thepiratebay.se)*
-* YouTube *(Search broadcast to http://youtube.com)*
 
 ###### Download Station Host Modules
 * Kinozal *(Download torrent files to http://kinozal.tv)*

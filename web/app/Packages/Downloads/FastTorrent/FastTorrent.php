@@ -14,35 +14,58 @@ class FastTorrent extends Package implements Download
 {
     use Client;
 
+    /**
+     * @var string
+     */
     const SITE_PREFIX = 'http://fast-torrent.ru';
 
+    /**
+     * @var string
+     */
     private $name = 'Fast-Torrent';
 
+    /**
+     * @var string
+     */
     private $shortDescription = 'Torrent tracker ' . self::SITE_PREFIX;
 
+    /**
+     * @var string
+     */
     protected $urlQuery = self::SITE_PREFIX . '/search/%s/50/%d.html';
 
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return ($this->name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getShortDescription()
     {
         return ($this->shortDescription);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function hasAuth()
     {
         return (false);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function searchByName($name, Stack $stack)
     {
         $client   = new CurlClient;
         $response = $this->sendGet($client, sprintf($this->urlQuery, urlencode($name), 1));
-
-        $html = pqInstance($response);
+        $html     = pqInstance($response);
 
         $total       = (int)$html->find('#search_result i b:first')->text();
         $inPage      = $this->foundElements($html);
@@ -68,6 +91,12 @@ class FastTorrent extends Package implements Download
         return (true);
     }
 
+    /**
+     * Founds elements in page.
+     *
+     * @param \phpQueryObject $dom
+     * @return array
+     */
     protected function foundElements(\phpQueryObject $dom)
     {
         $items = [];
@@ -81,6 +110,14 @@ class FastTorrent extends Package implements Download
         return ($items);
     }
 
+    /**
+     * Create item.
+     *
+     * @param string          $url
+     * @param \phpQueryObject $element
+     * @param \phpQueryObject $page
+     * @return \Generator
+     */
     protected function createItem($url, \phpQueryObject $element, \phpQueryObject $page)
     {
         // Category torrent
@@ -110,7 +147,7 @@ class FastTorrent extends Package implements Download
             $item->setTitle($title);
 
             // Url download torrent
-            $download = $row->find('.torrent-info a[href^=/download/torrent/]')->attr('href');
+            $download = $row->find('.torrent-info a[href*="/download/torrent/"]')->attr('href');
             $item->setFetch((!empty($download) ? (self::SITE_PREFIX . $download) : 'unknown'));
 
             // Torrent size

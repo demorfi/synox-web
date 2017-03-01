@@ -27,6 +27,11 @@ class Item extends _Item
     protected $page;
 
     /**
+     * @var string
+     */
+    protected $lyrics;
+
+    /**
      * @return string
      */
     public function getTitle()
@@ -58,6 +63,23 @@ class Item extends _Item
     public function setArtist($artist)
     {
         $this->artist = (string)$artist;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLyrics()
+    {
+        return ($this->lyrics);
+    }
+
+    /**
+     * @param string $lyrics
+     * @return void
+     */
+    public function setLyrics($lyrics)
+    {
+        $this->lyrics = (string)$lyrics;
     }
 
     /**
