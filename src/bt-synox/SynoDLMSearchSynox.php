@@ -49,7 +49,7 @@ class SynoDLMSearchSynox
         $this->username = rtrim(trim($username), '/');
         $this->query    = urlencode($query);
 
-        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->username, $this->query));
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->username));
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_POST, true);

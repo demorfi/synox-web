@@ -15,24 +15,18 @@ class SynoASSearchSynox
     protected $query = '';
     protected $username;
 
-    protected $password;
-    protected $maskQuery = '%s/api/lyrics?type=search&name=%s&api-key=%s';
-    protected $maskFetch = '%s/api/lyrics?type=fetch&id=%s&url=%s&api-key=%s';
+    protected $searchQuery = '%s/lyrics/search';
+    protected $resultsQuery = '%s/lyrics/results';
+    protected $maskFetch = '%s/lyrics/api/lyrics?type=fetch&id=%s&url=%s&api-key=%s';
 
     public function __construct()
     {
-        $config = @json_decode(file_get_contents('/tmp/synox.json'), true);
-        if (!empty($config)) {
-            $this->username = rtrim(trim($config['host']), '/');
-            $this->password = trim($config['key']);
-        }
-
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_HEADER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, DOWNLOAD_TIMEOUT);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, DOWNLOAD_TIMEOUT);
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 0);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, 0);
         curl_setopt($this->curl, CURLOPT_USERAGENT, DOWNLOAD_STATION_USER_AGENT);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
@@ -50,8 +44,43 @@ class SynoASSearchSynox
         }
     }
 
+    public function prepare($curl, $query, $username = null)
+    {
+        $this->username = rtrim(trim($username), '/');
+        $this->query    = urlencode($query);
+
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->username, $this->query));
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['name' => $query]));
+
+        return (true);
+    }
+
+    public function VerifyAccount($username)
+    {
+        $curl = curl_copy_handle($this->curl);
+
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, rtrim(trim($username), '/')));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['name' => 'verify']));
+
+        $response = @json_decode(curl_exec($curl), true);
+        curl_close($curl);
+
+        return (isset($response['success'], $response['hash']));
+    }
+
     public function getLyricsList($artist, $title, $plugin)
     {
+        $curl = curl_copy_handle($this->curl);
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, rtrim(trim($username), '/')));
+
+
+
+
+        exit;
         $curl = curl_copy_handle($this->curl);
         $fullQuery = sprintf($this->maskQuery, $this->username, urlencode($artist . ' - ' . $title), $this->password);
         curl_setopt($curl, CURLOPT_URL, $fullQuery);

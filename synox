@@ -1,0 +1,72 @@
+#!/bin/sh
+
+##########################################################################
+# Synox console.                                                         #
+#                                                                        #
+# @author  demorfi <demorfi@gmail.com>                                   #
+# @version 1.2                                                           #
+# @source https://github.com/demorfi/synox                               #
+# @license http://opensource.org/licenses/MIT Licensed under MIT License #
+##########################################################################
+
+PHP=`which php`
+USE_HOST="127.0.0.1:8080"
+WEB_PATH="`pwd`/web/public"
+
+kill_prev_process()
+{
+    ps -efw | grep "$PHP -S $USE_HOST" | grep -v grep | awk '{print $2}' | xargs kill > /dev/null 2>&1
+}
+
+bash_trap()
+{
+    kill_prev_process
+    exit
+}
+
+exec_php()
+{
+    shift;
+    $PHP "`pwd`/synox.php" "$@"
+}
+
+open_url()
+{
+    [[ -x $BROWSER ]] && exec "$BROWSER" "http://$USE_HOST/"
+    X_PATH=$(which xdg-open || which gnome-open) && exec "$X_PATH" "http://$USE_HOST/"
+    echo "Can't find browser"
+}
+
+if [ $1 ]; then
+    if [ $1 = "build" ]; then
+        make
+        exit 0
+    fi
+
+    if [ $1 = "exec" ]; then
+        kill_prev_process
+        (trap 'kill 0' SIGINT; $PHP -S $USE_HOST -t $WEB_PATH > /dev/null 2>&1 &) ; (exec_php "$@")
+        kill_prev_process
+        exit
+    fi
+
+    if [ $1 = "web" ]; then
+        kill_prev_process
+        ($PHP -S $USE_HOST -t $WEB_PATH &) ; (open_url)
+        trap bash_trap INT
+        while [ true ]
+        do
+        	sleep 1
+        done
+    fi
+
+    if [ $1 = "help" ]; then
+        echo "synox build       : make build"
+        echo "synox exec [ARGS] : execute command to synox package"
+        echo "synox web         : to run built-in web interface"
+    fi
+else
+	echo "use synox help"
+fi
+
+exit 0

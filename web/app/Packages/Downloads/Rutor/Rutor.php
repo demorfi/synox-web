@@ -90,6 +90,8 @@ class Rutor extends Package implements Download
                 }
             }
         }
+
+        return (true);
     }
 
     /**

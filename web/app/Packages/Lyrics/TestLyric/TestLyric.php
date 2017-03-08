@@ -59,6 +59,8 @@ class TestLyric extends Package implements Lyric
             $item->setFetch('http:/test/lyric?id=' . $index);
             $stack->push($item);
         }
+
+        return (true);
     }
 
     /**
@@ -67,5 +69,6 @@ class TestLyric extends Package implements Lyric
     public function fetch($url, Content $content)
     {
         $content->add('test <br /> content');
+        return ($content->isAvailable());
     }
 }

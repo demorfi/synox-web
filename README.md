@@ -9,7 +9,7 @@ Required
 Includes
 ========
 ###### Audio Station Modules
-* Bananan *(Translate song text into Russian Language to http://bananan.org)*
+* AllofLyric *(Translate song text into Russian Language to https://alloflyric.com)*
 * LyricWiki *(Song full-text search to http://lyrics.wikia.com)*
 
 ###### Download Station Search Modules

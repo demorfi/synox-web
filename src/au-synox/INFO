@@ -6,5 +6,6 @@
   "site": "https://github.com/demorfi/synox",
   "module": "SynoASSearchSynox.php",
   "type": "lyric",
-  "class": "SynoASSearchSynox"
+  "class": "SynoASSearchSynox",
+  "host": "http://localhost:8080/"
 }

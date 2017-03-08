@@ -128,7 +128,7 @@ class Torrent implements \JsonSerializable
      */
     public function getFileUrl()
     {
-        return (self::$urlPrefix . $this->name);
+        return (self::$urlPrefix . $this->name . self::FILE_EXTENSION);
     }
 
     /**

@@ -7,7 +7,7 @@ PKGFILES := $(addprefix ${BUILDDIR}/,${SOURCE})
 all: ${PKGNAME}
 
 ${PKGNAME}: $(BUILDDIR)
-	tar czf ${PKGNAME} -C ${BUILDDIR} .
+	(cd ${BUILDDIR} ; tar -czf ../${PKGNAME} *)
 
 $(BUILDDIR):
 	mkdir -p ${BUILDDIR}

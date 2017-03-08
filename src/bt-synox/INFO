@@ -7,5 +7,6 @@
   "accountsupport": true,
   "module": "SynoDLMSearchSynox.php",
   "type": "search",
-  "class": "SynoDLMSearchSynox"
+  "class": "SynoDLMSearchSynox",
+  "host": "http://localhost:8080/"
 }

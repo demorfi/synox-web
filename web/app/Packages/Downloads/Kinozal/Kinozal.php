@@ -126,7 +126,11 @@ class Kinozal extends Package implements Download
                     }
                 }
             }
+
+            return (true);
         }
+
+        return (false);
     }
 
     /**

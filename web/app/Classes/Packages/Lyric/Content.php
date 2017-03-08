@@ -56,11 +56,17 @@ class Content implements \JsonSerializable
      * @param string $string
      * @return string
      */
-    protected function filter($string)
+    public static function filter($string)
     {
         $string = preg_replace('/<br(\ ?\/)?>/', PHP_EOL, $string);
-        $string = trim(preg_replace(['/\n+/', '/\t?/'], ["\n", ''], strip_tags($string)));
-        return (nl2br($string));
+        $string = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $string);
+        $string = preg_replace(
+            ['/(\n\n\n)+/', '/\n+/', '/\t?/', '/<hr>/'],
+            ['<hr>', "\n", '', "\n\n"],
+            strip_tags($string)
+        );
+
+        return (nl2br(trim($string)));
     }
 
     /**

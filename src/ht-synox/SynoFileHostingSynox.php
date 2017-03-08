@@ -73,6 +73,7 @@ class SynoFileHostingSynox
             $response = @json_decode(curl_exec($curl), true);
             curl_close($curl);
 
+            var_dump($response);
             if (isset($response['success'], $response['file'])) {
                 return ([DOWNLOAD_URL => ($this->username . $response['file']['url'])]);
             }

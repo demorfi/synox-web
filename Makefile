@@ -19,7 +19,8 @@ synox.host: ${BUILDDIR}
 build: ${BUILDDIR}
 	cp LICENSE ${BUILDDIR}
 	cp README.md ${BUILDDIR}
-	cd ${BUILDDIR} && zip -r synox-${VERSION}.zip ./ && mv synox-${VERSION}.zip ../
+	cp -R web ${BUILDDIR}
+	(cd ${BUILDDIR} ; zip -r synox-${VERSION}.zip ./ ; mv synox-${VERSION}.zip ../)
 
 $(BUILDDIR):
 	mkdir -p ${BUILDDIR}

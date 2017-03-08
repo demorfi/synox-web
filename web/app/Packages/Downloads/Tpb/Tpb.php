@@ -95,6 +95,8 @@ class Tpb extends Package implements Download
                 }
             }
         }
+
+        return (true);
     }
 
     /**

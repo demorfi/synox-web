@@ -49,8 +49,8 @@ class TestDownload extends Package implements Download
      */
     public function searchByName($name, Stack $stack)
     {
-        $index = 5;
-        while ($index--) {
+        $index = 6;
+        while (--$index) {
             $item = new Item($this);
             $item->setTitle('Test ' . $name . ' ' . $index);
             $item->setCategory('Test category ' . $index);
@@ -58,10 +58,12 @@ class TestDownload extends Package implements Download
             $item->setSeeds(rand(1, 100));
             $item->setSize(rand(1000000, 9999999));
             $item->setDate(new \DateTime());
-            $item->setFetch('http://test/download?id=' . $index);
-            $item->setPage('http://test/page?id=' . $index);
+            $item->setFetch('http://synox.loc/?id=' . $this->name . '&fetch=' . $index);
+            $item->setPage('http://synox.loc/' . $index);
             $stack->push($item);
         }
+
+        return (true);
     }
 
     /**
@@ -69,6 +71,7 @@ class TestDownload extends Package implements Download
      */
     public function fetch($url, Torrent $file)
     {
-        $file->create('test.torrent', 'd8:announce');
+        $file->create('test', 'd8:announce');
+        return ($file->isAvailable());
     }
 }
