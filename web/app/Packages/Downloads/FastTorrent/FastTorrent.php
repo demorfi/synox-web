@@ -32,6 +32,11 @@ class FastTorrent extends Package implements Download
     /**
      * @var string
      */
+    private $version = '1.0';
+
+    /**
+     * @var string
+     */
     protected $urlQuery = self::SITE_PREFIX . '/search/%s/50/%d.html';
 
     /**
@@ -48,6 +53,14 @@ class FastTorrent extends Package implements Download
     public function getShortDescription()
     {
         return ($this->shortDescription);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return ($this->version);
     }
 
     /**

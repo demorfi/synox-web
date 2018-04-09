@@ -24,11 +24,16 @@ class Storage
     const SORT_DESC = 2;
 
     /**
+     * Storage instance.
+     *
      * @var _Storage
      */
-    private $journal;
+    protected $journal;
 
     /**
+     * Initialize.
+     *
+     * @return void
      * @throws \Exception
      */
     protected function __init()
@@ -61,10 +66,11 @@ class Storage
     /**
      * Get journal.
      *
+     * @param int $limit
      * @param int $sort
-     * @return \Generator
+     * @return array
      */
-    public function getJournal($limit = false, $sort = self::SORT_DESC)
+    protected function getAll($limit = 0, $sort = self::SORT_DESC)
     {
         $journal = $this->journal->getAll();
 
@@ -76,6 +82,19 @@ class Storage
             $journal = array_slice($journal, 0, $limit);
         }
 
+        return ($journal);
+    }
+
+    /**
+     * Get journal.
+     *
+     * @param int $limit
+     * @param int $sort
+     * @return \Generator
+     */
+    public function getJournal($limit = 0, $sort = self::SORT_DESC)
+    {
+        $journal = $this->getAll($limit, $sort);
         foreach ($journal as $item) {
             $item['date'] = date('Y-m-d H:m:s', $item['time']);
             yield $item;

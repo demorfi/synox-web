@@ -7,31 +7,43 @@ use Framework\Request;
 class OfArray implements \JsonSerializable
 {
     /**
+     * Data.
+     *
      * @var array
      */
     protected $array = [];
 
     /**
+     * Offset.
+     *
      * @var int
      */
     protected $offset = 0;
 
     /**
+     * Limit.
+     *
      * @var int
      */
     protected $limit = 0;
 
     /**
+     * Total elements.
+     *
      * @var int
      */
     protected $total = 1;
 
     /**
+     * Current element.
+     *
      * @var int
      */
     protected $current = 1;
 
     /**
+     * Request instance.
+     *
      * @var Request
      */
     private $request;
@@ -50,7 +62,7 @@ class OfArray implements \JsonSerializable
      * Set elements for create pagination.
      *
      * @param array $array Elements
-     * @param int $limit
+     * @param int   $limit
      * @return self
      */
     public function setElements(array $array, $limit)

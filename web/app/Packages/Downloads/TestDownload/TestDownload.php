@@ -13,12 +13,17 @@ class TestDownload extends Package implements Download
     /**
      * @var string
      */
-    private $name = 'TestDownload';
+    private $name = 'Test Download';
 
     /**
      * @var string
      */
     private $shortDescription = 'Test download';
+
+    /**
+     * @var string
+     */
+    private $version = '1.0';
 
     /**
      * @inheritdoc
@@ -34,6 +39,14 @@ class TestDownload extends Package implements Download
     public function getShortDescription()
     {
         return ($this->shortDescription);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return ($this->version);
     }
 
     /**

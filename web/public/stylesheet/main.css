@@ -10,6 +10,14 @@ footer
     overflow : hidden;
 }
 
+footer a,
+footer a:hover,
+.footer a,
+.footer a:hover
+{
+    color : #fff;
+}
+
 .container-fluid
 {
     min-height : calc(100vh - 51px);

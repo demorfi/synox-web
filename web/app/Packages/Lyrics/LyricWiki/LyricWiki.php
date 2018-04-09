@@ -32,6 +32,11 @@ class LyricWiki extends Package implements Lyric
     /**
      * @var string
      */
+    private $version = '1.0';
+
+    /**
+     * @var string
+     */
     protected $urlQuery = self::SITE_PREFIX . '/api.php?action=lyrics&artist=%s&song=%s&fmt=realjson';
 
     /**
@@ -48,6 +53,14 @@ class LyricWiki extends Package implements Lyric
     public function getShortDescription()
     {
         return ($this->shortDescription);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return ($this->version);
     }
 
     /**

@@ -54,7 +54,11 @@
 </div>
 
 <footer class="p-3 text-center hidden-md-up">
-    <p class="small m-0"><i class="fa fa-code"></i> with <i class="fa fa-heart"></i> in Siberia.</p>
+    <p class="small m-0">
+        <a href="https://github.com/demorfi/synox" target="_blank">
+            <i class="fa fa-code"></i> with <i class="fa fa-heart"></i> in Siberia.
+        </a>
+    </p>
 </footer>
 
 <script src="/javascript/jquery-3.1.1.min.js"></script>

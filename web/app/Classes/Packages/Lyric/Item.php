@@ -7,31 +7,43 @@ use Classes\Abstracts\Package\Item as _Item;
 class Item extends _Item
 {
     /**
+     * Title.
+     *
      * @var string
      */
     protected $title;
 
     /**
+     * Artist.
+     *
      * @var string
      */
     protected $artist;
 
     /**
+     * Url fetch.
+     *
      * @var string
      */
     protected $fetch;
 
     /**
+     * Url page.
+     *
      * @var string
      */
     protected $page;
 
     /**
+     * Lyrics content.
+     *
      * @var string
      */
     protected $lyrics;
 
     /**
+     * Get title.
+     *
      * @return string
      */
     public function getTitle()
@@ -40,6 +52,8 @@ class Item extends _Item
     }
 
     /**
+     * Set title.
+     *
      * @param string $title
      * @return void
      */
@@ -49,6 +63,8 @@ class Item extends _Item
     }
 
     /**
+     * Get artist.
+     *
      * @return string
      */
     public function getArtist()
@@ -57,6 +73,8 @@ class Item extends _Item
     }
 
     /**
+     * Set artist.
+     *
      * @param string $artist
      * @return void
      */
@@ -66,6 +84,8 @@ class Item extends _Item
     }
 
     /**
+     * Get lyric content.
+     *
      * @return string
      */
     public function getLyrics()
@@ -74,6 +94,8 @@ class Item extends _Item
     }
 
     /**
+     * Set lyric content.
+     *
      * @param string $lyrics
      * @return void
      */
@@ -83,6 +105,8 @@ class Item extends _Item
     }
 
     /**
+     * Get url fetch.
+     *
      * @return string
      */
     public function getFetch()
@@ -91,6 +115,8 @@ class Item extends _Item
     }
 
     /**
+     * Set url fetch.
+     *
      * @param string $url
      * @return void
      */
@@ -100,6 +126,8 @@ class Item extends _Item
     }
 
     /**
+     * Get url page.
+     *
      * @return string
      */
     public function getPage()
@@ -108,6 +136,8 @@ class Item extends _Item
     }
 
     /**
+     * Set url page.
+     *
      * @param string $url
      * @return void
      */

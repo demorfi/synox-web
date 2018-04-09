@@ -5,7 +5,7 @@ namespace Framework;
 class Route
 {
     /**
-     * Request.
+     * Request instance.
      *
      * @var Request
      */

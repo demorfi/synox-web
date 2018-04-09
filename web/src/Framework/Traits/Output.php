@@ -6,6 +6,8 @@ trait Output
 {
     /**
      * Start buffer.
+     *
+     * @return bool
      */
     public function startBuffer()
     {
@@ -24,6 +26,8 @@ trait Output
 
     /**
      * Clean buffer.
+     *
+     * @return void
      */
     public function cleanBuffer()
     {

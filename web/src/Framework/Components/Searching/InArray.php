@@ -5,6 +5,8 @@ namespace Framework\Components\Searching;
 class InArray
 {
     /**
+     * Data.
+     *
      * @var array
      */
     private $array;
@@ -23,7 +25,7 @@ class InArray
      * Find key in array.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      * @return array
      */
     public function find($key, $value)

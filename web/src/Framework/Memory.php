@@ -5,31 +5,43 @@ namespace Framework;
 class Memory implements \JsonSerializable
 {
     /**
+     * Memory size.
+     *
      * @var number
      */
     private $size;
 
     /**
+     * Semaphore key.
+     *
      * @var int
      */
     private $semKey;
 
     /**
+     * Shared memory key.
+     *
      * @var int
      */
     private $shmKey;
 
     /**
+     * Semaphore id.
+     *
      * @var resource
      */
     private $semId;
 
     /**
+     * Shared memory id.
+     *
      * @var resource
      */
     private $shmId;
 
     /**
+     * Offset key.
+     *
      * @var int
      */
     private $offset = 1;
@@ -188,6 +200,7 @@ class Memory implements \JsonSerializable
      * Push.
      *
      * @param mixed $data
+     * @return void
      * @throws \Exception
      */
     public function push($data)
@@ -220,6 +233,10 @@ class Memory implements \JsonSerializable
     public function pull()
     {
         try {
+            if (!shm_has_var($this->shmId, $this->offset)) {
+                return (false);
+            }
+
             $stack = shm_get_var($this->shmId, $this->offset);
             if ($stack === false) {
                 throw new \Exception();
@@ -249,6 +266,10 @@ class Memory implements \JsonSerializable
     public function shift()
     {
         try {
+            if (!shm_has_var($this->shmId, $this->offset)) {
+                return (false);
+            }
+
             $stack = shm_get_var($this->shmId, $this->offset);
             if ($stack === false) {
                 throw new \Exception();
@@ -297,6 +318,10 @@ class Memory implements \JsonSerializable
     public function readToArray()
     {
         try {
+            if (!shm_has_var($this->shmId, $this->offset)) {
+                return (false);
+            }
+
             $stack = shm_get_var($this->shmId, $this->offset);
             if ($stack === false) {
                 throw new \Exception();
@@ -319,11 +344,16 @@ class Memory implements \JsonSerializable
      */
     public function size()
     {
-        $stack = @shm_get_var($this->shmId, $this->offset);
-        if ($stack !== false) {
-            return (sizeof($stack));
+        try {
+            if (!shm_has_var($this->shmId, $this->offset)) {
+                return (false);
+            }
+
+            $stack = shm_get_var($this->shmId, $this->offset);
+        } catch (\Exception $e) {
+            return (0);
         }
 
-        return (0);
+        return ($stack !== false ? sizeof($stack) : 0);
     }
 }

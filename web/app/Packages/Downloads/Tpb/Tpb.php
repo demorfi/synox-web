@@ -32,6 +32,11 @@ class Tpb extends Package implements Download
     /**
      * @var string
      */
+    private $version = '1.0';
+
+    /**
+     * @var string
+     */
     protected $urlQuery = self::SITE_PREFIX . '/search/%s/%d/7/';
 
     /**
@@ -53,6 +58,14 @@ class Tpb extends Package implements Download
     public function getShortDescription()
     {
         return ($this->shortDescription);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return ($this->version);
     }
 
     /**

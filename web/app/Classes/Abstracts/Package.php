@@ -37,7 +37,7 @@ abstract class Package implements _Package
      * Get package setting.
      *
      * @param string $name
-     * @param mixed $default If request key not found it return default value
+     * @param mixed  $default If request key not found it return default value
      * @return null
      */
     protected function getSetting($name, $default = null)
@@ -49,7 +49,7 @@ abstract class Package implements _Package
      * Set package setting.
      *
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * @return void
      */
     protected function setSettings($name, $value)

@@ -7,11 +7,15 @@ use Framework\Memory;
 trait Stack
 {
     /**
+     * Stack size.
+     *
      * @var int
      */
     protected $defaultSize = 1024;
 
     /**
+     * Memory instance.
+     *
      * @var Memory
      */
     protected $memory;

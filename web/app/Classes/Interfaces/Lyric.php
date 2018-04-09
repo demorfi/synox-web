@@ -2,8 +2,8 @@
 
 namespace Classes\Interfaces;
 
-use Classes\Packages\Lyric\Stack;
 use Classes\Packages\Lyric\Content;
+use Classes\Packages\Lyric\Stack;
 
 interface Lyric extends Package
 {
@@ -11,7 +11,7 @@ interface Lyric extends Package
      * Search.
      *
      * @param string $name
-     * @param Stack $stack
+     * @param Stack  $stack
      * @return bool
      */
     public function searchByName($name, Stack $stack);
@@ -19,7 +19,7 @@ interface Lyric extends Package
     /**
      * Fetch lyric.
      *
-     * @param string $url
+     * @param string  $url
      * @param Content $content
      * @return bool
      */

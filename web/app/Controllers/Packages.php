@@ -10,6 +10,8 @@ use Framework\Response;
 class Packages extends Controller
 {
     /**
+     * Packages instances.
+     *
      * @var _Packages
      */
     protected $packages;

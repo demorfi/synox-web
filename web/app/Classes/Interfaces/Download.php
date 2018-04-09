@@ -11,7 +11,7 @@ interface Download extends Package
      * Search.
      *
      * @param string $name
-     * @param Stack $stack
+     * @param Stack  $stack
      * @return bool
      */
     public function searchByName($name, Stack $stack);
@@ -19,7 +19,7 @@ interface Download extends Package
     /**
      * Fetch torrent.
      *
-     * @param string $url
+     * @param string  $url
      * @param Torrent $file
      * @return bool
      */

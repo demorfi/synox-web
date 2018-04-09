@@ -5,6 +5,8 @@ namespace Framework\Abstracts;
 abstract class Data
 {
     /**
+     * Data.
+     *
      * @var array
      */
     protected $array = [];
@@ -23,8 +25,8 @@ abstract class Data
     /**
      * Set value.
      *
-     * @param string $name Name key
-     * @param mixed $value Value key
+     * @param string $name  Name key
+     * @param mixed  $value Value key
      * @return void
      */
     public function __set($name, $value)
@@ -46,13 +48,25 @@ abstract class Data
     /**
      * Get value.
      *
-     * @param string $name Name key
-     * @param mixed $default If request key not found it return default value
+     * @param string $name    Name key
+     * @param mixed  $default If request key not found it return default value
      * @return mixed
      */
     public function get($name, $default = null)
     {
         return ((isset($this->array[$name]) && !empty($this->array[$name])) ? $this->array[$name] : $default);
+    }
+
+    /**
+     * Set value.
+     *
+     * @param string $name  Name key
+     * @param mixed  $value Value key
+     * @return void
+     */
+    public function set($name, $value)
+    {
+        $this->array[$name] = $value;
     }
 
     /**
@@ -69,7 +83,7 @@ abstract class Data
     /**
      * Slice array by key.
      *
-     * @param string $prefix
+     * @param string        $prefix
      * @param callable|null $callable
      * @return array
      */
@@ -117,9 +131,22 @@ abstract class Data
 
     /**
      * Flush values.
+     *
+     * @return void
      */
     public function flush()
     {
         $this->array = [];
+    }
+
+    /**
+     * Overwrite values.
+     *
+     * @param array $array
+     * @return void
+     */
+    public function overwrite(array $array)
+    {
+        $this->array = $array;
     }
 }

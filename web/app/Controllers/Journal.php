@@ -3,7 +3,7 @@
 namespace Controllers;
 
 use Framework\Abstracts\Controller;
-use Framework\Components\Journal\Storage as StorageJournal;
+use Classes\Journal as StorageJournal;
 
 class Journal extends Controller
 {
@@ -15,7 +15,7 @@ class Journal extends Controller
     public function defaultAction()
     {
         $title   = 'Journal';
-        $journal = StorageJournal::getInstance()->getJournal(100);
+        $journal = StorageJournal::getInstance()->getJournal();
         return (tpl()->render('journal', compact('title', 'journal')));
     }
 

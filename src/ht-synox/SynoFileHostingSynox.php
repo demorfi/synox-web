@@ -11,18 +11,42 @@
  */
 class SynoFileHostingSynox
 {
+    /**
+     * @var resource
+     */
     protected $curl;
 
+    /**
+     * @var string
+     */
     protected $username;
 
+    /**
+     * @var string
+     */
     protected $id;
 
+    /**
+     * @var string
+     */
     protected $url;
 
+    /**
+     * @var string
+     */
     protected $searchQuery = '%s/downloads/search';
 
+    /**
+     * @var string
+     */
     protected $fetchQuery = '%s/downloads/fetch';
 
+    /**
+     * SynoFileHostingSynox constructor.
+     *
+     * @param string $url
+     * @param string $username
+     */
     public function __construct($url, $username)
     {
         $query = [];
@@ -42,6 +66,9 @@ class SynoFileHostingSynox
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
     }
 
+    /**
+     * @return int
+     */
     public function Verify()
     {
         $curl = curl_copy_handle($this->curl);
@@ -73,7 +100,6 @@ class SynoFileHostingSynox
             $response = @json_decode(curl_exec($curl), true);
             curl_close($curl);
 
-            var_dump($response);
             if (isset($response['success'], $response['file'])) {
                 return ([DOWNLOAD_URL => ($this->username . $response['file']['url'])]);
             }

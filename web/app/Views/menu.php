@@ -40,12 +40,18 @@
             <li class="nav-item <?php echo $this->hasRoute('lyrics') ? ' active ' : ''; ?>">
                 <a class="nav-link" href="/lyrics"><i class="fa fa-lyrics"></i> Lyrics</a>
             </li>
+            <?php if (config('app')->get('journal')) { ?>
             <li class="nav-item <?php echo $this->hasRoute('journal') ? ' active ' : ''; ?>">
                 <a class="nav-link" href="/journal"><i class="fa fa-history"></i> Journal</a>
             </li>
+            <?php } ?>
         </ul>
         <nav class="footer">
-            <p class="small"><i class="fa fa-code"></i> with <i class="fa fa-heart"></i> in Siberia.</p>
+            <p class="small">
+                <a href="https://github.com/demorfi/synox" target="_blank">
+                    <i class="fa fa-code"></i> with <i class="fa fa-heart"></i> in Siberia.
+                </a>
+            </p>
         </nav>
     </nav>
 </div>

@@ -13,11 +13,16 @@ class Packages
     use Singleton;
 
     /**
+     * Packages instances.
+     *
      * @var PackageList
      */
     private $packages;
 
     /**
+     * Initialize packages.
+     *
+     * @return void
      * @throws \Exception
      */
     protected function __init()

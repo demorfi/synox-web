@@ -16,9 +16,9 @@ require('lib/SynoxAbstract.php');
 @list (, $type, $first, $second) = $argv;
 if (empty($type) || !in_array($type, ['bt', 'ht', 'au'])) {
     echo <<<'EOD'
-for search: php synox.php bt "search query" "http://localhost:8080/"
-for download: php synox.php ht "http://synox.loc/?id=PACKAGE&fetch=TORRENT_URL" "http://localhost:8080/"
-for lyrics: php synox.php au "artist song" "title song" "http://localhost:8080/"
+for search: bt "search query" "http://localhost:8080/"
+for download: ht "http://synox.loc/?id=PACKAGE&fetch=TORRENT_URL" "http://localhost:8080/"
+for lyrics: au "artist song" "title song" "http://localhost:8080/"
 EOD;
     exit;
 }
@@ -44,7 +44,7 @@ switch ($type) {
     // for module dlm
     case ('bt'):
         $module = new $info->class();
-        $module->prepare($curl, $first);
+        $module->prepare($curl, $first, $second);
 
         echo 'url:' . curl_getinfo($curl, CURLINFO_EFFECTIVE_URL) . PHP_EOL;
         $response = curl_exec($curl);
@@ -55,7 +55,7 @@ switch ($type) {
 
     // for module host
     case ('ht'):
-        $module   = new $info->class($first);
+        $module   = new $info->class($first, $second);
         $download = $module->GetDownloadInfo();
 
         curl_setopt($curl, CURLOPT_HEADER, 0);

@@ -7,51 +7,71 @@ use Classes\Abstracts\Package\Item as _Item;
 class Item extends _Item
 {
     /**
+     * Title.
+     *
      * @var string
      */
     protected $title;
 
     /**
+     * Count seeds.
+     *
      * @var int
      */
     protected $seeds;
 
     /**
+     * Count peers.
+     *
      * @var int
      */
     protected $peers;
 
     /**
+     * Category.
+     *
      * @var string
      */
     protected $category;
 
     /**
+     * Url fetch.
+     *
      * @var string
      */
     protected $fetch;
 
     /**
+     * Url page.
+     *
      * @var string
      */
     protected $page;
 
     /**
+     * Date.
+     *
      * @var string
      */
     protected $date;
 
     /**
+     * Formatted size.
+     *
      * @var string
      */
     protected $size;
 
     /**
+     * Size.
+     *
      * @var float
      */
     protected $_size;
 
     /**
+     * Get title.
+     *
      * @return string
      */
     public function getTitle()
@@ -60,6 +80,8 @@ class Item extends _Item
     }
 
     /**
+     * Set title.
+     *
      * @param string $title
      * @return void
      */
@@ -69,6 +91,8 @@ class Item extends _Item
     }
 
     /**
+     * Get count seeds.
+     *
      * @return int
      */
     public function getSeeds()
@@ -77,6 +101,8 @@ class Item extends _Item
     }
 
     /**
+     * Set count seeds.
+     *
      * @param int $seeds
      * @return void
      */
@@ -86,6 +112,8 @@ class Item extends _Item
     }
 
     /**
+     * Get count peers.
+     *
      * @return int
      */
     public function getPeers()
@@ -94,6 +122,8 @@ class Item extends _Item
     }
 
     /**
+     * Set count peers.
+     *
      * @param int $peers
      * @return void
      */
@@ -103,6 +133,8 @@ class Item extends _Item
     }
 
     /**
+     * Get category.
+     *
      * @return string
      */
     public function getCategory()
@@ -111,6 +143,8 @@ class Item extends _Item
     }
 
     /**
+     * Set category.
+     *
      * @param string $category
      * @return void
      */
@@ -120,6 +154,8 @@ class Item extends _Item
     }
 
     /**
+     * Get url fetch.
+     *
      * @return string
      */
     public function getFetch()
@@ -128,6 +164,8 @@ class Item extends _Item
     }
 
     /**
+     * Set url fetch.
+     *
      * @param string $url
      * @return void
      */
@@ -137,6 +175,8 @@ class Item extends _Item
     }
 
     /**
+     * Get url page.
+     *
      * @return string
      */
     public function getPage()
@@ -145,6 +185,8 @@ class Item extends _Item
     }
 
     /**
+     * Set url page.
+     *
      * @param string $url
      * @return void
      */
@@ -154,6 +196,8 @@ class Item extends _Item
     }
 
     /**
+     * Get date.
+     *
      * @return string
      */
     public function getDate()
@@ -162,6 +206,8 @@ class Item extends _Item
     }
 
     /**
+     * Set date.
+     *
      * @param \DateTime $date
      * @return void
      */
@@ -171,6 +217,8 @@ class Item extends _Item
     }
 
     /**
+     * Get formatted size.
+     *
      * @return string
      */
     public function getSize()
@@ -179,6 +227,8 @@ class Item extends _Item
     }
 
     /**
+     * Set size.
+     *
      * @param float $size
      * @return void
      */

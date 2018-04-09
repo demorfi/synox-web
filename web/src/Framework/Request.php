@@ -8,11 +8,15 @@ use Framework\Request\Query;
 class Request
 {
     /**
+     * Query instance.
+     *
      * @var Query
      */
     private $query;
 
     /**
+     * Data instance.
+     *
      * @var Data
      */
     private $data;
@@ -27,6 +31,8 @@ class Request
     }
 
     /**
+     * Get data instance.
+     *
      * @return Data
      */
     public function getData()
@@ -35,6 +41,8 @@ class Request
     }
 
     /**
+     * Get query instance.
+     *
      * @return Query
      */
     public function getQuery()

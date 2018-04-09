@@ -64,7 +64,7 @@ class Query extends Data
     }
 
     /**
-     * Get controller action
+     * Get controller action.
      *
      * @return string
      */

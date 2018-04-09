@@ -13,12 +13,17 @@ class TestLyric extends Package implements Lyric
     /**
      * @var string
      */
-    private $name = 'TestLyric';
+    private $name = 'Test Lyric';
 
     /**
      * @var string
      */
     private $shortDescription = 'Test lyric';
+
+    /**
+     * @var string
+     */
+    private $version = '1.0';
 
     /**
      * @inheritdoc
@@ -34,6 +39,14 @@ class TestLyric extends Package implements Lyric
     public function getShortDescription()
     {
         return ($this->shortDescription);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return ($this->version);
     }
 
     /**

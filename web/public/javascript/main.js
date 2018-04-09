@@ -35,7 +35,7 @@ $(function ()
     $.fn.button = function (method)
     {
         var type      = $(this).is('input') ? 'input' : 'button',
-            text      = ($(this).data('loadingText') || $(this).data('loadingText') == false)
+            text      = ($(this).data('loadingText') || $(this).data('loadingText') === false)
                 ? $(this).data('loadingText')
                 : 'loading...',
             toClass   = $(this).data('loadingClass') ? $(this).data('loadingClass') : '',

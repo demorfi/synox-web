@@ -32,6 +32,11 @@ class RuTracker extends Package implements Download
     /**
      * @var string
      */
+    private $version = '1.0';
+
+    /**
+     * @var string
+     */
     protected $urlQuery = self::SITE_PREFIX . '/tracker.php?nm=%s';
 
     /**
@@ -53,6 +58,14 @@ class RuTracker extends Package implements Download
     public function getShortDescription()
     {
         return ($this->shortDescription);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return ($this->version);
     }
 
     /**

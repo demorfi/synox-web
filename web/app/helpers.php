@@ -6,7 +6,7 @@ use Framework\Template;
 if (!function_exists('tpl')) {
 
     /**
-     * Is dnsmasq service disabled.
+     * Get template instance.
      *
      * @return Template
      */
@@ -19,7 +19,7 @@ if (!function_exists('tpl')) {
 if (!function_exists('config')) {
 
     /**
-     * Is dnsmasq service disabled.
+     * Get config instance.
      *
      * @param $name
      * @return Config

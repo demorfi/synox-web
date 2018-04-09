@@ -10,6 +10,8 @@ class Template extends Data
     use Output;
 
     /**
+     * Path to views.
+     *
      * @var string
      */
     const PATH = APP_PATH . '/Views/';
@@ -43,7 +45,7 @@ class Template extends Data
     private $tpl = '';
 
     /**
-     * Request.
+     * Request instance.
      *
      * @var Request
      */
@@ -60,6 +62,8 @@ class Template extends Data
 
     /**
      * Render template.
+     *
+     * @return void
      */
     public function __destruct()
     {
@@ -104,8 +108,8 @@ class Template extends Data
     /**
      * Add template for render.
      *
-     * @param string $name Template name
-     * @param array $variables Added template variables
+     * @param string $name      Template name
+     * @param array  $variables Added template variables
      * @return Template
      */
     public function render($name, $variables = [])
@@ -177,7 +181,8 @@ class Template extends Data
      * Init short section for include template.
      *
      * @param string $name Section name
-     * @param string $tpl Template name
+     * @param string $tpl  Template name
+     * @return void
      */
     public function shortSection($name, $tpl)
     {
@@ -190,7 +195,7 @@ class Template extends Data
      * Proxy.
      *
      * @param string $name Method name
-     * @param array $args Method arguments
+     * @param array  $args Method arguments
      * @return mixed
      */
     public function __call($name, $args)

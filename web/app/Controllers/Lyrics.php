@@ -2,11 +2,11 @@
 
 namespace Controllers;
 
+use Classes\Journal as StorageJournal;
 use Classes\Packages;
 use Classes\Packages\Lyric\Content;
 use Classes\Packages\Lyric\Stack;
 use Framework\Abstracts\Controller;
-use Framework\Components\Journal\Storage as StorageJournal;
 
 class Lyrics extends Controller
 {
@@ -65,7 +65,7 @@ class Lyrics extends Controller
                 $package->searchByName($name, $stack);
 
                 $pkgSize = abs($size - $stack->size());
-                $size += $pkgSize;
+                $size    += $pkgSize;
                 $journal->push('lyric: found ' . $pkgSize . ' records of total ' . $size . ' records');
             } catch (\Exception $e) {
                 $journal->push('lyric: ' . $e->getMessage());
@@ -89,7 +89,7 @@ class Lyrics extends Controller
         }
 
         $hash  = $this->request->getData()->get('hash');
-        $limit = $this->request->getData()->get('limit', 1);
+        $limit = $this->request->getData()->get('limit', config('app')->get('results-limit'));
 
         /* @var $stack \Framework\Memory */
         $stack     = new Stack($hash);

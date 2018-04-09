@@ -7,11 +7,15 @@ use Framework\Response;
 class Fake extends Response
 {
     /**
+     * Location.
+     *
      * @var string
      */
     public $location;
 
     /**
+     * Data.
+     *
      * @var mixed
      */
     public $json;

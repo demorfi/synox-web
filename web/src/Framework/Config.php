@@ -5,6 +5,8 @@ namespace Framework;
 class Config extends Abstracts\Data
 {
     /**
+     * Path to config.
+     *
      * @var string
      */
     const PATH = APP_PATH . '/Configs/';

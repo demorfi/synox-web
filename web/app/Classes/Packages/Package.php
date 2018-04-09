@@ -8,6 +8,8 @@ use Framework\Storage;
 class Package
 {
     /**
+     * Package instance.
+     *
      * @var _Package
      */
     private $package;
@@ -29,9 +31,9 @@ class Package
     /**
      * Package constructor.
      *
-     * @param string $type Package type
+     * @param string   $type     Package type
      * @param _Package $package
-     * @param Storage $settings Package settings
+     * @param Storage  $settings Package settings
      */
     public function __construct($type, _Package $package, Storage $settings)
     {
@@ -63,7 +65,7 @@ class Package
      * Set package setting.
      *
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * @return void
      */
     public function __set($name, $value)

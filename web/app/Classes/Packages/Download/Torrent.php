@@ -4,6 +4,11 @@ namespace Classes\Packages\Download;
 
 class Torrent implements \JsonSerializable
 {
+    /**
+     * File extension.
+     *
+     * @var string
+     */
     const FILE_EXTENSION = '.torrent';
 
     /**
@@ -143,6 +148,12 @@ class Torrent implements \JsonSerializable
         return (array_merge($vars, ['url' => $this->getFileUrl()]));
     }
 
+    /**
+     * Is torrent file.
+     *
+     * @param string $content
+     * @return bool
+     */
     public function is($content)
     {
         $sign = substr($content, 0, 11);
@@ -152,12 +163,24 @@ class Torrent implements \JsonSerializable
             || substr($sign, 0, 3) == 'd9:');
     }
 
+    /**
+     * Decode torrent file.
+     *
+     * @param string $content
+     * @return mixed
+     */
     public function decode($content)
     {
         $pos = 0;
         return ($this->read($content, $pos));
     }
 
+    /**
+     * Get safe clean file name.
+     *
+     * @param string $fileName
+     * @return string
+     */
     protected function cleanFileName($fileName)
     {
         return (strtr(
@@ -167,6 +190,13 @@ class Torrent implements \JsonSerializable
         ));
     }
 
+    /**
+     * Read torrent file to decode torrent format.
+     *
+     * @param string $content
+     * @param int    $pos
+     * @return mixed
+     */
     protected function read($content, &$pos)
     {
         $length = strlen($content);

@@ -7,11 +7,15 @@ use Classes\Abstracts\Package;
 abstract class Item implements \Serializable, \JsonSerializable
 {
     /**
+     * Package name.
+     *
      * @var string
      */
     protected $package;
 
     /**
+     * Package id.
+     *
      * @var string
      */
     protected $id;
@@ -29,6 +33,8 @@ abstract class Item implements \Serializable, \JsonSerializable
     }
 
     /**
+     * Get package name.
+     *
      * @return string
      */
     public function getPackage()
@@ -37,6 +43,8 @@ abstract class Item implements \Serializable, \JsonSerializable
     }
 
     /**
+     * Get package id.
+     *
      * @return string
      */
     public function getId()
@@ -83,6 +91,8 @@ abstract class Item implements \Serializable, \JsonSerializable
     }
 
     /**
+     * Get formatted size of byte.
+     *
      * @param float $size
      * @return string
      */

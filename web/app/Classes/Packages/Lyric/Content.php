@@ -5,6 +5,8 @@ namespace Classes\Packages\Lyric;
 class Content implements \JsonSerializable
 {
     /**
+     * Content.
+     *
      * @var string
      */
     private $content;

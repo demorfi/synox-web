@@ -5,11 +5,15 @@ namespace Framework;
 class Storage extends Abstracts\Data implements \JsonSerializable
 {
     /**
+     * Path to storage.
+     *
      * @var string
      */
     const PATH = APP_PATH . '/Storage/';
 
     /**
+     * Original data for diff.
+     *
      * @var array
      */
     private $original = [];
@@ -35,6 +39,8 @@ class Storage extends Abstracts\Data implements \JsonSerializable
     }
 
     /**
+     * Load storage.
+     *
      * @param string $name Storage name
      * @return Storage
      */
