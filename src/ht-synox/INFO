@@ -7,6 +7,5 @@
   "hostprefix": "synox.loc",
   "authentication": "yes",
   "module": "SynoFileHostingSynox.php",
-  "class": "SynoFileHostingSynox",
-  "host": "http://localhost:8080/"
+  "class": "SynoFileHostingSynox"
 }

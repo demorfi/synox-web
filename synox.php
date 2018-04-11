@@ -18,7 +18,7 @@ if (empty($type) || !in_array($type, ['bt', 'ht', 'au'])) {
     echo <<<'EOD'
 for search: bt "search query" "http://localhost:8080/"
 for download: ht "http://synox.loc/?id=PACKAGE&fetch=TORRENT_URL" "http://localhost:8080/"
-for lyrics: au "artist song" "title song" "http://localhost:8080/"
+for lyrics: au "artist song" "title song"
 EOD;
     exit;
 }

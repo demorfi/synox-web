@@ -34,16 +34,6 @@ build()
         mkdir -p $BUILD_DIR
     fi
 
-    USED_HOST=$(cat INFO | grep \"host\" | sed '/"host": */!d; s///;q;' | sed 's/ //g')
-    echo -n "Use host $PKG_NAME (default: $USED_HOST):" ; read USE_HOST
-
-    if [ $USE_HOST ] && [ "$USE_HOST" != "$USED_HOST" ]; then
-        INFO=$(cat INFO)
-        OLD_HOST=$(cat INFO | grep \"host\")
-        NEW_HOST=${OLD_HOST//$USED_HOST/\"$USE_HOST\"}
-        echo "${INFO/$OLD_HOST/$NEW_HOST}" > INFO
-    fi
-
     cp $SOURCE $BUILD_DIR
     (cd $BUILD_DIR ; tar -czf ../$PKG_NAME *)
 }

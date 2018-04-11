@@ -4,6 +4,7 @@
   "description": "Translate song text",
   "version": "1.0",
   "site": "https://github.com/demorfi/synox",
+  "debug": "false",
   "module": "SynoASSearchSynox.php",
   "type": "lyric",
   "class": "SynoASSearchSynox",

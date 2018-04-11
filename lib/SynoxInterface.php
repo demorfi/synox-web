@@ -52,7 +52,7 @@ interface SynoxInterface
     public function getLyricsList($artist, $title, $plugin);
 
     /**
-     * Add lyrics.
+     * Get lyrics.
      *
      * @param string        $id     Id found lyric
      * @param SynoxAbstract $plugin Synology abstract
