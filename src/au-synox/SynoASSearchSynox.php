@@ -147,7 +147,7 @@ class SynoASSearchSynox
     {
         $total    = 0;
         $response = @json_decode($this->prepare(), true);
-        $query    = urlencode($artist . ' - ' . $title);
+        $query    = $artist . ' - ' . $title;
 
         $this->debug('parse-l: ' . json_encode([$response]));
         if (!empty($response) && isset($response['hash'])) {
@@ -212,8 +212,8 @@ class SynoASSearchSynox
                                 if (!empty($response['chunks'])) {
                                     foreach ($response['chunks'] as $item) {
                                         $plugin->addTrackInfoToList(
-                                            $item['artist'],
-                                            $item['title'],
+                                            urldecode($item['artist']),
+                                            urldecode($item['title']),
                                             sprintf(
                                                 $this->maskFetch,
                                                 $this->host,
@@ -269,7 +269,9 @@ class SynoASSearchSynox
 
         $this->debug('info: ' . json_encode([$response]));
         if (isset($response['success'], $response['data'])) {
-            $plugin->addLyrics($response['data']['content'], $id);
+            $content = preg_replace('#<br\s*/?>#i', "\n", $response['data']['content']);
+            $content = preg_replace('#\n\n*#', "\n", $content);
+            $plugin->addLyrics($content, $id);
             return (true);
         }
 

@@ -250,7 +250,7 @@ class SynoDLMSearchSynox
                                 if (!empty($response['chunks'])) {
                                     foreach ($response['chunks'] as $item) {
                                         $plugin->addResult(
-                                            $item['title'] . ' [' . $item['package'] . ']',
+                                            urldecode($item['title']) . ' [' . $item['package'] . ']',
                                             sprintf($this->fetchQuery, $item['id'], urlencode($item['fetch'])),
                                             $item['_size'],
                                             $item['date'],
@@ -258,7 +258,7 @@ class SynoDLMSearchSynox
                                             md5($item['page'] . $item['title'] . $item['fetch']),
                                             $item['seeds'],
                                             $item['peers'],
-                                            $item['category']
+                                            urldecode($item['category'])
                                         );
 
                                         $total++;
