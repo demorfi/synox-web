@@ -4,16 +4,16 @@ namespace App\Controllers;
 
 use App\Components\Storage\Journal as JournalStorage;
 use App\Repositories\Packages as PackagesRepository;
-use App\Package\Lyrics\Filter as FilterLyrics;
+use App\Package\Download\{Filter as FilterDownload, Torrent};
 use App\Package\PackageDispatcher;
 use App\Enums\PackageType;
 use Digua\Interfaces\Request as RequestInterface;
-use Digua\{LateEvent, Template, Helper};
+use Digua\{LateEvent, Template, Response, Helper};
 use Digua\Controllers\Base as BaseController;
 use Digua\Exceptions\Path as PathException;
 use Exception;
 
-class Lyrics extends BaseController
+class Download extends BaseController
 {
     /**
      * @param RequestInterface $request
@@ -35,13 +35,13 @@ class Lyrics extends BaseController
      */
     public function defaultAction(): Template
     {
-        $title    = 'Lyrics';
-        $filters  = FilterLyrics::uses();
+        $title    = 'Download';
+        $filters  = FilterDownload::uses();
         $packages = PackagesRepository::getInstance()->getPackages()
-            ->getByType(PackageType::Lyrics)
+            ->getByType(PackageType::Download)
             ->getByEnabled();
-        return ($this->render('lyrics', compact('title', 'packages', 'filters'))
-            ->javascripts(['packages/lyrics']));
+        return $this->render('download', compact('title', 'packages', 'filters'))
+            ->javascripts(['packages/download']);
     }
 
     /**
@@ -51,8 +51,8 @@ class Lyrics extends BaseController
      */
     public function searchAction(): array
     {
-        [$query, $hash, $package] = $this->dataRequest()->post()
-            ->only('query', 'hash', 'package');
+        [$query, $package, $filters, $hash] = $this->dataRequest()->post()
+            ->only('query', 'package', 'filters', 'hash');
 
         if (empty($query)) {
             return ['success' => false, 'error' => 'Empty search query!'];
@@ -63,12 +63,12 @@ class Lyrics extends BaseController
             return ['success' => true, 'hash' => $dispatcher->makePackageHash()];
         }
 
-        if (!$dispatcher->usePackages(PackageType::Lyrics, [$package])) {
-            return ['success' => false, 'error' => 'Lyrics packages not found or not enabled!'];
+        if (!$dispatcher->usePackages(PackageType::Download, [$package])) {
+            return ['success' => false, 'error' => 'Download packages not found or not enabled!'];
         }
 
         try {
-            $dispatcher->makeNewSearchQuery((string)$query);
+            $dispatcher->makeNewSearchQuery((string)$query, new FilterDownload($filters));
             return ['success' => $dispatcher->search()];
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -86,7 +86,7 @@ class Lyrics extends BaseController
         [$hash, $limit] = $this->dataRequest()->post()
             ->only('hash', 'limit');
 
-        $limit  ??= Helper::config('app')->get('results-limit', 10);
+        $limit  ??= Helper::config('app')->get('results-limit', 25);
         $chunks = [];
 
         try {
@@ -99,7 +99,7 @@ class Lyrics extends BaseController
     }
 
     /**
-     * Fetch lyric action.
+     * Fetch torrent action.
      *
      * @return array
      */
@@ -113,19 +113,39 @@ class Lyrics extends BaseController
         }
 
         $dispatcher = new PackageDispatcher();
-        if (!$dispatcher->usePackages(PackageType::Lyrics, [$id])) {
-            return ['success' => false, 'error' => 'Lyrics package not found or not enabled!'];
+        if (!$dispatcher->usePackages(PackageType::Download, [$id])) {
+            return ['success' => false, 'error' => 'Download package not found or not enabled!'];
         }
 
         try {
-            $content = $dispatcher->fetch($id, urldecode($url));
-            if ($content->isAvailable()) {
-                return ['success' => true, 'data' => $content];
+            $file = $dispatcher->fetch($id, urldecode($url));
+            if ($file->isAvailable()) {
+                return ['success' => true, 'file' => $file];
             }
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
 
-        return ['success' => false, 'error' => 'Unable to get content!'];
+        return ['success' => false, 'error' => 'Unable to get file!'];
+    }
+
+    /**
+     * Download torrent action.
+     *
+     * @return Response|array
+     */
+    public function downloadAction(): Response|array
+    {
+        $name = $this->dataRequest()->query()->get('name');
+        if (empty($name)) {
+            return ['success' => false, 'error' => 'Empty download request!'];
+        }
+
+        $file = (new Torrent)->open($name);
+        if ($file->isAvailable()) {
+            return (new Response)->redirectTo($file->getFileUrl());
+        }
+
+        return ['success' => false, 'error' => 'Unable to get file!'];
     }
 }

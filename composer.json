@@ -1,0 +1,36 @@
+{
+  "name": "demorfi/synox",
+  "description": "",
+  "keywords": [
+    "synox"
+  ],
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "demorfi",
+      "email": "demorfi@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "ext-curl": "*",
+    "ext-mbstring": "*",
+    "ext-shmop": "*",
+    "demorfi/digua": "^1.0",
+    "scotteh/php-dom-wrapper": "^2.0"
+  },
+  "autoload": {
+    "files": [
+      "web/vendor/demorfi/digua/bootstrap.php"
+    ],
+    "psr-4": {
+      "App\\": "web/app/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "vendor-dir": "./web/vendor"
+  },
+  "minimum-stability": "stable"
+}

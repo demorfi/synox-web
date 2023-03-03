@@ -1,32 +1,39 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Controllers;
+namespace App\Controllers;
 
-use Framework\Abstracts\Controller;
-use Classes\Journal as StorageJournal;
+use App\Components\Storage\Journal as JournalStorage;
+use Digua\{Template, Response};
+use Digua\Controllers\Base as BaseController;
+use Digua\Exceptions\{
+    Path as PathException,
+    Storage as StorageException
+};
 
-class Journal extends Controller
+class Journal extends BaseController
 {
     /**
      * Default action.
      *
-     * @return mixed
+     * @return Template
+     * @throws PathException
      */
-    public function defaultAction()
+    public function defaultAction(): Template
     {
         $title   = 'Journal';
-        $journal = StorageJournal::getInstance()->getJournal();
-        return (tpl()->render('journal', compact('title', 'journal')));
+        $journal = JournalStorage::getInstance()->getJournal();
+        return $this->render('journal', compact('title', 'journal'));
     }
 
     /**
      * Flush action.
      *
-     * @return mixed
+     * @return Response
+     * @throws StorageException
      */
-    public function flushAction()
+    public function flushAction(): Response
     {
-        StorageJournal::getInstance()->flush();
-        return ($this->response->location('/journal'));
+        JournalStorage::getInstance()->flush();
+        return (new Response)->redirectTo('/journal');
     }
 }

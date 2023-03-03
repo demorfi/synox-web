@@ -1,69 +1,79 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Controllers;
+namespace App\Controllers;
 
-use Classes\Packages as _Packages;
-use Framework\Abstracts\Controller;
-use Framework\Request;
-use Framework\Response;
+use App\Repositories\Packages as PackagesRepository;
+use Digua\Controllers\Base as BaseController;
+use Digua\Exceptions\Storage as StorageException;
+use Digua\Request;
 
-class Packages extends Controller
+class Packages extends BaseController
 {
     /**
-     * Packages instances.
-     *
-     * @var _Packages
+     * @var PackagesRepository
      */
-    protected $packages;
+    protected PackagesRepository $packages;
 
     /**
      * @inheritdoc
      */
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request)
     {
-        parent::__construct($request, $response);
-        $this->packages = _Packages::getInstance();
+        parent::__construct($request);
+        $this->packages = PackagesRepository::getInstance();
     }
 
     /**
-     * Package status.
+     * Change package status.
      *
-     * @return mixed
+     * @return array
+     * @throws StorageException
      */
-    public function statusAction()
+    public function statusAction(): array
     {
-        if ($this->request->getData()->has('pkg')) {
-            foreach ($this->request->getData()->get('pkg') as $id => $enabled) {
+        $pkg  = [];
+        $data = $this->dataRequest()->post()->get('pkg');
+        if (!empty($data) && is_array($data)) {
+            foreach ($data as $id => $enabled) {
+                $status  = ($enabled == 'true' || $enabled == 1);
                 $package = $this->packages->getPackages()->find($id);
                 if ($package) {
-                    $package->__set('enabled', ($enabled == 'true' || $enabled == 1));
-                    $pkg[$id] = true;
+                    $pkg[$id] = $status;
+                    $package->__set('enabled', $status);
+                    $package->saveSettings();
                 }
             }
         }
 
-        return ($this->response->json(compact('pkg')));
+        return compact('pkg');
     }
 
     /**
      * Change package settings.
      *
-     * @return mixed
+     * @return array
+     * @throws StorageException
      */
-    public function settingsAction()
+    public function settingsAction(): array
     {
-        if ($this->request->getData()->has('pkg')) {
-            $package = $this->packages->getPackages()->find($this->request->getData()->get('pkg'));
-            if ($package) {
-                if ($this->request->getData()->has('data')) {
-                    foreach ($this->request->getData()->get('data') as $key => $value) {
-                        $package->__set($key, $value);
-                    }
-                }
-                return ($this->response->json(['success' => true, 'settings' => $package->getSettings()]));
-            }
+        $id = $this->dataRequest()->post()->get('pkg');
+        if (empty($id)) {
+            return ['success' => false, 'error' => 'Incorrect request!'];
         }
 
-        return ($this->response->json(['success' => false, 'error' => 'Package not found!']));
+        $package = $this->packages->getPackages()->find($id);
+        if (!$package) {
+            return ['success' => false, 'error' => 'Package not found!'];
+        }
+
+        $settings = $this->dataRequest()->post()->get('data');
+        if (!empty($settings) && is_array($settings)) {
+            foreach ($settings as $key => $value) {
+                $package->__set($key, $value);
+            }
+            $package->saveSettings();
+        }
+
+        return ['success' => true, 'settings' => $package->getSettings()];
     }
 }

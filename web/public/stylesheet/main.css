@@ -78,13 +78,11 @@ footer a:hover,
 /* END Bootstrap */
 
 /* Icons */
-.fa-download:before,
-.fa-downloads:before
+.fa-download:before
 {
     content : "\f019";
 }
 
-.fa-music:before,
 .fa-lyrics:before
 {
     content : "\f001";
@@ -148,12 +146,6 @@ footer,
     border-top : 10px solid transparent;
 }
 
-#nav-left .nav-link i,
-#nav-top .nav-link i
-{
-    margin-right : .8rem;
-}
-
 #nav-left .nav-item.active .nav-link
 {
     border-left : 10px solid #d46c00;
@@ -162,6 +154,11 @@ footer,
 #nav-top .nav-item.active .nav-link
 {
     border-top : 10px solid #d46c00;
+}
+
+#navbar-top .nav-pills
+{
+    flex-wrap : nowrap;
 }
 
 /* END Nav Left */
@@ -178,6 +175,16 @@ td.hover-show-btn button
 td.hover-show-btn > div
 {
     padding-right : 120px;
+}
+
+span[data-element="title"]
+{
+    word-break : break-word;
+}
+
+.blockquote-footer:empty
+{
+    display : none;
 }
 
 /* END Table view */

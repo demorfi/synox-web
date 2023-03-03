@@ -1,21 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Controllers;
+namespace App\Controllers;
 
-use Classes\Packages;
-use Framework\Abstracts\Controller;
+use App\Repositories\Packages as PackagesRepository;
+use Digua\Controllers\Base as BaseController;
+use Digua\Exceptions\Path as PathException;
+use Digua\Template;
 
-class Main extends Controller
+class Main extends BaseController
 {
     /**
      * Default action.
      *
-     * @return mixed
+     * @return Template
+     * @throws PathException
      */
-    public function defaultAction()
+    public function defaultAction(): Template
     {
         $title    = 'Home';
-        $packages = Packages::getInstance()->getPackagesByType();
-        return (tpl()->render('main', compact('title', 'packages')));
+        $packages = PackagesRepository::getInstance()->getPackagesByType();
+        return $this->render('main', compact('title', 'packages'));
     }
 }
