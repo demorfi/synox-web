@@ -68,7 +68,7 @@ class Download extends BaseController
         }
 
         try {
-            $dispatcher->makeNewSearchQuery((string)$query, new FilterDownload($filters));
+            $dispatcher->makeNewSearchQuery((string)$query, new FilterDownload((array)$filters));
             return ['success' => $dispatcher->search()];
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];

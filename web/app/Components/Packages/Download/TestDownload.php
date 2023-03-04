@@ -72,6 +72,8 @@ class TestDownload extends Package implements DownloadInterface
             $item->setSeeds(rand(1, 100));
             $item->setSize(rand(1000000, 9999999));
             $item->setDate(date_create());
+            $item->setFetchUrl('http://synox.loc/download/fetch/?id=' . $this->name . '&fetch=' . $i);
+            $item->setPageUrl('http://synox.loc/download/?id=' . $this->name . '&page=' . $i);
             yield $item;
         }
 

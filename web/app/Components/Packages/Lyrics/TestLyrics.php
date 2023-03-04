@@ -68,6 +68,8 @@ class TestLyrics extends Package implements LyricsInterface
             $item->setTitle($i . ' Test ' . $query->value);
             $item->setArtist('Test artist ' . $i);
             $item->setContent('Test lyrics short ' . $i);
+            $item->setFetchUrl('http://synox.loc/lyrics/fetch/?id=' . $this->name . '&fetch=' . $i);
+            $item->setPageUrl('http://synox.loc/lyrics/?id=' . $this->name . '&page=' . $i);
             yield $item;
         }
 

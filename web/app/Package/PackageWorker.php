@@ -100,7 +100,7 @@ readonly class PackageWorker
                             unset($query['queues'][$key]);
                         }
                     }
-                    sleep(1);
+                    usleep(100000);
                 }
 
                 $stack->setEof();

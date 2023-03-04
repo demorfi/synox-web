@@ -17,6 +17,7 @@
     "ext-curl": "*",
     "ext-mbstring": "*",
     "ext-shmop": "*",
+    "ext-json": "*",
     "demorfi/digua": "^1.0",
     "scotteh/php-dom-wrapper": "^2.0"
   },
