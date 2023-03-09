@@ -3,16 +3,16 @@
 define('ROOT_PATH', realpath(__DIR__ . '/..'));
 
 if (php_sapi_name() != 'cli') {
-    die('Only works through cli!');
+    exit("only works through cli!\n");
 }
 
 $options = getopt('', ['queue:', 'waiting::', 'hash:']);
 if (empty($options) || isset($options['queue'], $options['waiting'])) {
-    die('Queue is empty or invalid input parameters!');
+    exit("queue is empty or invalid input parameters!\n");
 }
 
 if (isset($options['waiting']) && !isset($options['hash'])) {
-    die('Hash required');
+    exit("hash required!\n");
 }
 
 require_once ROOT_PATH . '/bootstrap.php';
@@ -22,7 +22,7 @@ use App\Package\PackageWorker;
 if (isset($options['queue'])) {
     $queue = (array)unserialize((string)base64_decode($options['queue'], true));
     if (empty($queue) || sizeof($queue) < 3) {
-        die('Queue is broken!');
+        exit("Queue is broken!\n");
     }
 
     [$hash, $package, $query] = $queue;
