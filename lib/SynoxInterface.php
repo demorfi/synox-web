@@ -1,63 +1,40 @@
-<?php
+<?php declare(strict_types=1);
 
-/**
- * Synox Interface.
- *
- * @author  demorfi <demorfi@gmail.com>
- * @version 1.1
- * @source https://github.com/demorfi/synox
- * @license http://opensource.org/licenses/MIT Licensed under MIT License
- */
 interface SynoxInterface
 {
     /**
-     * Send query to tracker.
-     *
-     * @param resource $curl     Resource curl
-     * @param string   $query    Search query
-     * @param string   $username Username for auth
-     * @param string   $password Password for auth
-     * @access public
+     * @param resource $curl
+     * @param string   $query
+     * @param string   $username
+     * @param ?string  $password
      * @return bool
      */
-    public function prepare($curl, $query, $username = null, $password = null);
+    public function prepare($curl, string $query, string $username, ?string $password = null): bool;
 
     /**
-     * Add torrent file in list.
-     *
-     * @param SynoxAbstract $plugin   Synology abstract
-     * @param string        $response Content tracker page
-     * @access public
+     * @param SynoxAbstract $plugin
+     * @param string        $response
      * @return int
      */
-    public function parse($plugin, $response);
+    public function parse(SynoxAbstract $plugin, string $response): int;
 
     /**
-     * Get information download torrent.
-     *
-     * @access public
      * @return array
      */
-    public function GetDownloadInfo();
+    public function GetDownloadInfo(): array;
 
     /**
-     * Search lyrics.
-     *
-     * @param string        $artist Artist song
-     * @param string        $title  Title song
-     * @param SynoxAbstract $plugin Synology abstract
-     * @access public
+     * @param string        $artist
+     * @param string        $title
+     * @param SynoxAbstract $plugin
      * @return int
      */
-    public function getLyricsList($artist, $title, $plugin);
+    public function getLyricsList(string $artist, string $title, SynoxAbstract $plugin): int;
 
     /**
-     * Get lyrics.
-     *
-     * @param string        $id     Id found lyric
-     * @param SynoxAbstract $plugin Synology abstract
-     * @access public
+     * @param string        $id
+     * @param SynoxAbstract $plugin
      * @return bool
      */
-    public function getLyrics($id, $plugin);
+    public function getLyrics(string $id, SynoxAbstract $plugin): bool;
 }

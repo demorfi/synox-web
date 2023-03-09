@@ -1,100 +1,75 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * SynoX (use at Synology Download Station BT)
- * Search torrents files across synox console.
+ * Search torrents files across synox web console.
  *
  * @author  demorfi <demorfi@gmail.com>
- * @version 1.0
+ * @version 2.0
+ * @php-dsm 7.2
  * @source https://github.com/demorfi/synox
- * @license http://opensource.org/licenses/MIT Licensed under MIT License
+ * @license https://opensource.org/license/mit/
  */
 class SynoDLMSearchSynox
 {
     /**
-     * Curl instance.
-     *
      * @var resource
      */
-    protected $curl;
+    private $curl;
 
     /**
-     * Query request.
-     *
      * @var string
      */
-    protected $query = '';
+    private $query = '';
 
     /**
      * Username used at url to synox console.
      * Example: https://synox.synology.loc/ (Web Station).
-     *
-     * @var string
-     */
-    protected $username;
-
-    /**
      * Password used at enable/disabled debug mode.
      * For enable debug mode set the password value to "test".
      *
      * @var string
      */
-    protected $password;
+    private $host;
 
     /**
-     * Use debug mode.
-     *
      * @var bool
      */
-    protected $debug = false;
+    private $debug = false;
 
     /**
-     * Search torrents query.
-     *
      * @var string
      */
-    protected $searchQuery = '%s/downloads/search';
+    private $searchQuery = '%s/download/search';
 
     /**
-     * Results torrents query.
-     *
      * @var string
      */
-    protected $resultsQuery = '%s/downloads/results';
+    private $resultsQuery = '%s/download/results';
 
     /**
-     * Fetch query for torrent file.
-     *
      * @var string
      */
-    protected $fetchQuery = 'http://synox.loc/?id=%s&fetch=%s';
+    private $fetchQuery = '%s/download/fetch/?id=%s&fetch=%s';
 
     /**
-     * Path to log file.
-     *
      * @var string
      */
-    protected $logFile = '/tmp/bt-synox.log';
+    private $logFile = '/tmp/bt-synox.log';
 
-    /**
-     * SynoDLMSearchSynox constructor.
-     */
     public function __construct()
     {
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_HEADER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 0);
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, DOWNLOAD_TIMEOUT);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, DOWNLOAD_TIMEOUT);
         curl_setopt($this->curl, CURLOPT_USERAGENT, DOWNLOAD_STATION_USER_AGENT);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
     }
 
-    /**
-     * SynoDLMSearchSynox destructor.
-     */
     public function __destruct()
     {
         if (is_resource($this->curl)) {
@@ -108,26 +83,28 @@ class SynoDLMSearchSynox
      * @param string $message
      * @return void
      */
-    protected function debug($message)
+    private function debug(string $message)
     {
         if ($this->debug) {
-            file_put_contents($this->logFile, $message . PHP_EOL, FILE_APPEND);
-            if (function_exists('syslog')) {
-                syslog(LOG_INFO, $message);
+            if (php_sapi_name() == 'cli') {
+                print $message . PHP_EOL;
+            } else {
+                file_put_contents($this->logFile, $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+                if (function_exists('syslog')) {
+                    syslog(LOG_INFO, $message);
+                }
             }
         }
     }
 
     /**
-     * Send query to tracker.
-     *
-     * @param resource $curl     Resource curl
-     * @param string   $query    Search query
-     * @param string   $username Username for auth
-     * @param string   $password Password for auth
+     * @param resource $curl
+     * @param string   $query
+     * @param string   $username
+     * @param ?string  $password
      * @return bool
      */
-    public function prepare($curl, $query, $username = null, $password = null)
+    public function prepare($curl, string $query, string $username, string $password = null): bool
     {
         $this->query = urlencode($query);
 
@@ -135,54 +112,50 @@ class SynoDLMSearchSynox
         $this->debug = ($password == 'test');
 
         // Username used at url to synox console. (Example: https://synox.synology.loc/ (Web Station))
-        $this->username = rtrim(trim($username), '/');
+        $this->host = rtrim(trim($username), '/');
 
-        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->username));
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->host));
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['name' => $this->query]));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['query' => $this->query]));
 
-        $this->debug('prepare: ' . json_encode([$this->username, $this->query]));
-        return (true);
+        $this->debug('prepare: ' . json_encode([$this->host, $this->query]));
+        return true;
     }
 
     /**
-     * Check auth account to tracker.
-     *
-     * @param string $username Username for auth
-     * @param string $password Password for auth
+     * @param string  $username
+     * @param ?string $password
      * @return bool
      */
-    public function VerifyAccount($username, $password = null)
+    public function VerifyAccount(string $username, string $password = null): bool
     {
         // Set debug mode
         $this->debug = ($password == 'test');
 
         // Username used at url to synox console. (Example: https://synox.synology.loc/ (Web Station))
-        $this->username = rtrim(trim($username), '/');
+        $this->host = rtrim(trim($username), '/');
 
         $curl = curl_copy_handle($this->curl);
-        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->username));
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->host));
         curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['name' => 'verify']));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['query' => 'verify']));
 
-        $this->debug('verify: ' . json_encode([$this->username]));
+        $this->debug('verify: ' . json_encode([$this->host]));
         $response = @json_decode(curl_exec($curl), true);
         curl_close($curl);
 
         $this->debug('verify: ' . json_encode([$response]));
-        return (isset($response['success'], $response['hash']));
+        return isset($response['success'], $response['hash']);
     }
 
     /**
-     * Add torrent file in list.
-     *
-     * @param SynoxAbstract $plugin   Synology abstract
-     * @param string        $response Content tracker page
+     * @param SynoxAbstract $plugin
+     * @param string        $response
      * @return int
      */
-    public function parse($plugin, $response)
+    public function parse($plugin, string $response): int
     {
         $total    = 0;
         $response = @json_decode($response, true);
@@ -192,24 +165,25 @@ class SynoDLMSearchSynox
             $mh = curl_multi_init();
             $ch = [];
 
-            $this->debug('search: ' . json_encode([$this->username, $this->query, $response]));
+            $this->debug('search: ' . json_encode([$this->host, $this->query, $response]));
             $ch['search'] = curl_copy_handle($this->curl);
-            curl_setopt($ch['search'], CURLOPT_URL, sprintf($this->searchQuery, $this->username));
+            curl_setopt($ch['search'], CURLOPT_URL, sprintf($this->searchQuery, $this->host));
             curl_setopt($ch['search'], CURLOPT_POST, true);
             curl_setopt(
                 $ch['search'],
                 CURLOPT_POSTFIELDS,
                 http_build_query(
                     [
-                        'name' => $this->query,
-                        'hash' => $response['hash']
+                        'query'   => $this->query,
+                        'filters' => ['category' => null],
+                        'hash'    => $response['hash']
                     ]
                 )
             );
 
-            $this->debug('results: ' . json_encode([$this->username, $response]));
+            $this->debug('results: ' . json_encode([$this->host, $response]));
             $ch['results'] = curl_copy_handle($this->curl);
-            curl_setopt($ch['results'], CURLOPT_URL, sprintf($this->resultsQuery, $this->username));
+            curl_setopt($ch['results'], CURLOPT_URL, sprintf($this->resultsQuery, $this->host));
             curl_setopt($ch['results'], CURLOPT_POST, true);
             curl_setopt($ch['results'], CURLOPT_POSTFIELDS, http_build_query(['hash' => $response['hash']]));
 
@@ -240,33 +214,39 @@ class SynoDLMSearchSynox
                         curl_multi_remove_handle($mh, $handle);
                         curl_close($handle);
                         $this->debug('http: ' . json_encode([$one]));
+                        $this->debug('response: ' . json_encode([$response]));
 
                         // Only results response
-                        if ($one['http_code'] == 200 && $one['url'] == sprintf($this->resultsQuery, $this->username)) {
+                        if ($one['http_code'] == 200 && $one['url'] == sprintf($this->resultsQuery, $this->host)) {
                             $response = @json_decode($response, true);
-                            $this->debug('response: ' . json_encode([$response]));
+                            if (isset($response['chunks']) && !empty($response['chunks'])) {
+                                foreach ($response['chunks'] as $item) {
+                                    $hash     = md5($item['pageUrl'] . $item['title'] . $item['fetchUrl']);
+                                    $title    = urldecode($item['title']) . ' [' . $item['package'] . ']';
+                                    $download = sprintf(
+                                        $this->fetchQuery,
+                                        $this->host,
+                                        $item['id'],
+                                        urlencode($item['fetchUrl'])
+                                    );
 
-                            if (isset($response['chunks'])) {
-                                if (!empty($response['chunks'])) {
-                                    foreach ($response['chunks'] as $item) {
-                                        $plugin->addResult(
-                                            urldecode($item['title']) . ' [' . $item['package'] . ']',
-                                            sprintf($this->fetchQuery, $item['id'], urlencode($item['fetch'])),
-                                            $item['_size'],
-                                            $item['date'],
-                                            $item['page'],
-                                            md5($item['page'] . $item['title'] . $item['fetch']),
-                                            $item['seeds'],
-                                            $item['peers'],
-                                            urldecode($item['category'])
-                                        );
+                                    $plugin->addResult(
+                                        $title,
+                                        $download,
+                                        (float)$item['size'],
+                                        $item['date'],
+                                        $item['pageUrl'],
+                                        $hash,
+                                        (int)$item['seeds'],
+                                        (int)$item['peers'],
+                                        urldecode($item['category'])
+                                    );
 
-                                        $total++;
-                                    }
+                                    $total++;
                                 }
                             }
 
-                            if (!isset($response['isEnd']) || $response['isEnd'] != true) {
+                            if (!isset($response['isEnd']) || !$response['isEnd']) {
                                 curl_multi_add_handle($mh, curl_copy_handle($ch['results']));
                                 curl_multi_exec($mh, $running);
                             }
@@ -278,6 +258,6 @@ class SynoDLMSearchSynox
             curl_multi_close($mh);
         }
 
-        return ($total);
+        return $total;
     }
 }

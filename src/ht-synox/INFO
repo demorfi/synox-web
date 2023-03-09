@@ -2,7 +2,7 @@
   "name": "ht-synox",
   "displayname": "Synox",
   "description": "Download torrent files",
-  "version": "1.0",
+  "version": "2.0",
   "site": "https://github.com/demorfi/synox",
   "hostprefix": "synox.loc",
   "authentication": "yes",

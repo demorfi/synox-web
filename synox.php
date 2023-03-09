@@ -1,33 +1,53 @@
-<?php
+<?php declare(strict_types=1);
 
-/**
- * Synox console.
- *
- * @author  demorfi <demorfi@gmail.com>
- * @version 1.2
- * @source https://github.com/demorfi/synox
- * @license http://opensource.org/licenses/MIT Licensed under MIT License
- */
+if (php_sapi_name() != 'cli') {
+    exit("only works through cli!\n");
+}
 
-require('lib/common.php');
-require('lib/SynoxInterface.php');
-require('lib/SynoxAbstract.php');
+define('SRC_PATH', realpath(__DIR__ . '/src'));
 
-@list (, $type, $first, $second) = $argv;
-if (empty($type) || !in_array($type, ['bt', 'ht', 'au'])) {
+$options = getopt('', ['command:', 'query:', 'host::', 'debug::', 'help::']);
+if (empty($options) || isset($options['help']) || sizeof($options) < 2) {
     echo <<<'EOD'
-for search: bt "search query" "http://localhost:8080/"
-for download: ht "http://synox.loc/?id=PACKAGE&fetch=TORRENT_URL" "http://localhost:8080/"
-for lyrics: au "artist song" "title song"
+for search torrents: 
+    --command download --query "search query string" [--host "http://synox host/"] [--debug]
+for search lyrics: 
+    --command lyrics --query "artist song/title song" [--host "http://synox host/"] [--debug]
+for download: 
+    --command fetch --query "search result link" [--host "http://synox host/"] [--debug]
+
 EOD;
     exit;
 }
 
-$name = ($type . '-synox');
-$path = (__DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
-$info = json_decode(file_get_contents($path . $name . DIRECTORY_SEPARATOR . 'INFO'));
+$host = $options['host'] ?? $_ENV['SYNOX_HOST'] ?? false;
+if (empty($host)) {
+    exit("synox host not found!\n");
+}
 
-require($path . $name . DIRECTORY_SEPARATOR . $info->module);
+$type = ['download' => 'bt', 'fetch' => 'ht', 'lyrics' => 'au'][$options['command']] ?? false;
+if (empty($type)) {
+    exit("unknown command!\n");
+}
+
+$pathInfo = SRC_PATH . '/' . $type . '-synox/INFO';
+if (!is_file($pathInfo)) {
+    exit("info file is not found!\n");
+}
+
+require_once('lib/common.php');
+require_once('lib/SynoxInterface.php');
+require_once('lib/SynoxAbstract.php');
+
+$info  = json_decode(file_get_contents($pathInfo));
+$debug = isset($options['debug']) ? 'test' : null;
+
+$pathModule = SRC_PATH . '/' . $type . '-synox/' . $info->module;
+if (!is_file($pathModule)) {
+    exit("module file is not found!\n");
+}
+
+require_once($pathModule);
 
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_HEADER, false);
@@ -41,10 +61,10 @@ curl_setopt($curl, CURLOPT_USERAGENT, DOWNLOAD_STATION_USER_AGENT);
 
 /* @var $module SynoxInterface */
 switch ($type) {
-    // for module dlm
+    // Search torrent files
     case ('bt'):
         $module = new $info->class();
-        $module->prepare($curl, $first, $second);
+        $module->prepare($curl, $options['query'], $host, $debug);
 
         echo 'url:' . curl_getinfo($curl, CURLINFO_EFFECTIVE_URL) . PHP_EOL;
         $response = curl_exec($curl);
@@ -52,11 +72,15 @@ switch ($type) {
 
         echo 'count:' . $module->parse(new SynoxAbstract(), $response) . PHP_EOL;
         break;
-
-    // for module host
+    // Download torrent files
     case ('ht'):
-        $module   = new $info->class($first, $second);
+        $module   = new $info->class(stripslashes($options['query']), $host, $debug);
         $download = $module->GetDownloadInfo();
+
+        if (isset($download[DOWNLOAD_ERROR])) {
+            echo 'error: ' . $download[DOWNLOAD_ERROR] . PHP_EOL;
+            break;
+        }
 
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_URL, $download[DOWNLOAD_URL]);
@@ -66,13 +90,13 @@ switch ($type) {
         echo 'download:' . (strpos($response, 'announce') !== false ? 'success' : 'failure') . PHP_EOL;
         curl_close($curl);
         break;
-
-    // for module aum
+    // Search song text
     case ('au'):
         $interface = new SynoxAbstract();
         $module    = new $info->class();
 
-        echo 'count:' . $module->getLyricsList($first, $second, $interface) . PHP_EOL;
+        [$artist, $title] = array_pad(explode('/', $options['query']), 2, '');
+        echo 'count:' . $module->getLyricsList($artist, $title, $interface) . PHP_EOL;
         echo 'lyrics:' . ($module->getLyrics($interface->getLyricsId(), $interface) ? 'success' : 'failure') . PHP_EOL;
         break;
 }

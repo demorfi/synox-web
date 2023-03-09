@@ -1,12 +1,12 @@
 {
   "name": "au-synox",
   "displayname": "Synox",
-  "description": "Translate song text",
-  "version": "1.0",
+  "description": "Search song text",
+  "version": "2.0",
   "site": "https://github.com/demorfi/synox",
   "debug": "false",
   "module": "SynoASSearchSynox.php",
   "type": "lyric",
   "class": "SynoASSearchSynox",
-  "host": "http://localhost:8080/"
+  "host": "http://0.0.0.0:8282/"
 }

@@ -1,98 +1,84 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
- * Synology Audio Station Translate Song Text.
- * For translate song text to bananan.org.
+ * Synology Audio Station Search Song Text.
+ * Search song text across synox web console.
  *
  * @author  demorfi <demorfi@gmail.com>
- * @version 1.0
+ * @version 2.0
+ * @php-dsm 7.2
  * @source https://github.com/demorfi/synox
- * @license http://opensource.org/licenses/MIT Licensed under MIT License
+ * @license https://opensource.org/license/mit/
  */
 class SynoASSearchSynox
 {
     /**
-     * Curl instance.
-     *
      * @var resource
      */
-    protected $curl;
+    private $curl;
 
     /**
-     * Url to synox console.
+     * Url to synox web console.
      * Example: https://synox.synology.loc/ (Web Station).
      *
      * @var string
      */
-    protected $host;
+    private $host;
 
     /**
-     * Use debug mode.
-     *
      * @var bool
      */
-    protected $debug = false;
+    private $debug = false;
 
     /**
-     * Search lyrics query.
-     *
      * @var string
      */
-    protected $searchQuery = '%s/lyrics/search';
+    private $searchQuery = '%s/lyrics/search';
 
     /**
-     * Results lyrics query.
-     *
      * @var string
      */
-    protected $resultsQuery = '%s/lyrics/results';
+    private $resultsQuery = '%s/lyrics/results';
 
     /**
-     * Fetch query for lyrics info.
-     *
      * @var string
      */
-    protected $fetchQuery = '%s/lyrics/fetch';
+    private $fetchQuery = '%s/lyrics/fetch?&id=%s&fetch=%s';
 
     /**
-     * Mask fetch query for lyrics info.
-     *
      * @var string
      */
-    protected $maskFetch = '%s/lyrics/fetch?&id=%s&fetch=%s';
+    private $logFile = '/tmp/au-synox.log';
 
-    /**
-     * Path to log file.
-     *
-     * @var string
-     */
-    protected $logFile = '/tmp/au-synox.log';
-
-    /**
-     * SynoASSearchSynox constructor.
-     */
     public function __construct()
     {
         // Settings of INFO file
-        $info        = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'INFO'));
-        $this->host  = rtrim(trim($info->host), '/');
+        $info       = json_decode(file_get_contents(__DIR__ . '/INFO'));
+        $this->host = rtrim(trim($info->host), '/');
+
+        // Let's try to use the host address from the bt-synox module
+        if ($this->host == 'http://0.0.0.0:8282' && is_file(SEARCH_ACCOUNT_CONF)) {
+            $ini = parse_ini_string(file_get_contents(SEARCH_ACCOUNT_CONF), true);
+            if (isset($ini['ht-synox']['username'])) {
+                $this->host = $ini['ht-synox']['username'];
+            }
+        }
+
         $this->debug = (bool)$info->debug;
         $this->debug('load: ' . json_encode([$info]));
+        $this->debug('uses host: ' . json_encode([$this->host]));
 
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_HEADER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 0);
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, DOWNLOAD_TIMEOUT);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, DOWNLOAD_TIMEOUT);
         curl_setopt($this->curl, CURLOPT_USERAGENT, DOWNLOAD_STATION_USER_AGENT);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
     }
 
-    /**
-     * SynoASSearchSynox destructor.
-     */
     public function __destruct()
     {
         if (is_resource($this->curl)) {
@@ -101,49 +87,47 @@ class SynoASSearchSynox
     }
 
     /**
-     * Send debug message to log file.
-     *
      * @param string $message
      * @return void
      */
-    protected function debug($message)
+    private function debug(string $message)
     {
         if ($this->debug) {
-            exec('echo "' . addslashes($message) . '" >> ' . $this->logFile);
-            if (function_exists('syslog')) {
-                syslog(LOG_INFO, $message);
+            if (php_sapi_name() == 'cli') {
+                print $message . PHP_EOL;
+            } else {
+                file_put_contents($this->logFile, $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+                if (function_exists('syslog')) {
+                    syslog(LOG_INFO, $message);
+                }
             }
         }
     }
 
     /**
-     * Send query to lyric.
-     *
      * @return string
      */
-    public function prepare()
+    public function prepare(): string
     {
         $curl = curl_copy_handle($this->curl);
         curl_setopt($curl, CURLOPT_URL, sprintf($this->searchQuery, $this->host));
         curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['name' => 'verify']));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['query' => 'verify']));
 
         $this->debug('prepare: ' . json_encode([$this->host]));
         $response = curl_exec($curl);
         curl_close($curl);
 
-        return ($response);
+        return $response;
     }
 
     /**
-     * Search lyrics.
-     *
      * @param string        $artist Artist song
-     * @param string        $title  Title song
+     * @param ?string       $title  Title song
      * @param SynoxAbstract $plugin Synology abstract
      * @return int
      */
-    public function getLyricsList($artist, $title, $plugin)
+    public function getLyricsList(string $artist, string $title, $plugin): int
     {
         $total    = 0;
         $response = @json_decode($this->prepare(), true);
@@ -163,8 +147,8 @@ class SynoASSearchSynox
                 CURLOPT_POSTFIELDS,
                 http_build_query(
                     [
-                        'name' => $query,
-                        'hash' => $response['hash']
+                        'query' => $query,
+                        'hash'  => $response['hash']
                     ]
                 )
             );
@@ -202,33 +186,30 @@ class SynoASSearchSynox
                         curl_multi_remove_handle($mh, $handle);
                         curl_close($handle);
                         $this->debug('http: ' . json_encode([$one]));
+                        $this->debug('response: ' . json_encode([$response]));
 
                         // Only results response
                         if ($one['http_code'] == 200 && $one['url'] == sprintf($this->resultsQuery, $this->host)) {
                             $response = @json_decode($response, true);
-                            $this->debug('response: ' . json_encode([$response]));
+                            if (isset($response['chunks']) && !empty($response['chunks'])) {
+                                foreach ($response['chunks'] as $item) {
+                                    $plugin->addTrackInfoToList(
+                                        urldecode($item['artist']),
+                                        urldecode($item['title']),
+                                        sprintf(
+                                            $this->fetchQuery,
+                                            $this->host,
+                                            $item['id'],
+                                            urlencode($item['fetchUrl'])
+                                        ),
+                                        $item['content'] ?? null
+                                    );
 
-                            if (isset($response['chunks'])) {
-                                if (!empty($response['chunks'])) {
-                                    foreach ($response['chunks'] as $item) {
-                                        $plugin->addTrackInfoToList(
-                                            urldecode($item['artist']),
-                                            urldecode($item['title']),
-                                            sprintf(
-                                                $this->maskFetch,
-                                                $this->host,
-                                                $item['id'],
-                                                urlencode($item['fetch'])
-                                            ),
-                                            null
-                                        );
-
-                                        $total++;
-                                    }
+                                    $total++;
                                 }
                             }
 
-                            if (!isset($response['isEnd']) || $response['isEnd'] != true) {
+                            if (!isset($response['isEnd']) || !$response['isEnd']) {
                                 curl_multi_add_handle($mh, curl_copy_handle($ch['results']));
                                 curl_multi_exec($mh, $running);
                             }
@@ -240,28 +221,26 @@ class SynoASSearchSynox
             curl_multi_close($mh);
         }
 
-        return ($total);
+        return $total;
     }
 
     /**
-     * Get lyrics.
-     *
-     * @param string        $id     Id found lyric
-     * @param SynoxAbstract $plugin Synology abstract
+     * @param string        $id
+     * @param SynoxAbstract $plugin
      * @return bool
      */
-    public function getLyrics($id, $plugin)
+    public function getLyrics(string $id, $plugin): bool
     {
         $response = @json_decode($this->prepare(), true);
         $this->debug('parse-s: ' . json_encode([$response, $id]));
 
         // Parse query to id package and fetch url
         parse_str(parse_url($id, PHP_URL_QUERY), $query);
-        list($_id, $url) = [$query['id'], urlencode($query['fetch'])];
+        [$_id, $url] = [$query['id'], urlencode($query['fetch'])];
         $this->debug('before: ' . json_encode([$this->host, $query, $_id, $url]));
 
         $curl = curl_copy_handle($this->curl);
-        curl_setopt($curl, CURLOPT_URL, sprintf($this->fetchQuery, $this->host));
+        curl_setopt($curl, CURLOPT_URL, sprintf($this->fetchQuery, $this->host, '', ''));
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['id' => $_id, 'url' => $url]));
         $response = @json_decode(curl_exec($curl), true);
@@ -272,9 +251,9 @@ class SynoASSearchSynox
             $content = preg_replace('#<br\s*/?>#i', "\n", $response['data']['content']);
             $content = preg_replace('#\n\n*#', "\n", $content);
             $plugin->addLyrics($content, $id);
-            return (true);
+            return true;
         }
 
-        return (false);
+        return false;
     }
 }

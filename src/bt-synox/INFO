@@ -2,7 +2,7 @@
   "name": "bt-synox",
   "displayname": "Synox",
   "description": "Search torrent files",
-  "version": "1.0",
+  "version": "2.0",
   "site": "https://github.com/demorfi/synox",
   "accountsupport": true,
   "module": "SynoDLMSearchSynox.php",
