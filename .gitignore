@@ -1,11 +1,6 @@
 .idea/
 vendor/
 node_modules/
-storage/*
-public/files/*
-!public/files/torrents
-public/files/torrents/*
-public/assets/*
 phpstorm.*
 *.d.ts
 *.lock
