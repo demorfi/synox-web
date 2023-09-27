@@ -18,20 +18,17 @@
     "ext-mbstring": "*",
     "ext-shmop": "*",
     "ext-json": "*",
-    "demorfi/digua": "^1.0",
-    "scotteh/php-dom-wrapper": "^2.0"
+    "demorfi/digua": "dev-main",
+    "scotteh/php-dom-wrapper": "^2.0",
+    "workerman/workerman": "^v4.1"
   },
   "autoload": {
     "files": [
-      "web/vendor/demorfi/digua/bootstrap.php"
-    ],
-    "psr-4": {
-      "App\\": "web/app/"
-    }
+      "vendor/demorfi/digua/bootstrap.php"
+    ]
   },
   "config": {
-    "optimize-autoloader": true,
-    "vendor-dir": "./web/vendor"
+    "optimize-autoloader": true
   },
   "minimum-stability": "stable"
 }

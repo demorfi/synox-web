@@ -1,0 +1,5 @@
+@mixin multiple($properties, $value) {
+  @each $property in $properties {
+    #{$property}: $value
+  }
+}
