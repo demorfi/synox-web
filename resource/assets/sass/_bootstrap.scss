@@ -1,0 +1,10 @@
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
+
+$j: 1rem;
+@for $i from 7 through 10 {
+  .fs-#{$i} {
+    font-size: $j !important;
+  }
+  $j: $j - .25rem;
+}
