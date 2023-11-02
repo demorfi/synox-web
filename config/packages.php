@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-return ([
+use Digua\Env;
+
+$packages = [
     'NnmClub',
     'FastTorrent',
     'RuTracker',
@@ -8,9 +10,13 @@ return ([
     'Kinozal',
     'Rutor',
     'Pornolab',
-    'TestTorrent',
     'SongLyrics',
     'Bananan',
-    'AllofLyrics',
-    'TestText',
-]);
+    'AllofLyrics'
+];
+
+if (Env::isDev()) {
+    $packages = [...$packages, 'TestTorrent', 'TestText'];
+}
+
+return $packages;

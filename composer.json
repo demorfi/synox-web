@@ -1,8 +1,11 @@
 {
-  "name": "demorfi/synox",
+  "name": "demorfi/synox-web",
   "description": "",
   "keywords": [
-    "synox"
+    "synox",
+    "synox-web",
+    "search",
+    "torrents"
   ],
   "type": "project",
   "license": "MIT",
@@ -13,11 +16,12 @@
     }
   ],
   "require": {
-    "php": "^8.1",
+    "php": "^8.2",
     "ext-curl": "*",
     "ext-mbstring": "*",
     "ext-shmop": "*",
     "ext-json": "*",
+    "ext-posix": "*",
     "demorfi/digua": "dev-main",
     "scotteh/php-dom-wrapper": "^2.0",
     "workerman/workerman": "^v4.1"

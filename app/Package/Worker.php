@@ -4,7 +4,7 @@ namespace App\Package;
 
 use App\Components\{Helper, Storage\Journal};
 use Digua\LateEvent;
-use Digua\Components\{Storage, Storage\SharedMemory};
+use Digua\Components\{Storage, Storage\SharedMemory, Storage\DiskFile};
 use Digua\Request\{Query as RequestQuery, FilteredInput};
 use Digua\Exceptions\{
     Storage as StorageException,
@@ -53,6 +53,10 @@ class Worker
     {
         $config = Helper::config('worker');
         LateEvent::subscribe(__CLASS__, fn($message) => Journal::staticPush($message));
+
+        WorkerConnection::$statusFile = DiskFile::getDiskPath('worker-' . posix_getpid() . '.status');
+        WorkerConnection::$pidFile = DiskFile::getDiskPath('worker.pid');
+        WorkerConnection::$logFile = DiskFile::getDiskPath('worker.log');
 
         $this->shell          = 'php ' . ROOT_PATH . '/console/worker.php %s';
         $this->privateAddress = $config->get('private');
@@ -107,7 +111,7 @@ class Worker
     public function runParallelService(): bool
     {
         $status = (string)exec(sprintf($this->shell, '--service status'));
-        if (str_contains($status, 'Summary')) {
+        if (!str_contains($status, 'not run')) {
             return true;
         }
 
@@ -181,6 +185,10 @@ class Worker
      */
     public function service(): void
     {
+        if (WorkerConnection::getStatus() === WorkerConnection::STATUS_RUNNING) {
+            return;
+        }
+
         $this->connection->onConnect = function ($connection) {
             $connection->onWebSocketConnect = function ($connection) {
                 $hash = (new RequestQuery((new FilteredInput())->refresh(INPUT_SERVER)))->get('hash');

@@ -1,9 +1,9 @@
-.idea/
+.git
+.idea
 vendor/
 node_modules/
-phpstorm.*
-.env
 *.d.ts
 *.lock
 *.tsbuildinfo
 *-lock.json
+Dockerfile
