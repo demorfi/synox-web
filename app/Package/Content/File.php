@@ -22,6 +22,12 @@ abstract class File extends PackageContent
     public function __construct()
     {
         parent::__construct();
+
+        $diskPath = self::getDiskPath();
+        if (!empty($diskPath) && !is_dir($diskPath)) {
+            mkdir($diskPath, 0755, true);
+        }
+
         self::throwIsBrokenDiskPath();
     }
 

@@ -7,7 +7,7 @@ export default {
             commit('reset');
             search.startSearch(query, filters)
                 .then(({data}) => {
-                    const wsHost = data.host.replace('websocket:', 'ws:');
+                    const wsHost = data.host.replace('websocket:', 'ws:').replace('0.0.0.0', location.hostname);
                     dispatch('openSocket', {...data, wsHost})
                         .then(() => resolve(data))
                         .catch(({message}) => reject({message}));
