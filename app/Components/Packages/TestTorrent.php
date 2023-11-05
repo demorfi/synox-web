@@ -81,7 +81,7 @@ class TestTorrent extends Package
     {
         $maxResults = rand(6, 24);
         for ($i = 1; $i <= $maxResults; $i++) {
-            sleep(1);
+            usleep(250000);
             $item = new TorrentItem($this);
             $item->setTitle($i . ' Test ' . $query->value);
             $item->setCategory($query->filter?->getById(Category::getId())->first() ?? Category::VIDEO);

@@ -81,6 +81,7 @@ class TestText extends Package
     {
         $maxResults = rand(6, 24);
         for ($i = 1; $i <= $maxResults; $i++) {
+            usleep(250000);
             $item = new TextItem($this);
             $item->setCategory(Category::TEXT);
             $item->setTitle($i . ' Test ' . $query->value);

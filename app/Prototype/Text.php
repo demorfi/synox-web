@@ -8,6 +8,7 @@ use App\Enums\{ContentType, ItemType};
 use App\Interfaces\{PackageContent, Package as PackageInterface};
 use App\Package\{Query, Content\Text as TextContent, Item\Text as TextItem};
 use Digua\Components\Client\Curl as CurlClient;
+use Digua\Exceptions\Path as PathException;
 use Digua\Traits\Client;
 use DOMWrap\Document;
 use DOMWrap\Element;
@@ -134,6 +135,7 @@ abstract class Text extends Package implements PackageInterface
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     public function search(Query $query): Generator
     {
@@ -158,6 +160,7 @@ abstract class Text extends Package implements PackageInterface
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     public function fetch(string $id, TextContent|PackageContent $content): bool
     {

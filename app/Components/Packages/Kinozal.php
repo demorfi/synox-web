@@ -8,6 +8,7 @@ use App\Package\Item\Torrent as TorrentItem;
 use App\Prototype\Torrent;
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Components\ArrayCollection;
+use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
 use Generator;
 
@@ -72,6 +73,7 @@ class Kinozal extends Torrent
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     protected function isAvailableAccount(): bool
     {

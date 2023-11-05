@@ -9,6 +9,7 @@ use App\Package\{Query, Content\Torrent as TorrentContent, Item\Torrent as Torre
 use App\Interfaces\PackageContent;
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Components\ArrayCollection;
+use Digua\Exceptions\Path as PathException;
 use Digua\Traits\Client;
 use Exception;
 use Generator;
@@ -107,6 +108,7 @@ class Tpb extends Package
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     public function search(Query $query): Generator
     {
@@ -171,6 +173,7 @@ class Tpb extends Package
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     public function fetch(string $id, TorrentContent|PackageContent $content): bool
     {

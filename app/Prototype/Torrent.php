@@ -8,6 +8,7 @@ use App\Enums\{ContentType, ItemType};
 use App\Interfaces\{PackageContent, Package as PackageInterface};
 use App\Package\{Query, Content\Torrent as TorrentContent, Item\Torrent as TorrentItem};
 use Digua\Components\Client\Curl as CurlClient;
+use Digua\Exceptions\Path as PathException;
 use Digua\Traits\Client;
 use DOMWrap\Document;
 use Exception;
@@ -167,6 +168,7 @@ abstract class Torrent extends Package implements PackageInterface
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     public function search(Query $query): Generator
     {
@@ -221,6 +223,7 @@ abstract class Torrent extends Package implements PackageInterface
 
     /**
      * @inheritdoc
+     * @throws PathException
      */
     public function fetch(string $id, TorrentContent|PackageContent $content): bool
     {
