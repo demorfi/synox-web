@@ -9,11 +9,6 @@ use App\Interfaces\PackageContent;
 use App\Exceptions\PackageDispatcher as PackageDispatcherException;
 use App\Repositories\Packages as Repository;
 use Digua\LateEvent;
-use Digua\Components\Storage;
-use Digua\Exceptions\{
-    MemoryShared as MemorySharedException,
-    Storage as StorageException
-};
 use Exception;
 
 final class Dispatcher
@@ -24,31 +19,11 @@ final class Dispatcher
     private ?Collection $packages = null;
 
     /**
-     * @var ?Query
-     */
-    private ?Query $query = null;
-
-    /**
-     * @param ?string $hash
-     */
-    public function __construct(private ?string $hash = null)
-    {
-    }
-
-    /**
      * @return string
      */
-    public function makePackageHash(): string
+    protected function makeHash(): string
     {
-        return $this->hash = (string)Helper::makeIntHash();
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasHash(): bool
-    {
-        return !empty($this->hash);
+        return (string)Helper::makeIntHash();
     }
 
     /**
@@ -78,28 +53,14 @@ final class Dispatcher
     /**
      * @param string  $query
      * @param ?Filter $filter
-     * @return Query
-     */
-    public function makeNewSearchQuery(string $query, ?Filter $filter = null): Query
-    {
-        return $this->query = new Query($query, $filter);
-    }
-
-    /**
-     * @return int
+     * @return string Query hash
      * @throws PackageDispatcherException
-     * @throws StorageException
-     * @throws MemorySharedException
      * @uses LateEvent::notify
      */
-    public function search(): int
+    public function makeNewSearchQuery(string $query, ?Filter $filter = null): string
     {
-        if (is_null($this->query)) {
+        if (empty($query)) {
             throw new PackageDispatcherException('Missing search query!');
-        }
-
-        if (!$this->hasHash()) {
-            throw new PackageDispatcherException('Required hash not passed!');
         }
 
         if (!$this->usesPackages()) {
@@ -111,25 +72,13 @@ final class Dispatcher
             throw new PackageDispatcherException('Failed running parallel service!');
         }
 
-        $storage = Storage::makeSharedMemory($this->hash);
-        $threads = $this->packages->count();
-        $storage->write((string)$threads);
+        $hash  = $this->makeHash();
+        $query = new Query($query, $filter);
 
-        if (!$worker->runParallelWatchdog($this->hash)) {
-            $storage->free();
-            throw new PackageDispatcherException('Failed running parallel watchdog!');
-        }
-
-        LateEvent::notify(__CLASS__, sprintf('search (%s) running', $this->query->value));
-        foreach ($this->packages as $package) {
-            /* @var $package Adapter */
-            if (!$worker->runParallelQueue($this->hash, $this->query, $package)) {
-                $storage->rewrite((string)(--$threads));
-            }
-        }
-
-        LateEvent::notify(__CLASS__, sprintf('running (%d) threads', $threads));
-        return $threads;
+        sleep(1);
+        $worker->addQueue($hash, $query, $this->packages);
+        LateEvent::notify(__CLASS__, sprintf('search query (%s) created', $query->value));
+        return $hash;
     }
 
     /**

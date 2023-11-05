@@ -44,13 +44,10 @@ class Search extends ResourceController
                 $this->throwAbort(Headers::UNPROCESSABLE_ENTITY, 'Packages not found or not enabled!');
             }
 
-            $hash = $dispatcher->makePackageHash();
-            $dispatcher->makeNewSearchQuery($query, new Filter($filters));
             return $this->response([
-                'threads' => $dispatcher->search(),
-                'limit'   => Helper::config('app')->get('limitPerPackage'),
-                'hash'    => $hash,
-                'host'    => Helper::config('worker')->get('public')
+                'hash'  => $dispatcher->makeNewSearchQuery($query, new Filter($filters)),
+                'host'  => Helper::config('worker')->get('public'),
+                'limit' => Helper::config('app')->get('limitPerPackage')
             ], Headers::ACCEPTED);
         } catch (BaseException $e) {
             $this->throwAbort($e->getCode() ?: Headers::EXPECTATION_FAILED, $e->getMessage());

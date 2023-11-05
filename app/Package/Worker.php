@@ -2,7 +2,9 @@
 
 namespace App\Package;
 
+use App\Collections\Package as PackageCollection;
 use App\Components\{Helper, Storage\Journal};
+use App\Exceptions\WorkerQueue as WorkerQueueException;
 use Digua\LateEvent;
 use Digua\Components\{Storage, Storage\SharedMemory, Storage\DiskFile};
 use Digua\Request\{Query as RequestQuery, FilteredInput};
@@ -10,7 +12,10 @@ use Digua\Exceptions\{
     Storage as StorageException,
     Path as PathException
 };
-use Workerman\Worker as WorkerConnection;
+use Workerman\{
+    Worker as WorkerConnection,
+    Connection\ConnectionInterface as WorkerConnectionInterface
+};
 use Exception;
 
 class Worker
@@ -33,7 +38,7 @@ class Worker
     /**
      * @var array
      */
-    private array $buffers = [];
+    private array $queues = [];
 
     /**
      * @var array
@@ -55,8 +60,8 @@ class Worker
         LateEvent::subscribe(__CLASS__, fn($message) => Journal::staticPush($message));
 
         WorkerConnection::$statusFile = DiskFile::getDiskPath('worker-' . posix_getpid() . '.status');
-        WorkerConnection::$pidFile = DiskFile::getDiskPath('worker.pid');
-        WorkerConnection::$logFile = DiskFile::getDiskPath('worker.log');
+        WorkerConnection::$pidFile    = DiskFile::getDiskPath('worker.pid');
+        WorkerConnection::$logFile    = DiskFile::getDiskPath('worker.log');
 
         $this->shell          = 'php ' . ROOT_PATH . '/console/worker.php %s';
         $this->privateAddress = $config->get('private');
@@ -91,6 +96,18 @@ class Worker
         }
 
         return true;
+    }
+
+    /**
+     * @param string            $hash
+     * @param Query             $query
+     * @param PackageCollection $packages
+     * @return void
+     */
+    public function addQueue(string $hash, Query $query, PackageCollection $packages): void
+    {
+        $queue = base64_encode(serialize(compact('query', 'packages')));
+        $this->send($hash, compact('queue'));
     }
 
     /**
@@ -190,63 +207,114 @@ class Worker
         }
 
         $this->connection->onConnect = function ($connection) {
-            $connection->onWebSocketConnect = function ($connection) {
-                $hash = (new RequestQuery((new FilteredInput())->refresh(INPUT_SERVER)))->get('hash');
-
-                $this->linkers[$hash] = $connection;
-
-                // Late queue execution
-                if (isset($this->buffers[$hash]) && !empty($this->buffers[$hash])) {
-                    foreach ($this->buffers[$hash] as $buffer) {
-                        // Sending a message to the client
-                        $connection->send($buffer);
-                    }
-                    unset($this->buffers[$hash]);
-                }
-            };
+            $connection->onWebSocketConnect = $this->socketConnect(...);
         };
 
-        $this->connection->onClose = function ($connection) {
-
-            // Freeing up memory
-            if (($hash = array_search($connection, $this->linkers)) !== false) {
-                unset($this->linkers[$hash]);
-
-                if (isset($this->buffers[$hash])) {
-                    unset($this->buffers[$hash]);
-                }
-
-                // Stop searching
-                if (SharedMemory::has($hash)) {
-                    Storage::makeSharedMemory($hash)->free();
-                }
-            }
-        };
+        $this->connection->onClose = $this->socketClose(...);
 
         $this->connection->onWorkerStart = function () {
             $connection = new WorkerConnection($this->privateAddress);
 
-            $connection->onMessage = function ($connection, $received) {
-                $data = json_decode($received);
-                if (!empty($data) && isset($data->hash)) {
-                    if (isset($this->linkers[$data->hash])) {
-                        // Sending a message to the client
-                        $this->linkers[$data->hash]->send($received);
-                    } else {
-
-                        // Create a late queue
-                        if (!isset($this->buffers[$data->hash])) {
-                            $this->buffers[$data->hash] = [];
-                        }
-                        $this->buffers[$data->hash][] = $received;
-                    }
-                }
-            };
-
+            $connection->onMessage = $this->socketMessage(...);
             $connection->listen();
         };
 
         WorkerConnection::runAll();
+    }
+
+    /**
+     * @param WorkerConnectionInterface $connection
+     * @return void
+     */
+    private function socketConnect(WorkerConnectionInterface $connection): void
+    {
+        try {
+            $hash = (new RequestQuery((new FilteredInput())->refresh(INPUT_SERVER)))->get('hash');
+            if (empty($hash)) {
+                throw new WorkerQueueException('Required hash not passed!');
+            }
+
+            $this->linkers[$hash] = $connection;
+            if (!isset($this->queues[$hash]) || empty($this->queues[$hash])) {
+                throw new WorkerQueueException('No search queue created!');
+            }
+
+            $queue = (array)unserialize((string)base64_decode($this->queues[$hash], true));
+            if (!isset($queue['query'], $queue['packages'])
+                || !($queue['query'] instanceof Query)
+                || !($queue['packages'] instanceof PackageCollection)) {
+                unset($this->queues[$hash]);
+                throw new WorkerQueueException('Search queue is broken!');
+            }
+
+            $storage = Storage::makeSharedMemory($hash);
+            $threads = $queue['packages']->count();
+            $storage->write((string)$threads);
+
+            if (!$this->runParallelWatchdog($hash)) {
+                $storage->free();
+                throw new WorkerQueueException('Failed running parallel watchdog!');
+            }
+
+            $this->notify('search (%s) running', $queue['query']->value);
+            foreach ($queue['packages'] as $package) {
+                /* @var $package Adapter */
+                if (!$this->runParallelQueue($hash, $queue['query'], $package)) {
+                    $storage->rewrite((string)(--$threads));
+                }
+            }
+
+            $this->notify('running (%d) threads', $threads);
+            $this->send($hash, compact('threads'));
+        } catch (Exception $e) {
+            $connection->send(['error' => $e->getMessage(), 'finished' => true]);
+        }
+    }
+
+    /**
+     * @param WorkerConnectionInterface $connection
+     * @return void
+     * @throws StorageException
+     */
+    private function socketClose(WorkerConnectionInterface $connection): void
+    {
+        // Freeing up memory
+        if (($hash = array_search($connection, $this->linkers)) !== false) {
+            unset($this->linkers[$hash]);
+
+            if (isset($this->queues[$hash])) {
+                unset($this->queues[$hash]);
+            }
+
+            // Stop searching
+            if (SharedMemory::has($hash)) {
+                Storage::makeSharedMemory($hash)->free();
+            }
+        }
+    }
+
+    /**
+     * @param WorkerConnectionInterface $connection
+     * @param string                    $received
+     * @return void
+     */
+    private function socketMessage(WorkerConnectionInterface $connection, string $received): void
+    {
+        $data = json_decode($received);
+        if (!isset($data->hash)) {
+            return;
+        }
+
+        // Add new search queue
+        if (isset($data->queue)) {
+            $this->queues[$data->hash] = $data->queue;
+            return;
+        }
+
+        // Sending a message to the client
+        if (isset($this->linkers[$data->hash])) {
+            $this->linkers[$data->hash]->send($received);
+        }
     }
 
     /**

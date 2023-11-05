@@ -5,8 +5,8 @@ export default {
     {
         return post('search/start', {query, filters})
             .then(response => {
-                if (!response.data?.threads) {
-                    throw new Error('No packages available to search');
+                if (!response.data?.hash) {
+                    throw new Error('No hash available to search');
                 }
                 return response;
             });
