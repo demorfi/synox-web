@@ -3,17 +3,17 @@
 define('ROOT_PATH', realpath(__DIR__ . '/..'));
 
 if (php_sapi_name() != 'cli') {
-    exit("only works through cli!\n");
+    exit("Only works through cli!\n");
 }
 
 $options = getopt('', ['queue:', 'watchdog:', 'service::']);
 if (empty($options) || sizeof($options) > 1) {
-    exit("invalid input parameters!\n");
+    exit("Invalid input parameters!\n");
 }
 
 require_once ROOT_PATH . '/bootstrap.php';
 
-use App\Package\Worker;
+use app\Package\Search\Worker;
 use Digua\Components\{Storage, Storage\SharedMemory};
 
 try {
@@ -29,7 +29,7 @@ try {
     if (isset($options['queue'])) {
         $queue = (array)unserialize((string)base64_decode($options['queue'], true));
         if (empty($queue) || sizeof($queue) < 3) {
-            exit($worker->notify('queue is broken!') . "\n");
+            exit($worker->notify('Queue is broken!') . "\n");
         }
 
         $worker->queue(...([$hash, $query, $package] = $queue));
@@ -47,7 +47,7 @@ try {
     if (isset($options['watchdog'])) {
         $hash = $options['watchdog'];
         if (!SharedMemory::has($hash)) {
-            exit($worker->notify('queue ends early!') . "\n");
+            exit($worker->notify('Queue ends early!') . "\n");
         }
 
         $worker->watchdog($hash);

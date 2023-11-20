@@ -4,16 +4,11 @@ namespace App\Components\Storage;
 
 use App\Components\Helper;
 use Digua\Components\Journal as JournalStorage;
-use Digua\Exceptions\{
-    Path as PathException,
-    Storage as StorageException
-};
+use Digua\Exceptions\{Path as PathException, Storage as StorageException};
 
 class Journal extends JournalStorage
 {
     /**
-     * Status enabled journal.
-     *
      * @var bool
      */
     protected bool $enabled = true;

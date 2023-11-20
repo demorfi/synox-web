@@ -2,16 +2,13 @@
 
 namespace App\Controllers\Api;
 
+use App\Controllers\Base;
 use App\Components\Storage\Journal as JournalStorage;
 use Digua\Response;
-use Digua\Controllers\Resource as ResourceController;
 use Digua\Enums\Headers;
-use Digua\Exceptions\{
-    Base as BaseException,
-    Abort as AbortException
-};
+use Digua\Exceptions\{Base as BaseException, Abort as AbortException};
 
-class Journal extends ResourceController
+class Journal extends Base
 {
     /**
      * @return array

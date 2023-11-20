@@ -2,13 +2,14 @@
 
 use Digua\Env;
 
-$packages = [
+$search = [
     'NnmClub',
     'FastTorrent',
     'RuTracker',
     'Tpb',
     'Kinozal',
     'Rutor',
+    'Byrutor',
     'Pornolab',
     'SongLyrics',
     'Bananan',
@@ -16,7 +17,8 @@ $packages = [
 ];
 
 if (Env::isDev()) {
-    $packages = [...$packages, 'TestTorrent', 'TestText'];
+    $search = [...$search, 'TestTorrent', 'TestText'];
 }
 
-return $packages;
+$extension = ['Cache'];
+return compact('search', 'extension');

@@ -2,25 +2,21 @@
 
 namespace App\Controllers\Api;
 
+use App\Controllers\Base;
 use App\Components\{Helper, Storage\Journal};
-use App\Package\{Dispatcher, Filter};
-use Digua\{Response, LateEvent};
+use App\Package\{Search\Dispatcher, Search\Filter};
+use Digua\{LateEvent, Response};
 use Digua\Enums\Headers;
-use Digua\Controllers\Resource as ResourceController;
-use Digua\Interfaces\Request;
-use Digua\Exceptions\{
-    Abort as AbortException,
-    Base as BaseException
-};
+use Digua\Exceptions\{Abort as AbortException, Base as BaseException};
 
-class Search extends ResourceController
+class Search extends Base
 {
     /**
-     * @param Request $request
+     * @inheritdoc
      */
-    public function __construct(Request $request)
+    protected function init(): void
     {
-        parent::__construct($request);
+        parent::init();
         LateEvent::subscribe(Dispatcher::class, fn($message) => Journal::staticPush($message));
     }
 
@@ -40,10 +36,6 @@ class Search extends ResourceController
             }
 
             $dispatcher = new Dispatcher();
-            if (!$dispatcher->usePackages(onlyPackages: $filters['packages'] ?? [])) {
-                $this->throwAbort(Headers::UNPROCESSABLE_ENTITY, 'Packages not found or not enabled!');
-            }
-
             return $this->response([
                 'hash'  => $dispatcher->makeNewSearchQuery($query, new Filter($filters)),
                 'host'  => Helper::config('worker')->get('public'),

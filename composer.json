@@ -22,6 +22,7 @@
     "ext-shmop": "*",
     "ext-json": "*",
     "ext-posix": "*",
+    "ext-redis": "*",
     "demorfi/digua": "dev-main",
     "scotteh/php-dom-wrapper": "^2.0",
     "workerman/workerman": "^v4.1"

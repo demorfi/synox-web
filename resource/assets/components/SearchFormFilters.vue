@@ -30,38 +30,9 @@ export default {
   async created()
   {
     await this.getPackagesFilters();
-
-    // Packages
-    if (this.getPackagesEnabled.length) {
-      this.selects.push({
-        id      : 'packages',
-        name    : 'Packages',
-        selected: [],
-        options : (() => {
-          let options = [], types = {};
-          for (let pkg of this.getPackagesEnabled) {
-            if (!(pkg.type in types)) {
-              types[pkg.type] = options.length;
-              options[options.length] = {label: pkg.type + 's', options: []};
-            }
-
-            options[types[pkg.type]].options.push({value: pkg.id, text: pkg.name});
-          }
-          return options;
-        })()
-      });
-    }
-
-    // Other filters
-    for (let filter of this.filters) {
-      const {id, name, cases: options} = filter;
-      this.selects.push({id, name, selected: [], options});
-    }
-
   },
 
   data: () => ({
-    selects : [],
     selected: {}
   }),
 
@@ -77,7 +48,45 @@ export default {
 
   computed: {
     ...mapState('packages', ['filters']),
-    ...mapGetters('packages', ['getPackagesEnabled'])
+    ...mapGetters('packages', ['getPackagesEnabledByType']),
+    selects()
+    {
+      let list = [];
+
+      // Packages
+      if (this.searchPackages.length) {
+        list.push({
+          id      : 'packages',
+          name    : 'Packages',
+          selected: [],
+          options : (() => {
+            let options = [], types = {};
+            for (let pkg of this.searchPackages) {
+              if (!(pkg.subtype in types)) {
+                types[pkg.subtype] = options.length;
+                options[options.length] = {label: pkg.subtype + 's', options: []};
+              }
+
+              options[types[pkg.subtype]].options.push({value: pkg.id, text: pkg.name});
+            }
+            return options;
+          })()
+        });
+      }
+
+      // Other filters
+      for (let filter of this.filters) {
+        const {id, name, cases: options} = filter;
+        list.push({id, name, selected: [], options});
+      }
+
+      return list;
+    },
+
+    searchPackages()
+    {
+      return this.getPackagesEnabledByType('Search');
+    }
   },
 
   methods: {

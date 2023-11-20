@@ -2,39 +2,21 @@
 
 namespace App\Controllers\Api;
 
-use App\Repositories\Packages as Repository;
-use App\Package\Filter;
-use Digua\{Request, Response};
-use Digua\Controllers\Resource as ResourceController;
+use App\Controllers\Base;
+use App\Package\Search\Filter;
+use Digua\Response;
 use Digua\Attributes\Guardian\RequestPathRequired;
 use Digua\Enums\Headers;
-use Digua\Exceptions\{
-    Base as BaseException,
-    Abort as AbortException
-};
+use Digua\Exceptions\{Abort as AbortException, Base as BaseException};
 
-class Packages extends ResourceController
+class Packages extends Base
 {
-    /**
-     * @var Repository
-     */
-    protected Repository $packages;
-
-    /**
-     * @inheritdoc
-     */
-    public function __construct(Request $request)
-    {
-        parent::__construct($request);
-        $this->packages = Repository::getInstance();
-    }
-
     /**
      * @return array
      */
     public function getDefaultAction(): array
     {
-        return $this->packages->getPackages()->getArrayCopy();
+        return $this->repository->getPackages()->getAll();
     }
 
     /**
@@ -54,7 +36,7 @@ class Packages extends ResourceController
     public function putChangeStateAction(string $id): Response
     {
         try {
-            $package = $this->packages->getPackages()->find($id);
+            $package = $this->repository->getPackages()->find($id);
             if (is_null($package)) {
                 $this->throwAbort(Headers::UNPROCESSABLE_ENTITY);
             }
@@ -81,7 +63,7 @@ class Packages extends ResourceController
     public function putUpdateSettingsAction(string $id): Response
     {
         try {
-            $package = $this->packages->getPackages()->find($id);
+            $package = $this->repository->getPackages()->find($id);
             if (is_null($package)) {
                 $this->throwAbort(Headers::UNPROCESSABLE_ENTITY);
             }

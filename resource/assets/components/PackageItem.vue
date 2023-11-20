@@ -27,7 +27,7 @@
       <b-row>
         <dl class="col-6 mb-0">
           <dt>Type</dt>
-          <dd>{{ type }}</dd>
+          <dd>{{ type }} &dash; {{ subtype }}</dd>
         </dl>
         <dl class="col-6 mb-0">
           <dt>Version</dt>
@@ -54,6 +54,7 @@ export default {
     id         : String,
     name       : String,
     type       : String,
+    subtype    : String,
     version    : String,
     description: String,
     enabled    : Boolean,

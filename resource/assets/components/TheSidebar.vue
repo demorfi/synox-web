@@ -37,7 +37,7 @@
 
       <div class="bottom-items">
         <div class="last nav-item">
-          <a href="https://github.com/demorfi/synox" target="_blank" class="nav-link" title="Github">
+          <a href="https://github.com/demorfi/synox-web" target="_blank" class="nav-link" title="Github">
             <AppIcon name="github"/>
             <span class="title fs-8">
               <AppIcon name="code-slash"/> with <AppIcon name="heart-fill"/> in Siberia
