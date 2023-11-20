@@ -2,27 +2,22 @@
 
 namespace App\Controllers\Api;
 
+use App\Controllers\Base;
 use App\Components\Storage\Journal;
-use App\Package\Dispatcher;
-use App\Enums\ItemType;
+use App\Package\Search\{Dispatcher, Enums\Type};
 use Digua\{LateEvent, Response};
-use Digua\Enums\Headers;
-use Digua\Controllers\Resource as ResourceController;
 use Digua\Attributes\Guardian\RequestPathRequired;
-use Digua\Interfaces\Request;
-use Digua\Exceptions\{
-    Abort as AbortException,
-    Base as BaseException
-};
+use Digua\Enums\Headers;
+use Digua\Exceptions\{Abort as AbortException, Base as BaseException};
 
-class Content extends ResourceController
+class Content extends Base
 {
     /**
-     * @param Request $request
+     * @inheritdoc
      */
-    public function __construct(Request $request)
+    protected function init(): void
     {
-        parent::__construct($request);
+        parent::init();
         LateEvent::subscribe(Dispatcher::class, fn($message) => Journal::staticPush($message));
     }
 
@@ -36,17 +31,13 @@ class Content extends ResourceController
     {
         try {
             $dispatcher = new Dispatcher();
-            if (!$dispatcher->usePackages(onlyPackages: [$packageId])) {
-                $this->throwAbort(Headers::UNPROCESSABLE_ENTITY, 'Package not found or not enabled!');
-            }
-
             $fetchId = $this->dataRequest()->post()->getFixedTypeValue('fetchId', 'string');
             if (empty($fetchId)) {
                 $this->throwAbort(Headers::FAILED_DEPENDENCY, 'Empty fetchId request!');
             }
 
             $content = $dispatcher->fetch($packageId, urldecode($fetchId));
-            if (!$content->isAvailable()) {
+            if (!$content?->isAvailable()) {
                 $this->throwAbort(Headers::BAD_REQUEST, 'Unable to get content!');
             }
 
@@ -65,7 +56,7 @@ class Content extends ResourceController
     #[RequestPathRequired('name', 'type')]
     public function getDownloadAction(string $name, string $type): Response
     {
-        $content = ItemType::tryName($type)?->contentType()->make();
+        $content = Type::tryName($type)?->makeContent();
         if (empty($content)) {
             $this->throwAbort(Headers::UNPROCESSABLE_ENTITY, 'Invalid content type!');
         }

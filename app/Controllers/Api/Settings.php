@@ -2,9 +2,9 @@
 
 namespace App\Controllers\Api;
 
+use App\Controllers\Base;
 use App\Components\Helper;
 use Digua\Response;
-use Digua\Controllers\Resource as ResourceController;
 use Digua\Attributes\Guardian\RequestPathRequired;
 use Digua\Enums\Headers;
 use Digua\Exceptions\{
@@ -14,7 +14,7 @@ use Digua\Exceptions\{
     Storage as StorageException
 };
 
-class Settings extends ResourceController
+class Settings extends Base
 {
     /**
      * @var array|string[]

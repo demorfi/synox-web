@@ -1,11 +1,13 @@
 <template>
   <b-card
+      no-body
       bg-variant="light"
       footer-class="fs-8"
       class="border-0 border-bottom shadow-sm">
-    <template #default>
+    <b-card-body :style="background">
       <b-card-title
           :text="title"
+          class="mb-0"
           tag="h5">
         <a
             v-if="pageUrl"
@@ -16,8 +18,9 @@
       </b-card-title>
       <b-card-subtitle
           v-if="content"
+          class="mt-2"
           :text="content"/>
-    </template>
+    </b-card-body>
     <template #footer>
       <b-row>
         <b-col
@@ -184,6 +187,19 @@ export default {
 
   computed: {
     ...mapGetters(['getEntry']),
+    background()
+    {
+      let hash = 0;
+      for (let i = 0; i < this.package.length; i++) {
+        hash = this.package.charCodeAt(i) + ((hash << i) - hash);
+      }
+
+      const hsla = hash % 360;
+      return {
+        background: `linear-gradient(90deg,rgba(255,255,255,0) 60%,hsla(${hsla},50%,40%,.4) 100%)`
+      };
+    },
+
     fetched()
     {
       return this.getEntry({packageId: this.id, fetchId: this.fetchId});

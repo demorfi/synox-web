@@ -30,14 +30,12 @@ export default {
         });
     },
 
-    openSocket({dispatch, state, commit}, {wsHost, hash, threads, limit})
+    openSocket({dispatch, state, commit}, {wsHost, hash, limit})
     {
         return new Promise((resolve, reject) => {
             const socket = new WebSocket(wsHost + '/?hash=' + hash);
             socket.onopen = () => {
                 commit('setSocket', socket);
-                commit('setTotalThreads', threads);
-                commit('setLimitPayloads', threads * limit);
                 commit('setStatusConnection', true);
                 resolve();
             };
@@ -63,6 +61,15 @@ export default {
 
                 if (Object.keys(message?.payload ?? {}).length) {
                     commit('addPayload', message.payload);
+                }
+
+                if ('threads' in message) {
+                    commit('setTotalThreads', message.threads);
+                    commit('setLimitPayloads', message.threads * limit);
+                }
+
+                if ('error' in message) {
+                    dispatch('notifications/addError', message.error, {root: true});
                 }
 
                 if ('completed' in message) {

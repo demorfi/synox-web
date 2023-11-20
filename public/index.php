@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 const DOCUMENT_ROOT = __DIR__;
 define('ROOT_PATH', realpath(DOCUMENT_ROOT . '/..'));
 
@@ -20,4 +21,4 @@ if (!$usesApi) {
     $builder->forced(App\Controllers\Main::class, 'default');
 }
 
-print (new Digua\RouteDispatcher())->default($builder, $appEntryPath);
+print (new Digua\RouteDispatcher())->default($builder, $appEntryPath, App\Controllers\Error::class);

@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+  redis:
+    image: bitnami/redis:7.2
+    restart: always
+    volumes:
+      - redis-data:/bitnami/redis/data
+    ports:
+      - '6379:6379'
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-secret}
+      REDIS_PORT_NUMBER: 6379
+    networks:
+        - net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_MODE: ${APP_MODE:-prod}
+        REDIS_HOST: redis
+        REDIS_PORT: 6379
+        REDIS_PASSWORD: ${REDIS_PASSWORD:-secret}
+        CACHE_EXPIRE: ${CACHE_EXPIRE:-86400}
+    image: demorfi/synox-web:latest
+    depends_on:
+      - redis
+    ports:
+      - '8002:80'
+      - '2346:2346'
+    volumes:
+      - storage:/synox-web/storage
+      - files:/synox-web/public/files
+    networks:
+      - net
+
+volumes:
+  redis-data:
+  storage:
+  files:
+
+networks:
+  net:
+    driver: bridge

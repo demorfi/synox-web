@@ -2,28 +2,42 @@
 
 namespace App\Package;
 
-use App\Interfaces\Package;
-use Digua\Components\DataFile;
+use App\Components\Settings;
+use App\Package\Abstracts\Relay;
 use Digua\Exceptions\Storage as StorageException;
-use Generator;
 use JsonSerializable;
-use BadMethodCallException;
 
 /**
- * @mixin Package
+ * @mixin Relay
  */
 final readonly class Adapter implements JsonSerializable
 {
     /**
-     * @param Package  $package  Package instance
-     * @param DataFile $settings Package settings
+     * @param Relay    $relay
+     * @param Settings $settings
      * @throws StorageException
      */
     public function __construct(
-        private Package $package,
-        private DataFile $settings
+        private Relay $relay,
+        private Settings $settings
     ) {
         $this->settings->read();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'       => $this->relay->getId(),
+            'type'     => $this->relay->getType()->getName(),
+            'enabled'  => $this->isEnabled(),
+            'settings' => $this->settings->collection()
+                ->except('enabled')
+                ->replaceValue('password', fn($v) => !empty($v) ? 'password' : ''),
+            ...$this->relay->jsonSerialize(),
+        ];
     }
 
     /**
@@ -33,30 +47,7 @@ final readonly class Adapter implements JsonSerializable
      */
     public function __call(string $name, array $arguments): mixed
     {
-        if (!method_exists($this->package, $name)) {
-            throw new BadMethodCallException('Method ' . $name . ' does not exist!');
-        }
-
-        return $this->package->$name(...$arguments);
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'id'          => $this->getId(),
-            'name'        => $this->package->getName(),
-            'type'        => $this->package->getItemType()->getName(),
-            'version'     => $this->package->getVersion(),
-            'description' => $this->package->getShortDescription(),
-            'usesAuth'    => $this->package->hasAuth(),
-            'enabled'     => $this->isEnabled(),
-            'settings'    => $this->settings->collection()
-                ->except('enabled')
-                ->replaceValue('password', fn($v) => !empty($v) ? 'password' : '')
-        ];
+        return $this->relay->$name(...$arguments);
     }
 
     /**
@@ -83,18 +74,9 @@ final readonly class Adapter implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return Settings
      */
-    public function getId(): string
-    {
-        $className = get_class($this->package);
-        return substr($className, strrpos($className, '\\') + 1);
-    }
-
-    /**
-     * @return DataFile
-     */
-    public function getSettings(): DataFile
+    public function getSettings(): Settings
     {
         return $this->settings;
     }
@@ -116,16 +98,5 @@ final readonly class Adapter implements JsonSerializable
     public function isEnabled(): bool
     {
         return (bool)$this->settings->get('enabled', false);
-    }
-
-    /**
-     * @param Query $query
-     * @return Generator
-     */
-    public function search(Query $query): Generator
-    {
-        foreach ($this->package->search($query) as $result) {
-            yield is_a($result, $this->package->getItemType()->getInterface()) ? $result : null;
-        }
     }
 }

@@ -7,3 +7,7 @@ node_modules/
 *.tsbuildinfo
 *-lock.json
 Dockerfile
+docker-compose.yml
+.dockerignore
+.gitignore
+*.example

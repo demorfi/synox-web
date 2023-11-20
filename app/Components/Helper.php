@@ -3,10 +3,7 @@
 namespace App\Components;
 
 use Digua\Helper as HelperBase;
-use Digua\Exceptions\{
-    Path as PathException,
-    Storage as StorageException
-};
+use Digua\Exceptions\{Path as PathException, Storage as StorageException};
 use DOMWrap\Document;
 
 class Helper extends HelperBase

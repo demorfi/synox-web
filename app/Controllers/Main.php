@@ -2,17 +2,16 @@
 
 namespace App\Controllers;
 
-use Digua\Controllers\Base as BaseController;
 use Digua\Exceptions\Path as PathException;
 use Digua\Template;
 
-class Main extends BaseController
+class Main extends Base
 {
     /**
      * @return Template
      * @throws PathException
      */
-    public function defaultAction(): Template
+    public function getDefaultAction(): Template
     {
         return $this->render('main');
     }

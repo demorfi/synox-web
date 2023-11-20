@@ -2,13 +2,10 @@
 
 namespace App\Components;
 
-use App\Enums\FileExtension;
+use App\Package\Enums\FileExtension;
 use Digua\Components\{DataFile, Types};
 use Digua\Config as ConfigBase;
-use Digua\Exceptions\{
-    Path as PathException,
-    Storage as StorageException
-};
+use Digua\Exceptions\{Path as PathException, Storage as StorageException};
 
 class Config extends ConfigBase
 {
