@@ -7,7 +7,10 @@ export default {
             commit('reset');
             search.startSearch(query, filters)
                 .then(({data}) => {
-                    const wsHost = data.host.replace('websocket:', 'ws:').replace('0.0.0.0', location.hostname);
+                    const wsHost = data.host
+                        .replace('websocket:', 'ws:')
+                        .replace('0.0.0.0', location.hostname);
+
                     dispatch('openSocket', {...data, wsHost})
                         .then(() => resolve(data))
                         .catch(({message}) => reject({message}));
@@ -30,10 +33,10 @@ export default {
         });
     },
 
-    openSocket({dispatch, state, commit}, {wsHost, hash, limit})
+    openSocket({dispatch, state, commit}, {wsHost, token, limit})
     {
         return new Promise((resolve, reject) => {
-            const socket = new WebSocket(wsHost + '/?hash=' + hash);
+            const socket = new WebSocket(wsHost + '/?token=' + token);
             socket.onopen = () => {
                 commit('setSocket', socket);
                 commit('setStatusConnection', true);

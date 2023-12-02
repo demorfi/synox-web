@@ -54,7 +54,7 @@ abstract class File extends Content
     public function create(string $name, string $content): static
     {
         if ($this->is($content)) {
-            $name     = str_replace('.', '_', $name);
+            $name     = strtolower(preg_replace(['/[^A-Za-z0-9_]/', '/_{2,}/'], '_', $name));
             $filePath = self::getDiskPath(Helper::filterFileName($name . $this->extension));
             if (file_put_contents($filePath, $content, LOCK_EX)) {
                 $this->name      = $name;

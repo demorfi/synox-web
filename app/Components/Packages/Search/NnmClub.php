@@ -6,7 +6,6 @@ use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent 
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
-use Generator;
 
 class NnmClub extends Torrent
 {
@@ -159,7 +158,7 @@ class NnmClub extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('.forumline.tablesorter tbody tr') as $item) {
             $url = $item->find('.genmed a.genmed')->attr('href');

@@ -98,26 +98,26 @@ class Worker
     }
 
     /**
-     * @param string            $hash
+     * @param string            $token
      * @param Query             $query
      * @param PackageCollection $packages
      * @return void
      */
-    public function addQueue(string $hash, Query $query, PackageCollection $packages): void
+    public function addQueue(string $token, Query $query, PackageCollection $packages): void
     {
         $queue = base64_encode(serialize(compact('query', 'packages')));
-        $this->send($hash, compact('queue'));
+        $this->send($token, compact('queue'));
     }
 
     /**
-     * @param string $hash
+     * @param string $token
      * @param array  $data
      * @return void
      */
-    protected function send(string $hash, array $data): void
+    protected function send(string $token, array $data): void
     {
         $stream = stream_socket_client($this->privateAddress);
-        fwrite($stream, json_encode(['hash' => $hash, ...$data]));
+        fwrite($stream, json_encode(['token' => $token, ...$data]));
         fclose($stream);
     }
 
@@ -135,33 +135,33 @@ class Worker
     }
 
     /**
-     * @param string  $hash
+     * @param string  $token
      * @param Query   $query
      * @param Adapter $package
      * @return bool
      */
-    public function runParallelQueue(string $hash, Query $query, Adapter $package): bool
+    public function runParallelQueue(string $token, Query $query, Adapter $package): bool
     {
-        $queue = base64_encode(serialize([$hash, $query, $package]));
+        $queue = base64_encode(serialize([$token, $query, $package]));
         return $this->exec('--queue ' . escapeshellarg($queue), true);
     }
 
     /**
-     * @param string $hash
+     * @param string $token
      * @return bool
      */
-    public function runParallelWatchdog(string $hash): bool
+    public function runParallelWatchdog(string $token): bool
     {
-        return $this->exec('--watchdog ' . escapeshellarg($hash), true);
+        return $this->exec('--watchdog ' . escapeshellarg($token), true);
     }
 
     /**
-     * @param string  $hash
+     * @param string  $token
      * @param Query   $query
      * @param Adapter $package
      * @return void
      */
-    public function queue(string $hash, Query $query, Adapter $package): void
+    public function queue(string $token, Query $query, Adapter $package): void
     {
         $type = $package->instance()->getType()->getName();
         $name = $package->getName();
@@ -172,7 +172,7 @@ class Worker
             $this->notify('Search (%s) through the package %s:%s', $query->value, $type, $name);
 
             foreach ($package->search($query) as $payload) {
-                if (!SharedMemory::has($hash)) {
+                if (!SharedMemory::has($token)) {
                     $this->notify('Search through the package %s:%s interrupted by watchdog?', $type, $name);
                     break;
                 }
@@ -183,7 +183,7 @@ class Worker
                 }
 
                 if (!empty($payload) && (!$query->hasFilter() || $query->filter->isPasses($payload))) {
-                    $this->send($hash, compact('payload'));
+                    $this->send($token, compact('payload'));
                     $countPayloads++;
                 }
             }
@@ -192,7 +192,7 @@ class Worker
         } catch (Exception $e) {
             $this->notify($name . ': ' . $e->getMessage());
         } finally {
-            $this->send($hash, ['completed' => $package->getId(), 'countPayloads' => $countPayloads]);
+            $this->send($token, ['completed' => $package->getId(), 'countPayloads' => $countPayloads]);
         }
     }
 
@@ -228,29 +228,29 @@ class Worker
     private function socketConnect(WorkerConnectionInterface $connection): void
     {
         try {
-            $hash = (new RequestQuery((new FilteredInput())->refresh(INPUT_SERVER)))->get('hash');
-            if (empty($hash)) {
-                throw new WorkerQueueException('Required hash not passed!');
+            $token = (new RequestQuery((new FilteredInput())->refresh(INPUT_SERVER)))->get('token');
+            if (empty($token)) {
+                throw new WorkerQueueException('Required token not passed!');
             }
 
-            $this->linkers[$hash] = $connection;
-            if (!isset($this->queues[$hash]) || empty($this->queues[$hash])) {
+            $this->linkers[$token] = $connection;
+            if (!isset($this->queues[$token]) || empty($this->queues[$token])) {
                 throw new WorkerQueueException('No search queue created!');
             }
 
-            $queue = (array)unserialize((string)base64_decode($this->queues[$hash], true));
+            $queue = (array)unserialize((string)base64_decode($this->queues[$token], true));
             if (!isset($queue['query'], $queue['packages'])
                 || !($queue['query'] instanceof Query)
                 || !($queue['packages'] instanceof PackageCollection)) {
-                unset($this->queues[$hash]);
+                unset($this->queues[$token]);
                 throw new WorkerQueueException('Search queue is broken!');
             }
 
-            $storage = Storage::makeSharedMemory($hash);
+            $storage = Storage::makeSharedMemory($token);
             $threads = $queue['packages']->count();
             $storage->write((string)$threads);
 
-            if (!$this->runParallelWatchdog($hash)) {
+            if (!$this->runParallelWatchdog($token)) {
                 $storage->free();
                 throw new WorkerQueueException('Failed running parallel watchdog!');
             }
@@ -258,13 +258,13 @@ class Worker
             $this->notify('Search (%s) running', $queue['query']->value);
             foreach ($queue['packages'] as $package) {
                 /* @var $package Adapter */
-                if (!$this->runParallelQueue($hash, $queue['query'], $package)) {
+                if (!$this->runParallelQueue($token, $queue['query'], $package)) {
                     $storage->rewrite((string)(--$threads));
                 }
             }
 
             $this->notify('Running (%d) threads', $threads);
-            $this->send($hash, compact('threads'));
+            $this->send($token, compact('threads'));
         } catch (Exception $e) {
             $connection->send(['error' => $e->getMessage(), 'finished' => true]);
         }
@@ -278,16 +278,16 @@ class Worker
     private function socketClose(WorkerConnectionInterface $connection): void
     {
         // Freeing up memory
-        if (($hash = array_search($connection, $this->linkers)) !== false) {
-            unset($this->linkers[$hash]);
+        if (($token = array_search($connection, $this->linkers)) !== false) {
+            unset($this->linkers[$token]);
 
-            if (isset($this->queues[$hash])) {
-                unset($this->queues[$hash]);
+            if (isset($this->queues[$token])) {
+                unset($this->queues[$token]);
             }
 
             // Stop searching
-            if (SharedMemory::has($hash)) {
-                Storage::makeSharedMemory($hash)->free();
+            if (SharedMemory::has($token)) {
+                Storage::makeSharedMemory($token)->free();
             }
         }
     }
@@ -300,32 +300,32 @@ class Worker
     private function socketMessage(WorkerConnectionInterface $connection, string $received): void
     {
         $data = json_decode($received);
-        if (!isset($data->hash)) {
+        if (!isset($data->token)) {
             return;
         }
 
         // Add new search queue
         if (isset($data->queue)) {
-            $this->queues[$data->hash] = $data->queue;
+            $this->queues[$data->token] = $data->queue;
             return;
         }
 
         // Sending a message to the client
-        if (isset($this->linkers[$data->hash])) {
-            $this->linkers[$data->hash]->send($received);
+        if (isset($this->linkers[$data->token])) {
+            $this->linkers[$data->token]->send($received);
         }
     }
 
     /**
-     * @param string $hash
+     * @param string $token
      * @param int    $timeout Seconds
      * @return void
      * @throws StorageException
      */
-    public function watchdog(string $hash, int $timeout = 60): void
+    public function watchdog(string $token, int $timeout = 60): void
     {
         $sleep   = 1;
-        $storage = Storage::makeSharedMemory($hash);
+        $storage = Storage::makeSharedMemory($token);
 
         while (true) {
             sleep($sleep);
@@ -339,6 +339,6 @@ class Worker
         }
 
         $storage->free();
-        $this->send($hash, ['finished' => true]);
+        $this->send($token, ['finished' => true]);
     }
 }

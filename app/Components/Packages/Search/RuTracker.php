@@ -6,7 +6,6 @@ use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent 
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
-use Generator;
 
 class RuTracker extends Torrent
 {
@@ -70,7 +69,7 @@ class RuTracker extends Torrent
             [263, 265, 266, 271, 272, 273, 283, 294, 312, 313, 314, 325, 343, 352, 372, 373, 376, 387, 393, 404],
             [484, 486, 489, 497, 498, 500, 504, 505, 507, 511, 514, 521, 528, 532, 534, 536, 539, 549, 550, 552],
             [572, 592, 594, 599, 607, 610, 614, 615, 617, 625, 626, 656, 660, 670, 671, 672, 677, 694, 704, 709],
-            [717, 718, 721, 751, 752, 775, 781, 809, 815, 816, 819, 820, 821, 822, 825, 827, 842, 845, 851, 854],
+            [717, 718, 721, 751, 752, 775, 781, 807, 809, 815, 816, 819, 820, 821, 822, 825, 827, 842, 845, 851, 854],
             [875, 876, 877, 882, 893, 905, 911, 915, 920, 921, 930, 934, 939, 941, 978, 979, 990, 1102, 1105, 1106],
             [1114, 1120, 1144, 1171, 1186, 1188, 1213, 1214, 1229, 1235, 1242, 1247, 1248, 1254, 1255, 1257, 1258, 1259, 1260, 1261],
             [1278, 1280, 1281, 1287, 1288, 1301, 1311, 1315, 1319, 1323, 1326, 1327, 1332, 1336, 1339, 1343, 1359, 1386, 1387, 1389],
@@ -191,7 +190,7 @@ class RuTracker extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('.forumline tr.hl-tr') as $item) {
             $url = $item->find('a.tLink')->attr('href');

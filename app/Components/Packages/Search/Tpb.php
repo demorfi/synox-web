@@ -11,7 +11,6 @@ use App\Package\Search\Content\Torrent as TorrentContent;
 use App\Components\Storage\Journal;
 use Digua\Exceptions\Path as PathException;
 use Exception;
-use Generator;
 
 class Tpb extends Package
 {
@@ -112,7 +111,7 @@ class Tpb extends Package
      * @inheritdoc
      * @throws PathException
      */
-    public function search(Query $query): Generator
+    public function search(Query $query): iterable
     {
         $client = $this->client();
         $client->useCookie($this->getId());

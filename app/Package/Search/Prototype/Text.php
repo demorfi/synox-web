@@ -12,7 +12,6 @@ use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\{Document, Element};
 use Exception;
-use Generator;
 
 abstract class Text extends Package
 {
@@ -129,7 +128,7 @@ abstract class Text extends Package
      * @inheritdoc
      * @throws PathException
      */
-    public function search(Query $query): Generator
+    public function search(Query $query): iterable
     {
         if ($this->hasAuth() && (!$this->hasCredentials() || !$this->isAvailableAccount())) {
             return false;
@@ -168,9 +167,9 @@ abstract class Text extends Package
 
     /**
      * @param Document $page
-     * @return Generator
+     * @return iterable
      */
-    abstract protected function searchItems(Document $page): Generator;
+    abstract protected function searchItems(Document $page): iterable;
 
     /**
      * @param Document $page
@@ -186,7 +185,7 @@ abstract class Text extends Package
 
     /**
      * @param Element $element
-     * @return Generator|TextItem
+     * @return iterable|TextItem
      */
-    abstract protected function buildItem(Element $element): Generator|TextItem;
+    abstract protected function buildItem(Element $element): iterable|TextItem;
 }

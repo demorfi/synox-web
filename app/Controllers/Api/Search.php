@@ -37,7 +37,7 @@ class Search extends Base
 
             $dispatcher = new Dispatcher();
             return $this->response([
-                'hash'  => $dispatcher->makeNewSearchQuery($query, new Filter($filters)),
+                'token' => $dispatcher->makeNewSearchQuery($query, new Filter($filters)),
                 'host'  => Helper::config('worker')->get('public'),
                 'limit' => Helper::config('app')->get('limitPerPackage')
             ], Headers::ACCEPTED);

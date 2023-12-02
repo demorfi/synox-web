@@ -4,7 +4,6 @@ namespace App\Components\Packages\Search;
 
 use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category};
 use DOMWrap\Document;
-use Generator;
 
 class FastTorrent extends Torrent
 {
@@ -48,7 +47,7 @@ class FastTorrent extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('.film-list .film-item') as $item) {
             $url = $item->find('a.film-download')->attr('href');
@@ -69,7 +68,7 @@ class FastTorrent extends Torrent
     /**
      * @inheritdoc
      */
-    protected function buildItem(string $url, Document $itemPage, Document $rootPage): Generator
+    protected function buildItem(string $url, Document $itemPage, Document $rootPage): iterable
     {
         // Category torrent
         $propCategory = $itemPage->find('.nav-menu > li > a')->text();

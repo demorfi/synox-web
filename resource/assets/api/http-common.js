@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const defCatch = error => {
-    let message = error.response?.data?.error ?? error.message;
-    throw new Error(message);
+    throw new Error(error.response?.data?.error ?? error.message);
 };
 
 export const http = axios.create({
