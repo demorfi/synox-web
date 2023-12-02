@@ -17,7 +17,7 @@
         <b-button
             :variant="enabled ? 'outline-warning' : 'outline-light'"
             size="sm"
-            @click="$emit('toggleActivity', !enabled)">
+            @click="$emit('status', !enabled)">
           {{ enabled ? 'Disable' : 'Enable' }}
         </b-button>
       </b-button-group>

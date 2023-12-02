@@ -7,7 +7,6 @@ use App\Package\Search\Enums\{Type, Category};
 use App\Package\Search\{Query, Filter};
 use App\Package\Search\Item\Text as TextItem;
 use App\Package\Search\Content\Text as TextContent;
-use Generator;
 
 class TestText extends Package
 {
@@ -82,7 +81,7 @@ class TestText extends Package
     /**
      * @inheritdoc
      */
-    public function search(Query $query): Generator
+    public function search(Query $query): iterable
     {
         $maxResults = rand(6, 24);
         for ($i = 1; $i <= $maxResults; $i++) {

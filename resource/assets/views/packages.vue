@@ -19,7 +19,7 @@
           :key="pkg.id">
         <PackageItem
             v-bind="pkg"
-            @toggle-activity="changeActivity($event, pkg.id)"
+            @status="changeActivity($event, pkg.id)"
             @auth="showAuthForm(pkg.id, pkg.name)"/>
       </b-col>
     </b-row>

@@ -90,7 +90,11 @@ export default {
   },
 
   methods: {
-    ...mapActions('packages', ['getPackagesFilters'])
+    ...mapActions('packages', ['getPackagesFilters']),
+    reset()
+    {
+      this.selected = {};
+    }
   }
 }
 </script>

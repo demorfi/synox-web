@@ -6,7 +6,6 @@ use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent 
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
-use Generator;
 
 class Rutor extends Torrent
 {
@@ -118,7 +117,7 @@ class Rutor extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('#index table .backgr ~ tr') as $item) {
             $url = $item->find('a[href^="/torrent/"]')->attr('href');

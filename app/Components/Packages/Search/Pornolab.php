@@ -6,7 +6,6 @@ use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent 
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
-use Generator;
 
 class Pornolab extends Torrent
 {
@@ -129,7 +128,7 @@ class Pornolab extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('.forumline tr.tCenter') as $item) {
             $url = $item->find('a.tLink')->attr('href');

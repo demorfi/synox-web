@@ -32,11 +32,11 @@ try {
             exit($worker->notify('Queue is broken!') . "\n");
         }
 
-        $worker->queue(...([$hash, $query, $package] = $queue));
+        $worker->queue(...([$token, $query, $package] = $queue));
 
         // Queue completion tracking
-        if (SharedMemory::has($hash)) {
-            $storage = Storage::makeSharedMemory($hash);
+        if (SharedMemory::has($token)) {
+            $storage = Storage::makeSharedMemory($token);
             $threads = (int)$storage->read();
             $storage->rewrite((string)(--$threads));
         }
@@ -45,12 +45,12 @@ try {
 
     // Run queue watchdog
     if (isset($options['watchdog'])) {
-        $hash = $options['watchdog'];
-        if (!SharedMemory::has($hash)) {
+        $token = $options['watchdog'];
+        if (!SharedMemory::has($token)) {
             exit($worker->notify('Queue ends early!') . "\n");
         }
 
-        $worker->watchdog($hash);
+        $worker->watchdog($token);
         exit;
     }
 } catch (Exception $e) {

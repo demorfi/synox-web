@@ -4,7 +4,6 @@ namespace App\Components\Packages\Search;
 
 use App\Package\Search\{Filter, Prototype\Text, Enums\Category, Item\Text as TextItem};
 use DOMWrap\{Document, Element};
-use Generator;
 
 class Bananan extends Text
 {
@@ -39,7 +38,7 @@ class Bananan extends Text
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         $total = 20;
         foreach ($page->find('.songs.songs_b > h5')->slice(0, $total) as $item) {

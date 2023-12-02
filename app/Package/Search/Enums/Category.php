@@ -70,6 +70,7 @@ enum Category: string implements FilterEnum
      */
     public static function tryFromArray(mixed $value, array $array): ?self
     {
-        return self::tryFrom(ArrayCollection::make($array)->search($value, recursive: true)->firstKey());
+        $from = ArrayCollection::make($array)->search($value, recursive: true)->firstKey();
+        return !empty($from) ? self::tryFrom($from) : null;
     }
 }

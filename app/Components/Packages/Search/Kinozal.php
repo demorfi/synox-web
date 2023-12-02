@@ -6,7 +6,6 @@ use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent 
 use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
-use Generator;
 
 class Kinozal extends Torrent
 {
@@ -132,7 +131,7 @@ class Kinozal extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('.content .t_peer tr.bg') as $item) {
             $url = $item->find('.nam a')->attr('href');

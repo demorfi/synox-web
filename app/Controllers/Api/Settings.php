@@ -50,11 +50,11 @@ class Settings extends Base
 
             $config = Helper::config($type);
             [$name, $value] = $this->dataRequest()->post()->collection()->only('name', 'value')->getValues();
-            if (!$config->has($name)) {
+            if (empty($name) || !$config->has($name)) {
                 $this->throwAbort(Headers::UNPROCESSABLE_ENTITY);
             }
 
-            if ($config->update($name, $value)) {
+            if ($value !== null && $config->update($name, $value)) {
                 return $this->response(['success' => true, $name => $value], Headers::ACCEPTED);
             }
 

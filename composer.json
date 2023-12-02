@@ -1,29 +1,34 @@
 {
   "name": "demorfi/synox-web",
-  "description": "",
+  "type": "project",
+  "description": "Modular-based torrent/text file search engine",
   "keywords": [
     "synox",
-    "synox-web",
     "search",
-    "torrents"
+    "torrent",
+    "engine"
   ],
-  "type": "project",
   "license": "MIT",
   "authors": [
     {
       "name": "demorfi",
-      "email": "demorfi@gmail.com"
+      "email": "demorfi@gmail.com",
+      "role": "Developer"
     }
   ],
+  "support": {
+    "issues": "https://github.com/demorfi/synox-web/issues",
+    "source": "https://github.com/demorfi/synox-web"
+  },
   "require": {
-    "php": "^8.2",
+    "php": ">=8.2",
     "ext-curl": "*",
     "ext-mbstring": "*",
     "ext-shmop": "*",
     "ext-json": "*",
     "ext-posix": "*",
     "ext-redis": "*",
-    "demorfi/digua": "dev-main",
+    "demorfi/digua": "^v1.5.0",
     "scotteh/php-dom-wrapper": "^2.0",
     "workerman/workerman": "^v4.1"
   },

@@ -4,7 +4,6 @@ namespace App\Package\Search;
 
 use App\Package\{Abstracts\Relay as RelayAbstract, Enums\Type as PackageType, Search\Interfaces\Content};
 use Digua\{LateEvent, Components\Event};
-use Generator;
 
 final class Relay extends RelayAbstract
 {
@@ -31,7 +30,7 @@ final class Relay extends RelayAbstract
     /**
      * @inheritdoc
      */
-    public function search(Query $query): Generator
+    public function search(Query $query): iterable
     {
         $event = new Event(
             ['query' => $query, 'package' => $this->package],
@@ -40,7 +39,7 @@ final class Relay extends RelayAbstract
 
         LateEvent::notify(__METHOD__, $event);
         $event->addHandler(function (Event $event, mixed $previous) {
-            return $previous instanceof Generator && $previous->valid() ? $previous : $this->result($event->query);
+            return is_iterable($previous) && $previous->valid() ? $previous : $this->result($event->query);
         });
 
         foreach ($event() as $result) {
@@ -50,9 +49,9 @@ final class Relay extends RelayAbstract
 
     /**
      * @param Query $query
-     * @return Generator
+     * @return iterable
      */
-    private function result(Query $query): Generator
+    private function result(Query $query): iterable
     {
         $event = new Event(
             ['query' => $query, 'package' => $this->package],

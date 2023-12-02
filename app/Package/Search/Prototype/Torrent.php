@@ -12,7 +12,6 @@ use Digua\Components\Client\Curl as CurlClient;
 use Digua\Exceptions\Path as PathException;
 use DOMWrap\Document;
 use Exception;
-use Generator;
 use SplObjectStorage;
 
 abstract class Torrent extends Package
@@ -163,7 +162,7 @@ abstract class Torrent extends Package
      * @inheritdoc
      * @throws PathException
      */
-    public function search(Query $query): Generator
+    public function search(Query $query): iterable
     {
         $this->query = $query;
         if ($this->hasAuth() && (!$this->hasCredentials() || !$this->isAvailableAccount())) {
@@ -203,8 +202,13 @@ abstract class Torrent extends Package
             $urls = $storage[$rootPage];
             foreach ($urls as $url) {
                 try {
-                    $itemPage = $this->getItemPage($client, $url, $rootPage);
-                    yield $this->buildItem($url, $itemPage, $rootPage);
+                    $itemPage  = $this->getItemPage($client, $url, $rootPage);
+                    $itemBuild = $this->buildItem($url, $itemPage, $rootPage);
+                    if (is_iterable($itemBuild)) {
+                        yield from $itemBuild;
+                    } else {
+                        yield $itemBuild;
+                    }
                 } catch (Exception $e) {
                     Journal::staticPush($this->getName() . ':' . __LINE__ . ' -> ' . $e->getMessage());
                 }
@@ -228,8 +232,8 @@ abstract class Torrent extends Package
             $content = $this->getType()->makeContent();
             if ($content->is($data)) {
                 $torrent = $content->decode($data);
-                if (!empty($torrent) && isset($torrent['info']['name'])) {
-                    $content->create($torrent['info']['name'], $data);
+                if (!empty($torrent) && isset($torrent['creation date'], $torrent['info']['name'])) {
+                    $content->create($torrent['info']['name'] . '-' . $torrent['creation date'], $data);
                 }
             }
             return $content;
@@ -246,9 +250,9 @@ abstract class Torrent extends Package
 
     /**
      * @param Document $page
-     * @return Generator
+     * @return iterable
      */
-    abstract protected function searchItems(Document $page): Generator;
+    abstract protected function searchItems(Document $page): iterable;
 
     /**
      * @param string $id
@@ -260,7 +264,7 @@ abstract class Torrent extends Package
      * @param string   $url
      * @param Document $itemPage
      * @param Document $rootPage
-     * @return Generator|TorrentItem
+     * @return iterable|TorrentItem
      */
-    abstract protected function buildItem(string $url, Document $itemPage, Document $rootPage): Generator|TorrentItem;
+    abstract protected function buildItem(string $url, Document $itemPage, Document $rootPage): iterable|TorrentItem;
 }

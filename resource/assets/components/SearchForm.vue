@@ -17,7 +17,6 @@
                 type="text"
                 id="query"
                 placeholder="Enter search query"
-                autocomplete="off"
                 required/>
             <b-progress
                 v-if="form.submitted"
@@ -82,7 +81,7 @@
             v-model="filters.show"
             id="filters"
             class="col-12">
-          <SearchFormFilters @selected="form.filters = $event"/>
+          <SearchFormFilters ref="searchFilters" @selected="form.filters = $event"/>
         </b-collapse>
       </suspense>
     </keep-alive>
@@ -147,6 +146,7 @@ export default {
 
     resetForm()
     {
+      this.$refs.searchFilters.reset();
       this.form = this.$options.data().form;
       this.$emit('reset');
     },

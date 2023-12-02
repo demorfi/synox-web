@@ -6,7 +6,6 @@ use App\Package\Search\{Abstracts\Item, Abstracts\Package, Enums\Category, Inter
 use Digua\Components\ArrayCollection;
 use JsonSerializable;
 use Fiber;
-use Generator;
 use Throwable;
 
 class Filter implements JsonSerializable
@@ -32,9 +31,9 @@ class Filter implements JsonSerializable
     }
 
     /**
-     * @return ?Generator
+     * @return ?iterable
      */
-    final public static function uses(): ?Generator
+    final public static function uses(): ?iterable
     {
         foreach (static::$uses as $enum) {
             if (is_subclass_of($enum, FilterEnum::class)) {

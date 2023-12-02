@@ -4,7 +4,6 @@ namespace App\Package\Search\Interfaces;
 
 use App\Package\Interfaces\Package as PackageInterface;
 use App\Package\Search\{Enums\Type, Query};
-use Generator;
 
 interface Package extends PackageInterface
 {
@@ -20,9 +19,9 @@ interface Package extends PackageInterface
 
     /**
      * @param Query $query
-     * @return ?Generator
+     * @return ?iterable
      */
-    public function search(Query $query): ?Generator;
+    public function search(Query $query): ?iterable;
 
     /**
      * @param string $id

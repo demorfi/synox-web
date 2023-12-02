@@ -4,7 +4,6 @@ namespace App\Components\Packages\Search;
 
 use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent as TorrentItem};
 use DOMWrap\Document;
-use Generator;
 
 class Byrutor extends Torrent
 {
@@ -62,7 +61,7 @@ class Byrutor extends Torrent
     /**
      * @inheritdoc
      */
-    protected function searchItems(Document $page): Generator
+    protected function searchItems(Document $page): iterable
     {
         foreach ($page->find('.short_search .short_titles') as $item) {
             $url = $item->find('a')->attr('href');

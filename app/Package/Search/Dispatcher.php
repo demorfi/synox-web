@@ -19,9 +19,9 @@ final class Dispatcher
     /**
      * @return string
      */
-    protected function makeHash(): string
+    protected function makeToken(): string
     {
-        return (string)Helper::makeIntHash();
+        return md5((string)Helper::makeIntHash());
     }
 
     /**
@@ -32,12 +32,13 @@ final class Dispatcher
     private function usePackages(array $onlyPackages = null, ?Filter $filter = null): bool
     {
         $onlyPackages   ??= $filter?->collection()->get('packages') ?: [];
+        $extraFilters   = $filter?->collection()->except('packages')->toArray() ?: [];
         $this->packages = Repository::getInstance()->getPackages()
             ->getByType(PackageType::SEARCH)
             ->getByEnabled()
-            ->filterByType(static function ($item) use ($onlyPackages, $filter): bool {
+            ->filterByType(static function ($item) use ($onlyPackages, $extraFilters, $filter): bool {
                 return (empty($onlyPackages) || in_array($item->getId(), $onlyPackages))
-                    && (empty($filter) || $filter->isPasses($item->instance()));
+                    && (empty($extraFilters) || $filter->isPasses($item->instance()));
             });
 
         return (bool)$this->packages->count();
@@ -54,7 +55,7 @@ final class Dispatcher
     /**
      * @param string  $query
      * @param ?Filter $filter
-     * @return string Query hash
+     * @return string Query token
      * @throws PackageDispatcherException
      * @uses LateEvent::notify
      */
@@ -74,13 +75,13 @@ final class Dispatcher
             throw new PackageDispatcherException('Failed running parallel service!');
         }
 
-        $hash  = $this->makeHash();
+        $token = $this->makeToken();
         $query = new Query($query, $filter);
 
-        sleep(1);
-        $worker->addQueue($hash, $query, $this->packages);
+        usleep(500000);
+        $worker->addQueue($token, $query, $this->packages);
         LateEvent::notify(__CLASS__, sprintf('Search query (%s) created', $query->value));
-        return $hash;
+        return $token;
     }
 
     /**
