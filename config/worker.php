@@ -13,5 +13,11 @@ return [
         'websocket://%s:%d',
         Env::get('WORKER_PUBLIC_HOST', '0.0.0.0'),
         Env::get('WORKER_PUBLIC_PORT', 2346)
-    )
+    ),
+
+    'broadcast' => sprintf(
+        'websocket://%s:%d',
+        Env::get('WORKER_BROADCAST_HOST', Env::get('WORKER_PUBLIC_HOST', '0.0.0.0')),
+        Env::get('WORKER_BROADCAST_PORT', Env::get('WORKER_PUBLIC_PORT', 2346))
+    ),
 ];
