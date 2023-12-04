@@ -57,9 +57,11 @@ docker-compose up -d
 * Build npm `npm run build`
 * [* Use .env.example or /config files to set your personal preferences]
 
+## API Integration
+Use implementation of the API interface [Synox Web API](https://github.com/demorfi/synox-web-api)
+
 ## Reporting issues
 If you have any issues with with the application please open an issue on [GitHub](https://github.com/demorfi/synox-web/issues).
 
-License
-=======
+## License
 SynoX Web is licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php).
