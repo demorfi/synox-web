@@ -5,7 +5,8 @@ define('ROOT_PATH', realpath(DOCUMENT_ROOT . '/..'));
 
 require_once ROOT_PATH . '/bootstrap.php';
 
-use Digua\{Request, Routes\RouteAsNameBuilder};
+use App\Package\{Repository, Adapter, Enums\Type};
+use Digua\{Request, LateEvent, Routes\RouteAsNameBuilder, Components\Event, RouteDispatcher};
 
 $usesApi      = str_starts_with($_SERVER['REQUEST_URI'], '/api/');
 $request      = new Request;
@@ -21,4 +22,12 @@ if (!$usesApi) {
     $builder->forced(App\Controllers\Main::class, 'default');
 }
 
-print (new Digua\RouteDispatcher())->default($builder, $appEntryPath, App\Controllers\Error::class);
+Repository::getInstance()->getPackages()
+    ->getByEnabled()
+    ->getByType(Type::EXTENSION)
+    ->each(static function (Adapter $package) {
+        $package->wakeup();
+    });
+
+LateEvent::notify(RouteDispatcher::class, new Event(compact('request', 'builder')));
+print (new RouteDispatcher)->default($builder, $appEntryPath, App\Controllers\Error::class);

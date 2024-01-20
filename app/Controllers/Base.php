@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Package\{Repository, Adapter};
+use App\Package\Repository;
 use Digua\Controllers\Resource;
 use Digua\Request;
 
@@ -28,8 +28,5 @@ abstract class Base extends Resource
     protected function init(): void
     {
         $this->repository = Repository::getInstance();
-        $this->repository->getPackages()->getByEnabled()->each(function (Adapter $package) {
-            $package->wakeup();
-        });
     }
 }
