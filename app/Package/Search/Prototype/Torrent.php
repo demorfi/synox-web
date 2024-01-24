@@ -232,8 +232,8 @@ abstract class Torrent extends Package
             $content = $this->getType()->makeContent();
             if ($content->is($data)) {
                 $torrent = $content->decode($data);
-                if (!empty($torrent) && isset($torrent['info']['length'], $torrent['info']['name'])) {
-                    $content->create($torrent['info']['name'] . '-' . $torrent['info']['length'], $data);
+                if (!empty($torrent) && isset($torrent['info']['piece length'], $torrent['info']['name'])) {
+                    $content->create($torrent['info']['name'] . '-' . $torrent['info']['piece length'], $data);
                 }
             }
             return $content;
