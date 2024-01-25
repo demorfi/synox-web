@@ -55,11 +55,12 @@ final class Dispatcher
     /**
      * @param string  $query
      * @param ?Filter $filter
+     * @param array   $params
      * @return string Query token
      * @throws PackageDispatcherException
      * @uses LateEvent::notify
      */
-    public function makeNewSearchQuery(string $query, ?Filter $filter = null): string
+    public function makeNewSearchQuery(string $query, ?Filter $filter = null, array $params = []): string
     {
         if (empty($query)) {
             throw new PackageDispatcherException('Missing search query!');
@@ -76,7 +77,7 @@ final class Dispatcher
         }
 
         $token = $this->makeToken();
-        $query = new Query($query, $filter);
+        $query = new Query($query, $filter, $params);
 
         usleep(500000);
         $worker->addQueue($token, $query, $this->packages);

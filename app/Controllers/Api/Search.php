@@ -30,6 +30,7 @@ class Search extends Base
             $request = $this->dataRequest()->post();
             $query   = $request->getFixedTypeValue('query', 'string');
             $filters = $request->getFixedTypeValue('filters', 'array');
+            $params  = $request->getFixedTypeValue('params', 'array');
             $config  = Helper::config('worker')->collection();
 
             if (empty($query) || strlen($query) <= 3) {
@@ -38,7 +39,7 @@ class Search extends Base
 
             $dispatcher = new Dispatcher();
             return $this->response([
-                'token' => $dispatcher->makeNewSearchQuery($query, new Filter($filters)),
+                'token' => $dispatcher->makeNewSearchQuery($query, new Filter($filters), $params),
                 'host'  => $config->replaceValue('broadcast', static function ($value) use ($config) {
                     $usesSsl = $config->collapse('ssl')->getFixedTypeValue('use', 'bool', false);
                     return str_ireplace('websocket:', $usesSsl ? 'wss:' : 'ws:', $value);
