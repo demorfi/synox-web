@@ -73,7 +73,10 @@ final class Relay extends RelayAbstract
      */
     public function fetch(string $id): ?Content
     {
-        $event = new Event(['id' => $id, 'package' => $this->package], $id);
+        $event = new Event(
+            ['id' => $id, 'package' => $this->package],
+            sprintf('%s:%s', $this->package->getId(), $id)
+        );
 
         LateEvent::notify(__METHOD__, $event);
         $event->addHandler(function (Event $event, mixed $previous) {
@@ -89,7 +92,10 @@ final class Relay extends RelayAbstract
      */
     private function fetched(string $id): ?Content
     {
-        $event = new Event(['id' => $id, 'package' => $this->package], $id);
+        $event = new Event(
+            ['id' => $id, 'package' => $this->package],
+            sprintf('%s:%s', $this->package->getId(), $id)
+        );
 
         LateEvent::notify(__METHOD__, $event);
         $event->addHandler(function (Event $event, mixed $previous, mixed $result) {
