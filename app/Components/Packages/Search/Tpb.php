@@ -53,8 +53,8 @@ class Tpb extends Package
      * @var array|int[][]
      */
     private static array $categories = [
-        Category::AUDIO->value        => [100],
-        Category::VIDEO->value        => [200, 500],
+        Category::AUDIO->value       => [100],
+        Category::VIDEO->value       => [200, 500],
         Category::APPLICATION->value => [300],
         Category::GAME->value        => [400]
     ];
@@ -180,15 +180,8 @@ class Tpb extends Package
         $client = $this->client();
         $client->useCookie($this->getId());
 
-        $data = $this->sendGet($client, sprintf($this->urlFetch, $id));
         $content = $this->getType()->makeContent();
-        if ($content->is($data)) {
-            $torrent = $content->decode($data);
-            if (!empty($torrent) && isset($torrent['info']['name'])) {
-                $content->create($torrent['info']['name'], $data);
-            }
-        }
-
+        $content->tryCreateFile($this->sendGet($client, sprintf($this->urlFetch, $id)));
         return $content;
     }
 }

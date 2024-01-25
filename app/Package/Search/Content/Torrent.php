@@ -44,20 +44,10 @@ class Torrent extends File
 
     /**
      * @param string $content
-     * @return string|array|int|null
-     */
-    public function decode(string $content): string|array|int|null
-    {
-        $pos = 0;
-        return $this->read($content, $pos);
-    }
-
-    /**
-     * @param string $content
      * @param int    $pos
      * @return string|array|int|null
      */
-    protected function read(string $content, int &$pos): string|array|int|null
+    protected function decode(string $content, int &$pos = 0): string|array|int|null
     {
         $length = strlen($content);
         if ($pos < 0 || $pos >= $length) {
@@ -84,12 +74,13 @@ class Torrent extends File
                 $info = [];
                 while ($pos < $length) {
                     if ($content[$pos] == 'e') {
+                        $info['isDct'] = true;
                         $pos++;
                         return $info;
                     }
 
-                    if (($key = $this->read($content, $pos)) === null
-                        || ($value = $this->read($content, $pos)) === null
+                    if (($key = $this->decode($content, $pos)) === null
+                        || ($value = $this->decode($content, $pos)) === null
                     ) {
                         break;
                     }
@@ -110,7 +101,7 @@ class Torrent extends File
                         return $info;
                     }
 
-                    if (($value = $this->read($content, $pos)) === null) {
+                    if (($value = $this->decode($content, $pos)) === null) {
                         break;
                     }
 
@@ -137,5 +128,70 @@ class Torrent extends File
                 $pos += $vLength;
                 return $value;
         }
+    }
+
+    /**
+     * @param mixed $info
+     * @return ?string
+     */
+    protected function encode(mixed $info): ?string
+    {
+        if (is_array($info)) {
+            $dict = isset($info['isDct']) && $info['isDct'] === true && ksort($info, SORT_STRING);
+            $line = $dict ? 'd' : 'l';
+            foreach ($info as $key => $value) {
+                if ($dict) {
+                    if ($key == 'isDct' && is_bool($value)) {
+                        continue;
+                    }
+                    $line .= strlen($key) . ':' . $key;
+                }
+
+                $line .= match (true) {
+                    is_int($value) || is_float($value) => "i{$value}e",
+                    is_string($value) => strlen($value) . ':' . $value,
+                    default => $this->encode($value)
+                };
+            }
+
+            return $line . 'e';
+        }
+
+        return is_string($info)
+            ? (strlen($info) . ':' . $info)
+            : (is_numeric($info)
+                ? "i{$info}e"
+                : null);
+    }
+
+    /**
+     * @param string $content
+     * @return ?array
+     */
+    public function read(string $content): ?array
+    {
+        $data = $this->decode($content);
+        if (isset($data['info']) && is_array($data['info']) && ($encoded = $this->encode($data['info'])) !== null) {
+            $data['hash'] = strtoupper(sha1($encoded));
+            $data['magnet'] = 'magnet:?xt=urn:btih:' . $data['hash'];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string $content
+     * @return bool
+     */
+    public function tryCreateFile(string $content): bool
+    {
+        if ($this->is($content)) {
+            $torrent = $this->read($content);
+            if (!empty($torrent) && isset($torrent['info']['name'])) {
+                $this->create($torrent['info']['name'] . (isset($torrent['hash']) ? '-' . $torrent['hash'] : ''), $content);
+            }
+        }
+
+        return $this->isAvailable();
     }
 }

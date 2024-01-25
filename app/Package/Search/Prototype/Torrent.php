@@ -228,14 +228,8 @@ abstract class Torrent extends Package
             $client = $this->client();
             $client->useCookie($this->getId());
 
-            $data = $this->sendGet($client, $this->buildFetchUrl($id));
             $content = $this->getType()->makeContent();
-            if ($content->is($data)) {
-                $torrent = $content->decode($data);
-                if (!empty($torrent) && isset($torrent['info']['piece length'], $torrent['info']['name'])) {
-                    $content->create($torrent['info']['name'] . '-' . $torrent['info']['piece length'], $data);
-                }
-            }
+            $content->tryCreateFile($this->sendGet($client, $this->buildFetchUrl($id)));
             return $content;
         }
 
