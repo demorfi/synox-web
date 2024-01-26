@@ -100,6 +100,21 @@ class Cache extends Package
                         $item = unserialize($data);
                         if ($item instanceof PackageItemInterface) {
                             $item->addProperty('Cached', 'Yes');
+
+                            $fStorage = Storage::make(
+                                RedisLists::class,
+                                $this->getStorageId(
+                                    Event::make(id: sprintf('%s:%s', $item->getId(), $item->getFetchId()))
+                                )
+                            );
+
+                            if (is_array($content = $fStorage->read())) {
+                                $content = unserialize(array_pop($content));
+                                if ($content instanceof PackageContentInterface) {
+                                    $item->setContent($content);
+                                }
+                            }
+
                             yield $item;
                         }
                     }
