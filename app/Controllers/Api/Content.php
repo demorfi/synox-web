@@ -31,7 +31,7 @@ class Content extends Base
     {
         try {
             $request = $this->dataRequest()->post();
-            $fetchId = $request->getFixedTypeValue('fetchId', 'string');
+            $fetchId = htmlspecialchars_decode($request->getFixedTypeValue('fetchId', 'string'));
             $params  = $request->getFixedTypeValue('params', 'array');
 
             if (empty($fetchId)) {
@@ -39,7 +39,7 @@ class Content extends Base
             }
 
             $dispatcher = new Dispatcher();
-            $content = $dispatcher->fetch($packageId, urldecode($fetchId), $params);
+            $content = $dispatcher->fetch($packageId, $fetchId, $params);
             if (!$content?->isAvailable()) {
                 $this->throwAbort(Headers::BAD_REQUEST, 'Unable to get content!');
             }

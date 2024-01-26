@@ -28,7 +28,7 @@ class Search extends Base
     {
         try {
             $request = $this->dataRequest()->post();
-            $query   = $request->getFixedTypeValue('query', 'string');
+            $query   = htmlspecialchars_decode($request->getFixedTypeValue('query', 'string'));
             $filters = $request->getFixedTypeValue('filters', 'array');
             $params  = $request->getFixedTypeValue('params', 'array');
             $config  = Helper::config('worker')->collection();
