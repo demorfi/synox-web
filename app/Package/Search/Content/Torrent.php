@@ -222,7 +222,7 @@ class Torrent extends File
     {
         $data = $this->decode($content);
         if (isset($data['info']) && is_array($data['info']) && ($encoded = $this->encode($data['info'])) !== null) {
-            $data['hash'] = strtoupper(sha1($encoded));
+            $data['hash']   = strtoupper(sha1($encoded));
             $data['magnet'] = 'magnet:?xt=urn:btih:' . $data['hash'];
         }
 
@@ -230,18 +230,34 @@ class Torrent extends File
     }
 
     /**
-     * @param string $content
-     * @return bool
+     * @inheritdoc
      */
-    public function tryCreateFile(string $content): bool
+    public function create(string $name, string $content): static
     {
-        if ($this->is($content)) {
-            $torrent = $this->read($content);
-            if (!empty($torrent) && isset($torrent['info']['name'])) {
-                $this->create($torrent['info']['name'] . (isset($torrent['hash']) ? '-' . $torrent['hash'] : ''), $content);
+        if ($this->is($content) && !empty($torrent = $this->read($content))) {
+            if (isset($torrent['hash'], $torrent['info']['name'])) {
+                $name = $name ?: $torrent['info']['name'] . '-' . $torrent['hash'];
+                $this->setHash($torrent['hash']);
+                parent::create($name, $content);
             }
         }
 
-        return $this->isAvailable();
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetch(): ?string
+    {
+        if (parent::fetch() !== null) {
+            if ($this->is($this->content) && !empty($torrent = $this->read($this->content))) {
+                if (isset($torrent['hash'])) {
+                    $this->setHash($torrent['hash']);
+                }
+            }
+            return $this->content;
+        }
+        return null;
     }
 }

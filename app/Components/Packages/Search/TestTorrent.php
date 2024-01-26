@@ -107,6 +107,9 @@ class TestTorrent extends Package
      */
     public function fetch(Query $query): TorrentContent
     {
-        return $this->getType()->makeContent()->create('test', 'd8:announce');
+        $content = 'ZDEzOmNyZWF0aW9uIGRhdGVpMTQ0OTczMDI4Nzg0MmU4OmVuY29kaW5nNTpVVEYtODQ6aW5mb2Q1OmZpbGVzbGQ2Omxlbmd0aGkxZTQ6cGF0aGw1O'
+            . 'jEudHh0ZWVkNjpsZW5ndGhpMmU0OnBhdGhsNToyLnR4dGVlZDY6bGVuZ3RoaTNlNDpwYXRobDU6My50eHRlZWU0Om5hbWU3Om51bWJlcn'
+            . 'MxMjpwaWVjZSBsZW5ndGhpMTYzODRlNjpwaWVjZXMyMDofdGSOUKamcI7FSrMnoWPVU2t87WVl';
+        return $this->getType()->makeContent()->create('', base64_decode($content));
     }
 }

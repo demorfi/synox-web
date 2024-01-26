@@ -180,8 +180,7 @@ class Tpb extends Package
         $client = $this->client();
         $client->useCookie($this->getId());
 
-        $content = $this->getType()->makeContent();
-        $content->tryCreateFile($this->sendGet($client, sprintf($this->urlFetch, $query->value)));
-        return $content;
+        $content = $this->sendGet($client, sprintf($this->urlFetch, $query->value));
+        return $this->getType()->makeContent()->create('', $content);
     }
 }

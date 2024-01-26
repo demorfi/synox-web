@@ -228,9 +228,8 @@ abstract class Torrent extends Package
             $client = $this->client();
             $client->useCookie($this->getId());
 
-            $content = $this->getType()->makeContent();
-            $content->tryCreateFile($this->sendGet($client, $this->buildFetchUrl($query->value)));
-            return $content;
+            $content = $this->sendGet($client, $this->buildFetchUrl($query->value));
+            return $this->getType()->makeContent()->create('', $content);
         }
 
         return null;
