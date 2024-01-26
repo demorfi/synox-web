@@ -105,9 +105,9 @@ class TestText extends Package
     /**
      * @inheritdoc
      */
-    public function fetch(string $id): TextContent
+    public function fetch(Query $query): TextContent
     {
         return $this->getType()->makeContent()
-            ->create(md5($id), sprintf("test \n №%d content", rand(1, 100)));
+            ->create(md5($query->value), sprintf("test \n №%d content", rand(1, 100)));
     }
 }

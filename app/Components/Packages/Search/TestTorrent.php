@@ -105,7 +105,7 @@ class TestTorrent extends Package
     /**
      * @inheritdoc
      */
-    public function fetch(string $id): TorrentContent
+    public function fetch(Query $query): TorrentContent
     {
         return $this->getType()->makeContent()->create('test', 'd8:announce');
     }

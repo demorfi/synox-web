@@ -222,14 +222,14 @@ abstract class Torrent extends Package
      * @inheritdoc
      * @throws PathException
      */
-    public function fetch(string $id): ?TorrentContent
+    public function fetch(Query $query): ?TorrentContent
     {
         if (!$this->hasAuth() || ($this->hasCredentials() && $this->isAvailableAccount())) {
             $client = $this->client();
             $client->useCookie($this->getId());
 
             $content = $this->getType()->makeContent();
-            $content->tryCreateFile($this->sendGet($client, $this->buildFetchUrl($id)));
+            $content->tryCreateFile($this->sendGet($client, $this->buildFetchUrl($query->value)));
             return $content;
         }
 

@@ -175,13 +175,13 @@ class Tpb extends Package
      * @inheritdoc
      * @throws PathException
      */
-    public function fetch(string $id): TorrentContent
+    public function fetch(Query $query): TorrentContent
     {
         $client = $this->client();
         $client->useCookie($this->getId());
 
         $content = $this->getType()->makeContent();
-        $content->tryCreateFile($this->sendGet($client, sprintf($this->urlFetch, $id)));
+        $content->tryCreateFile($this->sendGet($client, sprintf($this->urlFetch, $query->value)));
         return $content;
     }
 }

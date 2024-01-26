@@ -24,8 +24,8 @@ interface Package extends PackageInterface
     public function search(Query $query): ?iterable;
 
     /**
-     * @param string $id
+     * @param Query $query
      * @return ?Content
      */
-    public function fetch(string $id): ?Content;
+    public function fetch(Query $query): ?Content;
 }

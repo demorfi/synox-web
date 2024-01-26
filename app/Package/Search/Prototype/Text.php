@@ -153,13 +153,13 @@ abstract class Text extends Package
      * @inheritdoc
      * @throws PathException
      */
-    public function fetch(string $id): ?TextContent
+    public function fetch(Query $query): ?TextContent
     {
         if (!$this->hasAuth() || ($this->hasCredentials() && $this->isAvailableAccount())) {
             $client = $this->client();
             $client->useCookie($this->getId());
             return $this->getType()->makeContent()
-                ->create(md5($id), $this->searchItemContent($this->getPage($client, $this->buildFetchUrl($id))));
+                ->create(md5($query->value), $this->searchItemContent($this->getPage($client, $this->buildFetchUrl($query->value))));
         }
 
         return null;

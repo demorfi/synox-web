@@ -71,30 +71,30 @@ final class Relay extends RelayAbstract
     /**
      * @inheritdoc
      */
-    public function fetch(string $id): ?Content
+    public function fetch(Query $query): ?Content
     {
         $event = new Event(
-            ['id' => $id, 'package' => $this->package],
-            sprintf('%s:%s', $this->package->getId(), $id)
+            ['query' => $query, 'package' => $this->package],
+            sprintf('%s:%s', $this->package->getId(), $query->value)
         );
 
         LateEvent::notify(__METHOD__, $event);
         $event->addHandler(function (Event $event, mixed $previous) {
-            return $previous ?? $this->fetched($event->id);
+            return $previous ?? $this->fetched($event->query);
         });
 
         return $event();
     }
 
     /**
-     * @param string $id
+     * @param Query $query
      * @return ?Content
      */
-    private function fetched(string $id): ?Content
+    private function fetched(Query $query): ?Content
     {
         $event = new Event(
-            ['id' => $id, 'package' => $this->package],
-            sprintf('%s:%s', $this->package->getId(), $id)
+            ['query' => $query, 'package' => $this->package],
+            sprintf('%s:%s', $this->package->getId(), $query->value)
         );
 
         LateEvent::notify(__METHOD__, $event);
@@ -102,7 +102,7 @@ final class Relay extends RelayAbstract
             return $previous ?? $result;
         });
 
-        $content = $this->package->fetch($event->id);
+        $content = $this->package->fetch($event->query);
         return $event($content);
     }
 }

@@ -102,7 +102,7 @@ final class Dispatcher
         $package = $this->packages->find($packageId);
 
         try {
-            $content = $package->fetch($fetchId);
+            $content = $package->fetch(new Query($fetchId));
         } catch (Exception $e) {
             LateEvent::notify(__CLASS__, $package->getName() . ': ' . $e->getMessage());
         }
