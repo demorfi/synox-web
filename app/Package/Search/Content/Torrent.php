@@ -14,6 +14,16 @@ class Torrent extends File
     ];
 
     /**
+     * @var ?string
+     */
+    protected ?string $hash = null;
+
+    /**
+     * @var ?string
+     */
+    protected ?string $magnet = null;
+
+    /**
      * @inheritdoc
      */
     public function getType(): Type
@@ -40,6 +50,46 @@ class Torrent extends File
     {
         $data = parent::jsonSerialize();
         return [...$data, 'content' => null];
+    }
+
+    /**
+     * @param string $hash
+     * @param string $type
+     * @return void
+     */
+    public function setHash(string $hash, string $type = 'btih'): void
+    {
+        $this->hash   = strtoupper($hash);
+        $this->magnet = sprintf('magnet:?xt=urn:%s:%s', $type, $hash);
+    }
+
+    /**
+     * @return ?string
+     */
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param string $magnet
+     * @return void
+     */
+    public function setMagnet(string $magnet): void
+    {
+        preg_match('/urn:(tree:tiger|sha1|bitprint|ed2k|aich|kzhash|btih|md5|crc32):(?P<hash>\w+):?/', $magnet, $result);
+        if (isset($result['hash'])) {
+            $this->magnet = $magnet;
+            $this->hash   = strtoupper($result['hash']);
+        }
+    }
+
+    /**
+     * @return ?string
+     */
+    public function getMagnet(): ?string
+    {
+        return $this->magnet;
     }
 
     /**
