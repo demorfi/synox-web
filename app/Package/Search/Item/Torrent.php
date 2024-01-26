@@ -2,9 +2,7 @@
 
 namespace App\Package\Search\Item;
 
-use App\Package\Search\Abstracts\Item;
-
-class Torrent extends Item
+class Torrent extends Text
 {
     /**
      * @var int|string
