@@ -72,4 +72,15 @@ interface Item extends Stringable, JsonSerializable
      * @return void
      */
     public function setPageUrl(string $url): void;
+
+    /**
+     * @param Content $content
+     * @return void
+     */
+    public function setContent(Content $content): void;
+
+    /**
+     * @return Content
+     */
+    public function getContent(): Content;
 }

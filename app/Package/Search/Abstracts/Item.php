@@ -2,7 +2,8 @@
 
 namespace App\Package\Search\Abstracts;
 
-use App\Package\Search\{Interfaces\Item as PackageItemInterface, Enums\Category};
+use App\Package\Search\Enums\Category;
+use App\Package\Search\Interfaces\{Item as PackageItemInterface, Content as PackageContentInterface};
 use DateTime;
 
 abstract class Item implements PackageItemInterface
@@ -68,6 +69,11 @@ abstract class Item implements PackageItemInterface
     protected array $properties = [];
 
     /**
+     * @var PackageContentInterface
+     */
+    protected PackageContentInterface $content;
+
+    /**
      * @param Package $package
      */
     public function __construct(Package $package)
@@ -121,6 +127,22 @@ abstract class Item implements PackageItemInterface
     public function addProperty(string $name, string|int $value): void
     {
         $this->properties[$name] = $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setContent(PackageContentInterface $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getContent(): PackageContentInterface
+    {
+        return $this->content;
     }
 
     /**

@@ -29,7 +29,7 @@
           <b-row v-if="!!fetchId">
             <b-col cols="12">
               <b-button
-                  v-if="!fetched"
+                  v-if="!fetched || !fetched?.available"
                   @click="fetch(id, fetchId)"
                   size="sm"
                   variant="outline-dark"
@@ -176,6 +176,11 @@ export default {
       type    : Object,
       required: false,
       inList  : true
+    },
+
+    content: {
+      type    : Object,
+      required: false
     }
   },
 
@@ -202,7 +207,7 @@ export default {
 
     fetched()
     {
-      return this.getEntry({packageId: this.id, fetchId: this.fetchId});
+      return this.getEntry({packageId: this.id, fetchId: this.fetchId}) || this.content;
     },
 
     listProps()
