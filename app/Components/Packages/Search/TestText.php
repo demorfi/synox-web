@@ -91,7 +91,7 @@ class TestText extends Package
             $item->setTitle($i . ' Test ' . $query->value);
             $item->addProperty('Info-1', 'Text 1 property ' . $i);
             $item->addProperty('Info-2', 'Text 2 property ' . $i);
-            $item->setContent('Test short content ' . $i);
+            $item->setDescription('Test short content ' . $i);
             $item->setSize(rand(1000000, 9999999));
             $item->setDate(date_create());
             $item->setFetchId('#fetch/?id=' . $this->name . '&fetch=' . $i);

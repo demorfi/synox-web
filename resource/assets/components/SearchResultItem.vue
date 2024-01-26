@@ -17,9 +17,9 @@
         </a>
       </b-card-title>
       <b-card-subtitle
-          v-if="content"
+          v-if="description"
           class="mt-2"
-          :text="content"/>
+          :text="description"/>
     </b-card-body>
     <template #footer>
       <b-row>
@@ -154,7 +154,7 @@ export default {
       required: false
     },
 
-    content: {
+    description: {
       type    : String,
       required: false,
       default : ''

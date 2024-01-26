@@ -76,7 +76,7 @@ class Bananan extends Text
         $item->setTitle(trim($title));
 
         // Short lyrics
-        $item->setContent(trim($element->find('.b-content')->text()));
+        $item->setDescription(trim($element->find('.b-content')->text()));
 
         // Artist lyrics
         $item->addProperty('Artist', trim($element->find('.b-title > a')->text()));

@@ -67,7 +67,7 @@ class SongLyrics extends Text
         $item->setTitle(trim($element->find('h3 a')->text()));
 
         // Short lyrics
-        $item->setContent(trim((string)$element->find('.serpdesc-2 p + p')->last()?->text()));
+        $item->setDescription(trim((string)$element->find('.serpdesc-2 p + p')->last()?->text()));
 
         // Artist lyrics
         $item->addProperty('Artist', trim((string)$element->find('.serpdesc-2 p a')->first()?->text()));

@@ -9,22 +9,22 @@ class Text extends Item
     /**
      * @var ?string
      */
-    protected ?string $content = null;
+    protected ?string $description = null;
 
     /**
      * @return ?string
      */
-    public function getContent(): ?string
+    public function getDescription(): ?string
     {
-        return $this->content;
+        return $this->description;
     }
 
     /**
-     * @param string $content
+     * @param string $text
      * @return void
      */
-    public function setContent(string $content): void
+    public function setDescription(string $text): void
     {
-        $this->content = $content;
+        $this->description = $text;
     }
 }
