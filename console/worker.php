@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+define('DOCUMENT_ROOT', realpath(__DIR__ . '/../public'));
 define('ROOT_PATH', realpath(__DIR__ . '/..'));
 
 if (php_sapi_name() != 'cli') {
