@@ -79,13 +79,22 @@ class Cache extends Package
 
     /**
      * @param Event $event
+     * @return string
+     */
+    private function getStorageId(Event $event): string
+    {
+        return $this->version . '-' . md5($event->getId());
+    }
+
+    /**
+     * @param Event $event
      * @return void
      */
     private function eventSearch(Event $event): void
     {
         $event->addHandler(function (Event $event) {
             try {
-                $storage = Storage::make(RedisLists::class, $event->getId());
+                $storage = Storage::make(RedisLists::class, $this->getStorageId($event));
                 if (is_array($result = $storage->read())) {
                     foreach ($result as $data) {
                         $item = unserialize($data);
@@ -109,7 +118,7 @@ class Cache extends Package
     {
         $event->addHandler(function (Event $event, mixed $previous, PackageItemInterface $item) {
             try {
-                $storage = Storage::make(RedisLists::class, $event->getId());
+                $storage = Storage::make(RedisLists::class, $this->getStorageId($event));
                 $storage->write(serialize($item));
             } catch (BaseException $e) {
                 Journal::staticPush(sprintf('Cache Write Error: %s', $e->getMessage()));
@@ -125,7 +134,7 @@ class Cache extends Package
     {
         $event->addHandler(function (Event $event) {
             try {
-                $storage = Storage::make(RedisLists::class, $event->getId());
+                $storage = Storage::make(RedisLists::class, $this->getStorageId($event));
                 if (is_array($result = $storage->read())) {
                     return unserialize(array_pop($result));
                 }
@@ -145,7 +154,7 @@ class Cache extends Package
         $event->addHandler(function (Event $event, mixed $previous, ?PackageContentInterface $content) {
             if ($content instanceof PackageContentInterface) {
                 try {
-                    $storage = Storage::make(RedisLists::class, $event->getId());
+                    $storage = Storage::make(RedisLists::class, $this->getStorageId($event));
                     $storage->write(serialize($content));
                 } catch (BaseException $e) {
                     Journal::staticPush(sprintf('Cache Write Error: %s', $e->getMessage()));
