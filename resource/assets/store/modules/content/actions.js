@@ -1,10 +1,10 @@
 import content from '@/api/content';
 
 export default {
-    fetchEntry({dispatch, commit}, {packageId, fetchId})
+    fetchEntry({dispatch, commit}, {packageId, fetchId, params})
     {
         return new Promise((resolve, reject) => {
-            content.fetch(packageId, fetchId)
+            content.fetch(packageId, fetchId, params)
                 .then(({data}) => {
                     commit('setEntry', {packageId, fetchId, entry: data});
                     resolve(data);

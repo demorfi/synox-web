@@ -88,11 +88,12 @@ final class Dispatcher
     /**
      * @param string $packageId
      * @param string $fetchId
+     * @param array $params
      * @return ?Content
      * @throws PackageDispatcherException
      * @uses LateEvent::notify
      */
-    public function fetch(string $packageId, string $fetchId): ?Content
+    public function fetch(string $packageId, string $fetchId, array $params = []): ?Content
     {
         if (!$this->usePackages([$packageId])) {
             throw new PackageDispatcherException('The requested package was not found!');
@@ -102,7 +103,7 @@ final class Dispatcher
         $package = $this->packages->find($packageId);
 
         try {
-            $content = $package->fetch(new Query($fetchId));
+            $content = $package->fetch(new Query($fetchId, params: $params));
         } catch (Exception $e) {
             LateEvent::notify(__CLASS__, $package->getName() . ': ' . $e->getMessage());
         }

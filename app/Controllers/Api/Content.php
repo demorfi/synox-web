@@ -30,13 +30,16 @@ class Content extends Base
     public function postFetchAction(string $packageId): Response
     {
         try {
-            $dispatcher = new Dispatcher();
-            $fetchId = $this->dataRequest()->post()->getFixedTypeValue('fetchId', 'string');
+            $request = $this->dataRequest()->post();
+            $fetchId = $request->getFixedTypeValue('fetchId', 'string');
+            $params  = $request->getFixedTypeValue('params', 'array');
+
             if (empty($fetchId)) {
                 $this->throwAbort(Headers::FAILED_DEPENDENCY, 'Empty fetchId request!');
             }
 
-            $content = $dispatcher->fetch($packageId, urldecode($fetchId));
+            $dispatcher = new Dispatcher();
+            $content = $dispatcher->fetch($packageId, urldecode($fetchId), $params);
             if (!$content?->isAvailable()) {
                 $this->throwAbort(Headers::BAD_REQUEST, 'Unable to get content!');
             }

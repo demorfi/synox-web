@@ -237,7 +237,7 @@ export default {
     fetch(packageId, fetchId)
     {
       this.fetching = true;
-      this.fetchEntry({packageId, fetchId})
+      this.fetchEntry({packageId, fetchId, params: this.content})
           .finally(() => this.fetching = false);
     },
 

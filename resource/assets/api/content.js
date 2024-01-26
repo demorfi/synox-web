@@ -1,9 +1,9 @@
 import {post, download} from './http-common';
 
 export default {
-    fetch(packageId, fetchId)
+    fetch(packageId, fetchId, params)
     {
-        return post(`content/fetch/packageId/${packageId}`, {fetchId});
+        return post(`content/fetch/packageId/${packageId}`, {fetchId, params});
     },
 
     download(fileName, baseName, typeId)
