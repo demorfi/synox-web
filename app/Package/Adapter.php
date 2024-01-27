@@ -15,13 +15,9 @@ final readonly class Adapter implements JsonSerializable
     /**
      * @param Relay    $relay
      * @param Settings $settings
-     * @throws StorageException
      */
-    public function __construct(
-        private Relay $relay,
-        private Settings $settings
-    ) {
-        $this->settings->read();
+    public function __construct(private Relay $relay, private Settings $settings)
+    {
     }
 
     /**
