@@ -21,15 +21,23 @@ final readonly class Adapter implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->settings->getId();
+    }
+
+    /**
      * @inheritdoc
      */
     public function jsonSerialize(): array
     {
         return [
-            'id'       => $this->relay->getId(),
-            'type'     => $this->relay->getType()->getName(),
-            'enabled'  => $this->isEnabled(),
-            'settings' => $this->settings->collection()
+            'id'          => $this->getId(),
+            'type'        => $this->relay->getType()->getName(),
+            'enabled'     => $this->isEnabled(),
+            'settings'    => $this->settings->collection()
                 ->except('enabled')
                 ->replaceValue('password', fn($v) => !empty($v) ? 'password' : ''),
             ...$this->relay->jsonSerialize(),
