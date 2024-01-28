@@ -4,31 +4,31 @@ namespace App\Package\Abstracts;
 
 use App\Components\Settings;
 use App\Package\Enums\Type;
-use App\Package\Extension\Abstracts\Package as ExtensionPackageAbstract;
-use App\Package\Search\Abstracts\Package as SearchPackageAbstract;
+use App\Package\Extension\Interfaces\Package as ExtensionPackageInterface;
+use App\Package\Search\Interfaces\Package as SearchPackageInterface;
 use BadMethodCallException;
 use JsonSerializable;
 
 /**
- * @mixin SearchPackageAbstract
- * @mixin ExtensionPackageAbstract
+ * @mixin SearchPackageInterface
+ * @mixin ExtensionPackageInterface
  */
 abstract class Relay implements JsonSerializable
 {
     /**
-     * @param SearchPackageAbstract|ExtensionPackageAbstract $package
+     * @param SearchPackageInterface|ExtensionPackageInterface $package
      * @param Settings                                       $settings
      */
     public function __construct(
-        protected readonly SearchPackageAbstract|ExtensionPackageAbstract $package,
+        protected readonly SearchPackageInterface|ExtensionPackageInterface $package,
         protected readonly Settings $settings
     ) {
     }
 
     /**
-     * @return SearchPackageAbstract|ExtensionPackageAbstract
+     * @return SearchPackageInterface|ExtensionPackageInterface
      */
-    public function instance(): SearchPackageAbstract|ExtensionPackageAbstract
+    public function instance(): SearchPackageInterface|ExtensionPackageInterface
     {
         return $this->package;
     }
