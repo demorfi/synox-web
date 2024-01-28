@@ -14,7 +14,16 @@ export default {
     setPackageSettings: (state, {id, settings}) => {
         state.packages.find((pkg, index) => {
             if (pkg.id === id) {
-                state.packages[index].settings = {...state.packages[index].settings, ...settings};
+                for (let setting in settings) {
+                    const pkgSettings = state.packages[index].settings;
+                    if (setting in pkgSettings) {
+                        if (typeof pkgSettings[setting] === 'object' && 'value' in pkgSettings[setting]) {
+                            pkgSettings[setting].value = settings[setting];
+                        } else {
+                            pkgSettings[setting] = settings[setting];
+                        }
+                    }
+                }
                 return true;
             }
         });

@@ -77,7 +77,9 @@ class Packages extends Base
             }
 
             foreach ($settings as $key => $value) {
-                $package->{$key} = $value;
+                if (is_scalar($value)) {
+                    $package->{$key} = is_array($package->{$key}) ? [...$package->{$key}, 'value' => $value] : $value;
+                }
             }
 
             $package->saveSettings();

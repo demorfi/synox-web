@@ -40,6 +40,7 @@ final readonly class Adapter implements JsonSerializable
             'settings'    => $this->settings->collection()
                 ->except('enabled')
                 ->replaceValue('password', fn($v) => !empty($v) ? 'password' : ''),
+            'pkgSettings' => $this->settings->collection()->except('enabled', 'password', 'username')->getKeys(),
             ...$this->relay->jsonSerialize(),
         ];
     }

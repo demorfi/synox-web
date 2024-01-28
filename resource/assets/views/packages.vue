@@ -20,7 +20,8 @@
         <PackageItem
             v-bind="pkg"
             @status="changeActivity($event, pkg.id)"
-            @auth="showAuthForm(pkg.id, pkg.name)"/>
+            @auth="showAuthForm(pkg.id, pkg.name)"
+            @settings="showSettingsForm(pkg.id, pkg.name, pkg.pkgSettings)"/>
       </b-col>
     </b-row>
 
@@ -28,7 +29,7 @@
         v-if="useAuthForm"
         @resolve="resolveAuthForm">
       <b-modal
-          v-model="showModal"
+          v-model="showAuthModal"
           :title="authForm.title"
           size="sm"
           ok-title="Save"
@@ -38,6 +39,22 @@
         <PackageFormAuth
             v-model:username="authForm.username"
             v-model:password="authForm.password"/>
+      </b-modal>
+    </suspense>
+
+    <suspense
+        v-if="useSettingsForm"
+        @resolve="resolveSettingsForm">
+      <b-modal
+          v-model="showSettingsModal"
+          :title="settingsForm.title"
+          size="sm"
+          ok-title="Save"
+          cancel-title="Close"
+          centered
+          @ok="saveSettingsForm">
+        <PackageFormSettings
+            v-model:settings="settingsForm.useSettings"/>
       </b-modal>
     </suspense>
   </div>
@@ -56,17 +73,25 @@ export default {
   components: {
     AppIcon,
     PackageItem,
-    PackageFormAuth: defineAsyncComponent(() => import('@/components/PackageFormAuth.vue'))
+    PackageFormAuth    : defineAsyncComponent(() => import('@/components/PackageFormAuth.vue')),
+    PackageFormSettings: defineAsyncComponent(() => import('@/components/PackageFormSettings.vue')),
   },
 
   data: () => ({
-    useAuthForm: false,
-    showModal  : false,
-    authForm   : {
+    useAuthForm      : false,
+    useSettingsForm  : false,
+    showAuthModal    : false,
+    showSettingsModal: false,
+    authForm         : {
       id      : '',
       title   : '',
       username: '',
       password: ''
+    },
+    settingsForm     : {
+      id         : '',
+      title      : '',
+      useSettings: []
     }
   }),
 
@@ -89,10 +114,33 @@ export default {
       return this.useAuthForm ? this.resolveAuthForm() : this.useAuthForm = true;
     },
 
+    showSettingsForm(id, title, pkgSettings)
+    {
+      const settings = this.getPackageSettings(id);
+      const useSettings = [];
+
+      for (let pkgSetting of pkgSettings) {
+        if (pkgSetting in settings) {
+          settings[pkgSetting]['name'] = pkgSetting;
+          useSettings.push({...settings[pkgSetting]});
+        }
+      }
+
+      this.settingsForm = {id, title, useSettings};
+      return this.useSettingsForm ? this.resolveSettingsForm() : this.useSettingsForm = true;
+    },
+
     resolveAuthForm()
     {
       this.$nextTick(() => {
-        this.showModal = true;
+        this.showAuthModal = true;
+      });
+    },
+
+    resolveSettingsForm()
+    {
+      this.$nextTick(() => {
+        this.showSettingsModal = true;
       });
     },
 
@@ -108,6 +156,23 @@ export default {
 
       if (password !== oldPassword) {
         settings.password = password;
+      }
+
+      if (Object.keys(settings).length) {
+        this.updatePackageSettings({id, settings});
+      }
+    },
+
+    saveSettingsForm()
+    {
+      const {id, useSettings} = this.settingsForm;
+      const pkgSettings = this.getPackageSettings(id);
+
+      const settings = {};
+      for (let useSetting of useSettings) {
+        if (useSetting.name in pkgSettings && useSetting.value !== pkgSettings[useSetting.name].value) {
+          settings[useSetting.name] = useSetting.value;
+        }
       }
 
       if (Object.keys(settings).length) {

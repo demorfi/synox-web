@@ -15,6 +15,13 @@
           <AppIcon name="key-fill"/>
         </b-button>
         <b-button
+            v-if="pkgSettings.length"
+            :variant="enabled ? 'outline-warning' : 'outline-light'"
+            size="sm"
+            @click="$emit('settings')">
+          <AppIcon name="gear"/>
+        </b-button>
+        <b-button
             :variant="enabled ? 'outline-warning' : 'outline-light'"
             :disabled="!available"
             size="sm"
@@ -52,11 +59,7 @@
 import AppIcon from '@/components/AppIcon.vue';
 
 export default {
-  components: {
-    AppIcon
-  },
-
-  emits: ['status', 'auth'],
+  emits: ['status', 'auth', 'settings'],
   props: {
     id         : String,
     name       : String,
@@ -67,7 +70,12 @@ export default {
     enabled    : Boolean,
     available  : Boolean,
     requires   : Array,
-    usesAuth   : Boolean
+    usesAuth   : Boolean,
+    pkgSettings: Array,
+  },
+
+  components: {
+    AppIcon
   }
 }
 </script>

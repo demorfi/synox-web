@@ -55,7 +55,8 @@ abstract class Package implements PackageInterface
      */
     final protected function getSetting(string $name, mixed $default = null): mixed
     {
-        return $this->settings->get($name, $default);
+        $setting = $this->settings->get($name, $default);
+        return is_array($setting) && isset($setting['value']) ? $setting['value'] ?: $default : $setting;
     }
 
     /**
@@ -68,6 +69,25 @@ abstract class Package implements PackageInterface
     {
         $this->settings->set($name, $value);
         $this->settings->save();
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @param string $name
+     * @param mixed  $value
+     * @param string $label
+     * @param array  $params
+     * @return self
+     * @throws StorageException
+     */
+    final protected function addSetting(string $type, string $name, mixed $value, string $label, array $params = []): self
+    {
+        if (!$this->settings->has($name)) {
+            $this->settings->set($name, compact('type', 'value', 'label', 'params'));
+            $this->settings->save();
+        }
+
         return $this;
     }
 
