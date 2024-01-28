@@ -16,6 +16,7 @@
         </b-button>
         <b-button
             :variant="enabled ? 'outline-warning' : 'outline-light'"
+            :disabled="!available"
             size="sm"
             @click="$emit('status', !enabled)">
           {{ enabled ? 'Disable' : 'Enable' }}
@@ -32,6 +33,12 @@
         <dl class="col-6 mb-0">
           <dt>Version</dt>
           <dd>{{ version }}</dd>
+        </dl>
+        <dl
+            v-if="requires.length"
+            class="col-12 mb-0">
+          <dt>Requires</dt>
+          <dd>{{ requires.join(',') }}</dd>
         </dl>
       </b-row>
     </template>
@@ -58,6 +65,8 @@ export default {
     version    : String,
     description: String,
     enabled    : Boolean,
+    available  : Boolean,
+    requires   : Array,
     usesAuth   : Boolean
   }
 }

@@ -27,6 +27,16 @@ interface Package
     public function getVersion(): string;
 
     /**
+     * @return bool
+     */
+    public function isAvailable(): bool;
+
+    /**
+     * @return string[]
+     */
+    public function getRequires(): array;
+
+    /**
      * @return void
      */
     public function wakeup(): void;

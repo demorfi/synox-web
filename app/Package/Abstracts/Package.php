@@ -19,6 +19,22 @@ abstract class Package implements PackageInterface
     /**
      * @inheritdoc
      */
+    public function isAvailable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRequires(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function wakeup(): void
     {
     }

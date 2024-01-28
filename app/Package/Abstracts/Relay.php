@@ -17,7 +17,7 @@ abstract class Relay implements JsonSerializable
 {
     /**
      * @param SearchPackageInterface|ExtensionPackageInterface $package
-     * @param Settings                                       $settings
+     * @param Settings                                         $settings
      */
     public function __construct(
         protected readonly SearchPackageInterface|ExtensionPackageInterface $package,
@@ -50,7 +50,9 @@ abstract class Relay implements JsonSerializable
             'subtype'     => $this->package->getType()->getName(),
             'name'        => $this->package->getName(),
             'description' => $this->package->getDescription(),
-            'version'     => $this->package->getVersion()
+            'version'     => $this->package->getVersion(),
+            'available'   => $this->package->isAvailable(),
+            'requires'    => $this->package->getRequires()
         ];
     }
 

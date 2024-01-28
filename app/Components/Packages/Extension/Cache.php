@@ -25,7 +25,7 @@ class Cache extends Package
     /**
      * @var string
      */
-    private string $description = 'Caching search queries. Required Redis!';
+    private string $description = 'Caching search queries';
 
     /**
      * @var string
@@ -67,14 +67,28 @@ class Cache extends Package
     /**
      * @inheritdoc
      */
+    public function isAvailable(): bool
+    {
+        return class_exists('Redis');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRequires(): array
+    {
+        return ['Redis'];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function wakeup(): void
     {
-        if (class_exists('Redis')) {
-            LateEvent::subscribe(Relay::class . '::search', $this->eventSearch(...));
-            LateEvent::subscribe(Relay::class . '::result', $this->eventResult(...));
-            LateEvent::subscribe(Relay::class . '::fetch', $this->eventFetch(...));
-            LateEvent::subscribe(Relay::class . '::fetched', $this->eventFetched(...));
-        }
+        LateEvent::subscribe(Relay::class . '::search', $this->eventSearch(...));
+        LateEvent::subscribe(Relay::class . '::result', $this->eventResult(...));
+        LateEvent::subscribe(Relay::class . '::fetch', $this->eventFetch(...));
+        LateEvent::subscribe(Relay::class . '::fetched', $this->eventFetched(...));
     }
 
     /**

@@ -73,6 +73,14 @@ class Collection extends ArrayCollection
     }
 
     /**
+     * @return static
+     */
+    public function getByAvailable(): static
+    {
+        return $this->filterByType(fn($item) => $item->isAvailable());
+    }
+
+    /**
      * @param Type ...$types
      * @return self
      */
