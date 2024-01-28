@@ -54,9 +54,7 @@ class Worker
         LateEvent::subscribe(__CLASS__, fn($message) => Journal::staticPush($message));
 
         // Wakeup events
-        Repository::getInstance()->getPackages()->getByEnabled()->each(function (Adapter $package) {
-            $package->wakeup();
-        });
+        Repository::getInstance()->wakeup();
 
         WorkerConnection::$statusFile = DiskFile::getDiskPath('worker-' . posix_getpid() . '.status');
         WorkerConnection::$pidFile    = DiskFile::getDiskPath('worker.pid');

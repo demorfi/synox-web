@@ -22,12 +22,7 @@ if (!$usesApi) {
     $builder->forced(App\Controllers\Main::class, 'default');
 }
 
-Repository::getInstance()->getPackages()
-    ->getByEnabled()
-    ->getByType(Type::EXTENSION)
-    ->each(static function (Adapter $package) {
-        $package->wakeup();
-    });
+Repository::getInstance()->wakeup();
 
 LateEvent::notify(RouteDispatcher::class, new Event(compact('request', 'builder')));
 print (new RouteDispatcher)->default($builder, $appEntryPath, App\Controllers\Error::class);

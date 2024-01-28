@@ -46,4 +46,17 @@ class Repository
     {
         return $this->packages;
     }
+
+    /**
+     * @return void
+     */
+    public function wakeup(): void
+    {
+        $this->packages
+            ->getByEnabled()
+            ->getByAvailable()
+            ->each(static function (Adapter $package) {
+                $package->wakeup();
+            });
+    }
 }
