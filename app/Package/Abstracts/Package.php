@@ -4,8 +4,8 @@ namespace App\Package\Abstracts;
 
 use App\Components\Settings;
 use App\Package\Interfaces\Package as PackageInterface;
-use Digua\Enums\FileExtension;
 use Digua\Components\ArrayCollection;
+use Digua\Exceptions\Storage as StorageException;
 
 abstract class Package implements PackageInterface
 {
@@ -62,10 +62,12 @@ abstract class Package implements PackageInterface
      * @param string $name
      * @param mixed  $value
      * @return self
+     * @throws StorageException
      */
     final protected function setSetting(string $name, mixed $value): self
     {
         $this->settings->set($name, $value);
+        $this->settings->save();
         return $this;
     }
 
