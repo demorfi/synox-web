@@ -2,6 +2,7 @@
 
 namespace App\Package\Enums;
 
+use App\Components\Settings;
 use App\Package\Interfaces\BaseEnum;
 use App\Package\Extension\{
     Enums\Type as ExtensionType,
@@ -63,13 +64,14 @@ enum Type: string implements BaseEnum
 
     /**
      * @param ExtensionPackageInterface|SearchPackageInterface $package
+     * @param Settings $settings
      * @return ExtensionRelay|SearchRelay
      */
-    public function makeRelay(ExtensionPackageInterface|SearchPackageInterface $package): ExtensionRelay|SearchRelay
+    public function makeRelay(ExtensionPackageInterface|SearchPackageInterface $package, Settings $settings): ExtensionRelay|SearchRelay
     {
         return match ($this) {
-            self::EXTENSION => new ExtensionRelay($package),
-            self::SEARCH => new SearchRelay($package),
+            self::EXTENSION => new ExtensionRelay($package, $settings),
+            self::SEARCH => new SearchRelay($package, $settings),
         };
     }
 }

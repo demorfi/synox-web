@@ -2,6 +2,7 @@
 
 namespace App\Package\Abstracts;
 
+use App\Components\Settings;
 use App\Package\Enums\Type;
 use App\Package\Extension\Abstracts\Package as ExtensionPackageAbstract;
 use App\Package\Search\Abstracts\Package as SearchPackageAbstract;
@@ -16,9 +17,12 @@ abstract class Relay implements JsonSerializable
 {
     /**
      * @param SearchPackageAbstract|ExtensionPackageAbstract $package
+     * @param Settings                                       $settings
      */
-    public function __construct(protected readonly SearchPackageAbstract|ExtensionPackageAbstract $package)
-    {
+    public function __construct(
+        protected readonly SearchPackageAbstract|ExtensionPackageAbstract $package,
+        protected readonly Settings $settings
+    ) {
     }
 
     /**

@@ -33,7 +33,7 @@ class Repository
                 $class = 'App\Components\Packages\\' . $type->getName() . '\\' . $package;
                 if (is_subclass_of($class, $type->getInterface())) {
                     $settings = Settings::create($type->getId() . '-' . strtolower($package));
-                    $this->packages->append(new Adapter($type->makeRelay(new $class($settings)), $settings));
+                    $this->packages->append(new Adapter($type->makeRelay(new $class($settings), $settings), $settings));
                 }
             }
         }
