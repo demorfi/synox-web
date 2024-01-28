@@ -58,6 +58,6 @@ abstract class Package implements PackageInterface
      */
     final public function getId(): string
     {
-        return basename($this->settings->getName(), FileExtension::JSON->value);
+        return $this->settings->getId();
     }
 }
