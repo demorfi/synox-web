@@ -34,7 +34,7 @@ final class Relay extends RelayAbstract
     {
         $event = new Event(
             ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->package->getId(), $query->value)
+            sprintf('%s:%s', $this->getId(), $query->value)
         );
 
         LateEvent::notify(__METHOD__, $event);
@@ -55,7 +55,7 @@ final class Relay extends RelayAbstract
     {
         $event = new Event(
             ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->package->getId(), $query->value)
+            sprintf('%s:%s', $this->getId(), $query->value)
         );
 
         LateEvent::notify(__METHOD__, $event);
@@ -75,7 +75,7 @@ final class Relay extends RelayAbstract
     {
         $event = new Event(
             ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->package->getId(), $query->value)
+            sprintf('%s:%s', $this->getId(), $query->value)
         );
 
         LateEvent::notify(__METHOD__, $event);
@@ -94,7 +94,7 @@ final class Relay extends RelayAbstract
     {
         $event = new Event(
             ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->package->getId(), $query->value)
+            sprintf('%s:%s', $this->getId(), $query->value)
         );
 
         LateEvent::notify(__METHOD__, $event);

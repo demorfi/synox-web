@@ -34,6 +34,14 @@ abstract class Relay implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->settings->getId();
+    }
+
+    /**
      * @inheritdoc
      */
     public function jsonSerialize(): array
