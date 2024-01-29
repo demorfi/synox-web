@@ -87,7 +87,20 @@
                 :key="index"
                 class="col-6 col-md-4 col-lg-3 mb-0">
               <dt>{{ info.name }}</dt>
-              <dd>{{ info.value }}</dd>
+              <dd>
+                <template
+                    v-if="info.type === 'text'">
+                  {{ info.value }}
+                </template>
+                <template
+                    v-else-if="info.type === 'link'">
+                  <a
+                      :href="info.value"
+                      target="_blank">
+                    Link
+                  </a>
+                </template>
+              </dd>
             </dl>
           </b-row>
         </b-col>
@@ -218,15 +231,21 @@ export default {
             value = this.$props[prop];
 
         if ('inList' in setting && setting.inList && value !== undefined && value !== null) {
+          const type = 'text';
           if (value instanceof Object) {
             for (let sValue in value) {
-              list.push({name: sValue, value: value[sValue]});
+              list.push({name: sValue, value: value[sValue], type});
             }
           } else {
             let name = prop.charAt(0).toUpperCase() + prop.slice(1);
-            list.push({name, value});
+            list.push({name, value, type});
           }
         }
+      }
+
+      // Add magnet link info
+      if (typeof this.content === 'object' && 'magnet' in this.content && this.content.magnet !== null) {
+        list.push({name: 'Magnet', value: this.content.magnet, type: 'link'});
       }
       return list;
     }
