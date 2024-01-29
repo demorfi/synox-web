@@ -51,13 +51,13 @@ export default {
         return new Promise((resolve, reject) => {
             const notification = dispatch('notifications/addInfo', 'Updating...', {root: true});
             packages.updateSettings(id, settings)
-                .then(() => {
-                    commit('setPackageSettings', {id, settings});
+                .then(({data}) => {
+                    commit('updatePackageState', {id, packageState: data.state});
                     notification.then(({id}) => {
                         const message = 'Settings changed successfully';
                         commit('notifications/setNotification', {id, message, type: 'success'}, {root: true});
                     });
-                    resolve({id, settings});
+                    resolve({id, settings: data.state.settings});
                 })
                 .catch(({message}) => {
                     notification.then(({id}) => {

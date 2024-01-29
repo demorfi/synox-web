@@ -83,7 +83,7 @@ class Packages extends Base
             }
 
             $package->saveSettings();
-            return $this->response(['success' => true], Headers::ACCEPTED);
+            return $this->response(['success' => true, 'state' => $package], Headers::ACCEPTED);
         } catch (BaseException $e) {
             $this->throwAbort($e->getCode() ?: Headers::EXPECTATION_FAILED, $e->getMessage());
         }

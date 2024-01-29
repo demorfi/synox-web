@@ -11,6 +11,15 @@ export default {
         });
     },
 
+    updatePackageState: (state, {id, packageState}) => {
+        state.packages.find((pkg, index) => {
+            if (pkg.id === id) {
+                state.packages[index] = packageState;
+                return true;
+            }
+        });
+    },
+
     setPackageSettings: (state, {id, settings}) => {
         state.packages.find((pkg, index) => {
             if (pkg.id === id) {
