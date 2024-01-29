@@ -8,11 +8,11 @@ export default {
     },
 
     getPackagesEnabled: state => {
-        return state.packages.filter(pkg => pkg.enabled);
+        return state.packages.filter(pkg => pkg.enabled && pkg.available);
     },
 
     getPackagesEnabledByType: state => (type) => {
-        return state.packages.filter(pkg => pkg.type === type && pkg.enabled);
+        return state.packages.filter(pkg => pkg.type === type && pkg.enabled && pkg.available);
     },
 
     getPackageSettings: (state, getters) => (id) => {

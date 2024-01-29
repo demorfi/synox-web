@@ -36,6 +36,7 @@ final class Dispatcher
         $this->packages = Repository::getInstance()->getPackages()
             ->getByType(PackageType::SEARCH)
             ->getByEnabled()
+            ->getByAvailable()
             ->filterByType(static function ($item) use ($onlyPackages, $extraFilters, $filter): bool {
                 return (empty($onlyPackages) || in_array($item->getId(), $onlyPackages))
                     && (empty($extraFilters) || $filter->isPasses($item->instance()));
