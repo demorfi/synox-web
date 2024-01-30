@@ -5,7 +5,7 @@ define('ROOT_PATH', realpath(DOCUMENT_ROOT . '/..'));
 
 require_once ROOT_PATH . '/bootstrap.php';
 
-use App\Package\{Repository, Adapter, Enums\Type};
+use App\Package\Repository;
 use Digua\{Request, LateEvent, Routes\RouteAsNameBuilder, Components\Event, RouteDispatcher};
 
 $usesApi      = str_starts_with($_SERVER['REQUEST_URI'], '/api/');
