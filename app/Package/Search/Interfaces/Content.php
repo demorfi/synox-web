@@ -11,7 +11,7 @@ interface Content extends JsonSerializable
      * @param string $content
      * @return void
      */
-    public function add(string $content): void;
+    public function set(string $content): void;
 
     /**
      * @param string $content

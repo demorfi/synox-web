@@ -41,10 +41,9 @@ abstract class Content implements PackageContentInterface
     /**
      * @inheritdoc
      */
-    public function add(string $content): void
+    public function set(string $content): void
     {
-        $this->content   = $content;
-        $this->available = $this->is($this->content);
+        $this->content = $content;
     }
 
     /**

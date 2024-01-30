@@ -26,7 +26,7 @@ class Text extends File
      */
     public function create(string $name, string $content): static
     {
-        $this->add($content);
+        $this->set($content);
         if ($this->isAvailable()) {
             parent::create($name, $this->content);
         }
@@ -37,8 +37,8 @@ class Text extends File
     /**
      * @inheritdoc
      */
-    public function add(string $content): void
+    public function set(string $content): void
     {
-        parent::add(trim(strip_tags($content)));
+        parent::set(trim(strip_tags($content)));
     }
 }
