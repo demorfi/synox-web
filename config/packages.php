@@ -13,7 +13,8 @@ $search = [
     'Pornolab',
     'SongLyrics',
     'Bananan',
-    'AllofLyrics'
+    'AllofLyrics',
+    'Jackett'
 ];
 
 if (Env::isDev()) {
