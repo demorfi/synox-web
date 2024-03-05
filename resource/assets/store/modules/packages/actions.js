@@ -57,7 +57,7 @@ export default {
                         const message = 'Settings changed successfully';
                         commit('notifications/setNotification', {id, message, type: 'success'}, {root: true});
                     });
-                    resolve({id, settings: data.state.settings});
+                    resolve({id, state: data.state});
                 })
                 .catch(({message}) => {
                     notification.then(({id}) => {

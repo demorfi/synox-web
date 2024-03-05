@@ -11,21 +11,21 @@
             v-if="usesAuth"
             variant="outline-warning"
             size="sm"
-            @click="$emit('auth')">
+            @click="showForm('auth')">
           <AppIcon name="key-fill"/>
         </b-button>
         <b-button
             v-if="pkgSettings.length"
             :variant="enabled ? 'outline-warning' : 'outline-light'"
             size="sm"
-            @click="$emit('settings')">
+            @click="showForm('settings')">
           <AppIcon name="gear"/>
         </b-button>
         <b-button
             :variant="enabled ? 'outline-warning' : 'outline-light'"
             :disabled="!available"
             size="sm"
-            @click="$emit('status', !enabled)">
+            @click="changeActivity">
           {{ enabled ? 'Disable' : 'Enable' }}
         </b-button>
       </b-button-group>
@@ -53,13 +53,50 @@
     <b-card-title tag="h5">{{ name }}</b-card-title>
     <b-card-text class="text-wrap fw-lighter">{{ description }}</b-card-text>
   </b-card>
+
+  <suspense
+      v-if="forms.auth.use"
+      @resolve="resolveForm('auth')">
+    <b-modal
+        v-model="forms.auth.show"
+        :title="name"
+        size="sm"
+        ok-title="Save"
+        cancel-title="Close"
+        centered
+        @ok="saveForm('auth')">
+      <PackageFormAuth
+          v-bind="{id}"
+          ref="auth"/>
+    </b-modal>
+  </suspense>
+
+  <suspense
+      v-if="forms.settings.use"
+      @resolve="resolveForm('settings')">
+    <b-modal
+        v-model="forms.settings.show"
+        :title="name"
+        size="sm"
+        ok-title="Save"
+        cancel-title="Close"
+        centered
+        @ok="saveForm('settings')">
+      <PackageFormSettings
+          v-bind="{id}"
+          ref="settings"/>
+    </b-modal>
+  </suspense>
 </template>
 
 <script>
+import {defineAsyncComponent} from 'vue';
+import {createNamespacedHelpers} from 'vuex';
 import AppIcon from '@/components/AppIcon.vue';
 
+const {mapState, mapGetters, mapActions} = createNamespacedHelpers('packages');
+
 export default {
-  emits: ['status', 'auth', 'settings'],
   props: {
     id         : String,
     name       : String,
@@ -69,13 +106,49 @@ export default {
     description: String,
     enabled    : Boolean,
     available  : Boolean,
+    onlyAllowed: Object,
     requires   : Array,
     usesAuth   : Boolean,
+    settings   : Object,
     pkgSettings: Array,
   },
 
   components: {
-    AppIcon
+    AppIcon,
+    PackageFormAuth    : defineAsyncComponent(() => import('@/components/PackageFormAuth.vue')),
+    PackageFormSettings: defineAsyncComponent(() => import('@/components/PackageFormSettings.vue')),
+  },
+
+  data: () => ({
+    forms: {
+      auth    : {use: false, show: false},
+      settings: {use: false, show: false}
+    }
+  }),
+
+  methods: {
+    ...mapActions(['changePackageActivity']),
+    changeActivity()
+    {
+      this.changePackageActivity({id: this.id, active: !this.enabled});
+    },
+
+    resolveForm(name)
+    {
+      this.$nextTick(() => {
+        this.forms[name].show = true;
+      });
+    },
+
+    showForm(name)
+    {
+      return this.forms[name].use ? this.resolveForm(name) : this.forms[name].use = true;
+    },
+
+    saveForm(name)
+    {
+      this.$refs[name].saveForm();
+    }
   }
 }
 </script>
