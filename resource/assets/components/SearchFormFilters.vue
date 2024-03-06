@@ -49,19 +49,24 @@ export default {
   computed: {
     ...mapState('packages', ['filters']),
     ...mapGetters('packages', ['getPackagesEnabledByType']),
+    packages()
+    {
+      return this.getPackagesEnabledByType('Search');
+    },
+
     selects()
     {
       let list = [];
 
       // Packages
-      if (this.searchPackages.length) {
+      if (this.packages.length) {
         list.push({
           id      : 'packages',
           name    : 'Packages',
           selected: [],
           options : (() => {
             let options = [], types = {};
-            for (let pkg of this.searchPackages) {
+            for (let pkg of this.packages) {
               if (!(pkg.subtype in types)) {
                 types[pkg.subtype] = options.length;
                 options[options.length] = {label: pkg.subtype + 's', options: []};
@@ -81,11 +86,6 @@ export default {
       }
 
       return list;
-    },
-
-    searchPackages()
-    {
-      return this.getPackagesEnabledByType('Search');
     }
   },
 

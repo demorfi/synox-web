@@ -74,7 +74,11 @@ export default {
 
   computed: {
     ...mapState('search', ['connected', 'payloads', 'limitPayloads', 'progressToLimit']),
-    ...mapGetters('packages', {packages: 'getPackagesEnabled'})
+    ...mapGetters('packages', ['getPackagesEnabledByType']),
+    packages()
+    {
+      return this.getPackagesEnabledByType('Search');
+    }
   },
 
   watch: {
