@@ -1,9 +1,9 @@
 <template>
   <b-card
-      :header-class="[enabled ? 'text-bg-dark' : 'text-bg-secondary', 'rounded-0']"
+      :header-class="[`text-bg-${bgVariant}`, 'rounded-0']"
       bg-variant="light"
       footer-class="rounded-0 fs-8"
-      class="border-0 rounded-0 border-bottom">
+      class="h-100 border-0 rounded-0 border-bottom">
 
     <template #header>
       <b-button-group>
@@ -77,13 +77,13 @@
     <b-modal
         v-model="forms.settings.show"
         :title="name"
-        size="sm"
+        size="md"
         ok-title="Save"
         cancel-title="Close"
         centered
         @ok="saveForm('settings')">
       <PackageFormSettings
-          v-bind="{id}"
+          :id="id"
           ref="settings"/>
     </b-modal>
   </suspense>
@@ -125,6 +125,16 @@ export default {
       settings: {use: false, show: false}
     }
   }),
+
+  computed: {
+    bgVariant()
+    {
+      if (this.enabled && this.available) {
+        return 'dark';
+      }
+      return !this.available ? 'danger' : 'secondary';
+    }
+  },
 
   methods: {
     ...mapActions(['changePackageActivity']),
