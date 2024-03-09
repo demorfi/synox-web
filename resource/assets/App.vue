@@ -36,14 +36,15 @@ export default {
     this.$Progress.finish();
   },
 
-  async created()
+  created()
   {
     this.$Progress.start();
-    await this.getPackages();
+    this.getPackages();
+    this.getPackagesFilters();
   },
 
   methods: {
-    ...mapActions('packages', ['getPackages'])
+    ...mapActions('packages', ['getPackages', 'getPackagesFilters'])
   }
 }
 </script>
