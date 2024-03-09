@@ -119,8 +119,8 @@ class Filter implements JsonSerializable
      */
     public function each(callable $callable): void
     {
-        foreach (array_keys($this->filters) as $filter) {
-            $this->getById($filter)->each($callable);
+        foreach (array_keys($this->filters) as $id) {
+            $this->getById((string)$id)->each($callable);
         }
     }
 
