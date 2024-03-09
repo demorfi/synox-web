@@ -17,5 +17,9 @@ export default {
 
     getPackageSettings: (state, getters) => (id) => {
         return getters.getPackageById(id).settings ?? [];
+    },
+
+    getFilterById: state => (id) => {
+        return state.filters.find(filter => filter.id === id);
     }
 }
