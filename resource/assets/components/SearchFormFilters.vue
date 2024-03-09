@@ -22,17 +22,12 @@
 </template>
 
 <script>
-import {mapState, mapGetters, mapActions} from 'vuex';
+import {mapState, mapGetters} from 'vuex';
 
 export default {
   emits: ['selected'],
 
-  async created()
-  {
-    await this.getPackagesFilters();
-  },
-
-  data: () => ({
+  data : () => ({
     selected: {}
   }),
 
@@ -90,7 +85,6 @@ export default {
   },
 
   methods: {
-    ...mapActions('packages', ['getPackagesFilters']),
     reset()
     {
       this.selected = {};
