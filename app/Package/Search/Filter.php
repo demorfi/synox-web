@@ -135,8 +135,8 @@ class Filter implements JsonSerializable
             return true;
         }
 
-        $fiber = new Fiber(function (Item|Package $item): void {
-            $this->each(static function (FilterEnum $case) use ($item): void {
+        $fiber = new Fiber(static function (Filter $filter, Item|Package $item): void {
+            $filter->each(static function (FilterEnum $case) use ($item): void {
                 $caseId = $case::getFilterId();
                 if (($item instanceof Item && $case->value === $item->{$caseId})
                     || ($item instanceof Package && !$item->onlyAllowed()->getById($caseId)->search($case)->isEmpty())) {
@@ -146,7 +146,13 @@ class Filter implements JsonSerializable
         });
 
         try {
-            return $fiber->start($item) === true;
+            // Personal filtering
+            $itemId = $item->getId();
+            if (isset($this->filters[$itemId]) && is_array($this->filters[$itemId])) {
+                return $fiber->start(new Filter($this->filters[$itemId]), $item) === true;
+            }
+
+            return $fiber->start($this, $item) === true;
         } catch (Throwable) {
             return false;
         }
