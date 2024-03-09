@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const defCatch = error => {
+const defCatch = (error) => {
     throw new Error(error.response?.data?.error ?? error.message);
 };
 
@@ -45,6 +45,9 @@ export default {
         http.interceptors.response.use((response) => {
             app.config.globalProperties.$Progress.finish();
             return response;
+        }, (error) => {
+            app.config.globalProperties.$Progress.finish();
+            defCatch(error);
         });
     }
 }
