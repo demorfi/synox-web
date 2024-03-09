@@ -94,6 +94,7 @@ class Filter implements JsonSerializable
             /* @var FilterEnum $enum */
             $enum = iterator_to_array(self::uses())[$id] ?? null;
             if (!empty($enum)) {
+                $filters = array_unique($filters, SORT_REGULAR);
                 foreach ($filters as $filter) {
                     if (($case = $enum::tryFrom($filter instanceof FilterEnum ? $filter->value : $filter)) !== null) {
                         $collection[] = $case;
