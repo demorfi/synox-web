@@ -44,7 +44,7 @@ export default {
   position: fixed;
   right: 1rem;
   top: 3rem;
-  z-index: 100;
+  z-index: 2000;
   padding: 1rem;
 
   .notification {
