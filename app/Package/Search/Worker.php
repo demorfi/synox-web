@@ -276,7 +276,7 @@ class Worker
             $this->notify('Running (%d) threads', $threads);
             $this->send($token, compact('threads'));
         } catch (Exception $e) {
-            $connection->send(['error' => $e->getMessage(), 'finished' => true]);
+            $connection->send(json_encode(['error' => $e->getMessage(), 'finished' => true]));
         }
     }
 
