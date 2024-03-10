@@ -28,7 +28,7 @@
     "ext-json": "*",
     "ext-posix": "*",
     "ext-redis": "*",
-    "demorfi/digua": "^v1.5.0",
+    "demorfi/digua": "^v1.6.0",
     "scotteh/php-dom-wrapper": "^2.0",
     "workerman/workerman": "^v4.1"
   },
