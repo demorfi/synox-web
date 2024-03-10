@@ -2,6 +2,7 @@
 
 namespace App\Package\Search;
 
+use App\Components\Storage\Profiles as ProfilesStorage;
 use App\Package\Search\{Abstracts\Item, Abstracts\Package, Enums\Category, Interfaces\FilterEnum};
 use Digua\Components\ArrayCollection;
 use JsonSerializable;
@@ -18,7 +19,7 @@ class Filter implements JsonSerializable
     /**
      * @param array $filters
      */
-    public function __construct(protected readonly array $filters)
+    public function __construct(protected array $filters)
     {
     }
 
@@ -28,6 +29,23 @@ class Filter implements JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->filters;
+    }
+
+    /**
+     * @param string $id
+     * @return void
+     */
+    public function loadProfile(string $id): void
+    {
+        $profile = ProfilesStorage::load()->collection($id)
+            ->callWrapIfTrue(static function ($profile) {
+                $profile->set('packages', $profile->getKeys());
+                return $profile;
+            }, fn($profile) => !$profile->isEmpty());
+
+        $this->filters = $this->collection()
+            ->merge($profile->toArray(), true)
+            ->each(fn(&$array) => $array = array_unique($array, SORT_REGULAR))->toArray();
     }
 
     /**

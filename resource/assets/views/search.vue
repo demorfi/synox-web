@@ -98,10 +98,10 @@ export default {
   methods: {
     ...mapActions('search', ['connection', 'disconnection']),
     ...mapMutations('search', ['clearPayloads']),
-    search(query, filters)
+    search(query, profile, filters)
     {
       this.searching = true;
-      this.connection({query, filters})
+      this.connection({query, profile, filters})
           .then(() => {
             if (!this.searching) {
               throw new Error('Search terminated!');

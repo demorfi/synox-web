@@ -7,7 +7,7 @@
       <b-col cols="12">
         <b-input-group>
           <b-form-group
-              class="form-floating position-relative"
+              class="form-floating position-relative w-50"
               label="Query"
               label-for="query"
               floating>
@@ -28,6 +28,25 @@
           </b-form-group>
 
           <b-input-group-append>
+            <b-form-group
+                label="Search profile"
+                label-for="profile"
+                floating>
+              <b-form-select
+                  v-model="form.profile"
+                  :options="optionsProfiles"
+                  :disabled="!profiles.length"
+                  id="profile"
+                  placeholder="Search profile">
+                <template #first>
+                  <b-form-select-option
+                      :value="null">
+                    None
+                  </b-form-select-option>
+                </template>
+              </b-form-select>
+            </b-form-group>
+
             <b-button
                 :disabled="form.submitted"
                 type="reset"
@@ -91,6 +110,7 @@
 
 <script>
 import {defineAsyncComponent} from 'vue';
+import {mapState, mapActions, mapGetters} from 'vuex';
 import AppIcon from '@/components/AppIcon.vue';
 
 export default {
@@ -112,9 +132,22 @@ export default {
     SearchFormFilters: defineAsyncComponent(() => import('@/components/SearchFormFilters.vue'))
   },
 
+  async created()
+  {
+    await this.getProfiles();
+  },
+
+  activated()
+  {
+    if (this.form.profile !== null && this.getProfileById(this.form.profile) === undefined) {
+      this.form.profile = null;
+    }
+  },
+
   data: () => ({
     form: {
       query    : '',
+      profile  : null,
       filters  : [],
       submitted: false
     },
@@ -126,11 +159,25 @@ export default {
     }
   }),
 
+  computed: {
+    ...mapState('profiles', ['profiles']),
+    ...mapGetters('profiles', ['getProfileById']),
+    optionsProfiles()
+    {
+      const options = [];
+      for (let profile of this.profiles) {
+        options.push({value: profile.id, text: profile.id});
+      }
+      return options;
+    }
+  },
+
   methods: {
+    ...mapActions('profiles', ['getProfiles']),
     submitForm()
     {
       this.form.submitted = true;
-      this.$emit('submit', this.form.query, this.form.filters);
+      this.$emit('submit', this.form.query, this.form.profile, this.form.filters);
     },
 
     stopSubmitForm()

@@ -1,11 +1,11 @@
 import search from '@/api/search';
 
 export default {
-    connection({dispatch, state, commit}, {query, filters})
+    connection({dispatch, state, commit}, {query, profile, filters})
     {
         return new Promise((resolve, reject) => {
             commit('reset');
-            search.startSearch(query, filters)
+            search.startSearch(query, profile, filters)
                 .then(({data}) => {
                     const wsHost = data.host
                         .replace('websocket:', 'ws:')

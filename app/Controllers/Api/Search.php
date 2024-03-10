@@ -29,17 +29,25 @@ class Search extends Base
         try {
             $request = $this->dataRequest()->post();
             $query   = htmlspecialchars_decode($request->getFixedTypeValue('query', 'string'));
-            $filters = $request->getFixedTypeValue('filters', 'array');
-            $params  = $request->getFixedTypeValue('params', 'array');
-            $config  = Helper::config('worker')->collection();
 
             if (empty($query) || strlen($query) <= 3) {
                 $this->throwAbort(Headers::FAILED_DEPENDENCY, 'Empty or short search query!');
             }
 
+            $params = $request->getFixedTypeValue('params', 'array');
+            $config = Helper::config('worker')->collection();
+            $filter = $request->callWrap(static function ($request) {
+                $filter = new Filter($request->getFixedTypeValue('filters', 'array'));
+                $request->callWrapIfTrue(
+                    fn($request) => $filter->loadProfile($request->getFixedTypeValue('profile', 'string')),
+                    $request->has('profile')
+                );
+                return !$filter->collection()->isEmpty() ? $filter : null;
+            });
+
             $dispatcher = new Dispatcher();
             return $this->response([
-                'token' => $dispatcher->makeNewSearchQuery($query, new Filter($filters), $params),
+                'token' => $dispatcher->makeNewSearchQuery($query, $filter, $params),
                 'host'  => $config->replaceValue('broadcast', static function ($value) use ($config) {
                     $usesSsl = $config->collapse('ssl')->getFixedTypeValue('use', 'bool', false);
                     return str_ireplace('websocket:', $usesSsl ? 'wss:' : 'ws:', $value);

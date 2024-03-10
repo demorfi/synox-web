@@ -1,9 +1,9 @@
 import {post} from './http-common';
 
 export default {
-    startSearch(query, filters)
+    startSearch(query, profile, filters)
     {
-        return post('search/start', {query, filters})
+        return post('search/start', {query, profile, filters})
             .then(response => {
                 if (!response.data?.token) {
                     throw new Error('No token available to search');

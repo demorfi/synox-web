@@ -8,6 +8,12 @@ const routes = [
         component: () => import('@/views/search.vue')
     },
     {
+        path     : '/profiles',
+        name     : 'Profiles',
+        meta     : {icon: 'collection', badge: {id: 'profiles', variant: 'light'}},
+        component: () => import('@/views/profiles.vue')
+    },
+    {
         path     : '/packages',
         name     : 'Packages',
         meta     : {icon: 'box-seam', badge: {id: 'packages', variant: 'light'}},
