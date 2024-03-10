@@ -2,7 +2,7 @@
 
 namespace App\Package\Search;
 
-use App\Package\{Adapter, Repository, Collection as PackageCollection};
+use App\Package\Repository;
 use App\Package\Search\Exceptions\WorkerQueue as WorkerQueueException;
 use App\Components\{Helper, Storage\Journal};
 use Digua\Components\{Storage, Storage\DiskFile, Storage\SharedMemory};
@@ -108,14 +108,13 @@ class Worker
     }
 
     /**
-     * @param string            $token
-     * @param Query             $query
-     * @param PackageCollection $packages
+     * @param string $token
+     * @param Query  $query
      * @return void
      */
-    public function addQueue(string $token, Query $query, PackageCollection $packages): void
+    public function addQueue(string $token, Query $query): void
     {
-        $queue = base64_encode(serialize(compact('query', 'packages')));
+        $queue = base64_encode(serialize($query));
         $this->send($token, compact('queue'));
     }
 
@@ -145,14 +144,13 @@ class Worker
     }
 
     /**
-     * @param string  $token
-     * @param Query   $query
-     * @param Adapter $package
+     * @param string $token
+     * @param Query  $query
      * @return bool
      */
-    public function runParallelQueue(string $token, Query $query, Adapter $package): bool
+    public function runParallelQueue(string $token, Query $query): bool
     {
-        $queue = base64_encode(serialize([$token, $query, $package]));
+        $queue = base64_encode(serialize([$token, $query]));
         return $this->exec('--queue ' . escapeshellarg($queue), true);
     }
 
@@ -166,43 +164,44 @@ class Worker
     }
 
     /**
-     * @param string  $token
-     * @param Query   $query
-     * @param Adapter $package
+     * @param string $token
+     * @param Query  $query
      * @return void
      */
-    public function queue(string $token, Query $query, Adapter $package): void
+    public function queue(string $token, Query $query): void
     {
-        $type = $package->instance()->getType()->getName();
-        $name = $package->getName();
+        foreach ($query->getPackages() as $package) {
+            $type = $package->instance()->getType()->getName();
+            $name = $package->getName();
 
-        $countPayloads = 0;
-        try {
-            $limitPayloads = Helper::config('app')->get('limitPerPackage');
-            $this->notify('Search (%s) through the package %s:%s', $query->value, $type, $name);
+            $countPayloads = 0;
+            try {
+                $limitPayloads = Helper::config('app')->get('limitPerPackage');
+                $this->notify('Search (%s) through the package %s:%s', $query->value, $type, $name);
 
-            foreach ($package->search($query) as $payload) {
-                if (!SharedMemory::has($token)) {
-                    $this->notify('Search through the package %s:%s interrupted by watchdog?', $type, $name);
-                    break;
+                foreach ($package->search($query) as $payload) {
+                    if (!SharedMemory::has($token)) {
+                        $this->notify('Search through the package %s:%s interrupted by watchdog?', $type, $name);
+                        break;
+                    }
+
+                    if ($countPayloads > $limitPayloads) {
+                        $this->notify('Search through the package %s:%s interrupted by limit', $type, $name);
+                        break;
+                    }
+
+                    if (!empty($payload) && (!$query->hasFilter() || $query->filter->isPasses($payload))) {
+                        $this->send($token, compact('payload'));
+                        $countPayloads++;
+                    }
                 }
 
-                if ($countPayloads > $limitPayloads) {
-                    $this->notify('Search through the package %s:%s interrupted by limit', $type, $name);
-                    break;
-                }
-
-                if (!empty($payload) && (!$query->hasFilter() || $query->filter->isPasses($payload))) {
-                    $this->send($token, compact('payload'));
-                    $countPayloads++;
-                }
+                $this->notify('Found (%d) records through the package %s:%s', $countPayloads, $type, $name);
+            } catch (Exception $e) {
+                $this->notify($name . ': ' . $e->getMessage());
+            } finally {
+                $this->send($token, ['completed' => $package->getId(), 'countPayloads' => $countPayloads]);
             }
-
-            $this->notify('Found (%d) records through the package %s:%s', $countPayloads, $type, $name);
-        } catch (Exception $e) {
-            $this->notify($name . ': ' . $e->getMessage());
-        } finally {
-            $this->send($token, ['completed' => $package->getId(), 'countPayloads' => $countPayloads]);
         }
     }
 
@@ -248,16 +247,14 @@ class Worker
                 throw new WorkerQueueException('No search queue created!');
             }
 
-            $queue = (array)unserialize((string)base64_decode($this->queues[$token], true));
-            if (!isset($queue['query'], $queue['packages'])
-                || !($queue['query'] instanceof Query)
-                || !($queue['packages'] instanceof PackageCollection)) {
+            $query = unserialize((string)base64_decode($this->queues[$token], true));
+            if (!($query instanceof Query) || !$query->isValid()) {
                 unset($this->queues[$token]);
                 throw new WorkerQueueException('Search queue is broken!');
             }
 
             $storage = Storage::makeSharedMemory($token);
-            $threads = $queue['packages']->count();
+            $threads = $query->count();
             $storage->write((string)$threads);
 
             if (!$this->runParallelWatchdog($token)) {
@@ -265,10 +262,9 @@ class Worker
                 throw new WorkerQueueException('Failed running parallel watchdog!');
             }
 
-            $this->notify('Search (%s) running', $queue['query']->value);
-            foreach ($queue['packages'] as $package) {
-                /* @var $package Adapter */
-                if (!$this->runParallelQueue($token, $queue['query'], $package)) {
+            $this->notify('Search (%s) running', $query->value);
+            foreach ($query->split() as $queryPerPackage) {
+                if (!$this->runParallelQueue($token, $queryPerPackage)) {
                     $storage->rewrite((string)(--$threads));
                 }
             }

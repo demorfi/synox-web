@@ -29,11 +29,11 @@ try {
     // Run one queue for search in the package
     if (isset($options['queue'])) {
         $queue = (array)unserialize((string)base64_decode($options['queue'], true));
-        if (empty($queue) || sizeof($queue) < 3) {
+        if (empty($queue) || sizeof($queue) < 2) {
             exit($worker->notify('Queue is broken!') . "\n");
         }
 
-        $worker->queue(...([$token, $query, $package] = $queue));
+        $worker->queue(...([$token, $query] = $queue));
 
         // Queue completion tracking
         if (SharedMemory::has($token)) {

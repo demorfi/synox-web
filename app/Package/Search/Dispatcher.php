@@ -78,10 +78,10 @@ final class Dispatcher
         }
 
         $token = $this->makeToken();
-        $query = new Query($query, $filter, $params);
+        $query = new Query($query, $this->packages, $filter, $params);
 
         usleep(500000);
-        $worker->addQueue($token, $query, $this->packages);
+        $worker->addQueue($token, $query);
         LateEvent::notify(__CLASS__, sprintf('Search query (%s) created', $query->value));
         return $token;
     }
@@ -104,7 +104,7 @@ final class Dispatcher
         $package = $this->packages->find($packageId);
 
         try {
-            $content = $package->fetch(new Query($fetchId, params: $params));
+            $content = $package->fetch(new Query($fetchId, $package, params: $params));
         } catch (Exception $e) {
             LateEvent::notify(__CLASS__, $package->getName() . ': ' . $e->getMessage());
         }

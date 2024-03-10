@@ -2,17 +2,20 @@
 
 namespace App\Package\Search;
 
+use App\Package\{Adapter, Collection};
 use Digua\Components\ArrayCollection;
 
 readonly class Query
 {
     /**
-     * @param string  $value
-     * @param ?Filter $filter
-     * @param array   $params
+     * @param string             $value
+     * @param Collection|Adapter $packages
+     * @param ?Filter            $filter
+     * @param array              $params
      */
     public function __construct(
         public string $value,
+        protected Collection|Adapter $packages,
         public ?Filter $filter = null,
         public array $params = []
     ) {
@@ -24,6 +27,52 @@ readonly class Query
     public function hasFilter(): bool
     {
         return $this->filter instanceof Filter;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        if (strlen($this->value) < 1) {
+            return false;
+        }
+
+        if ($this->packages instanceof Collection && $this->packages->count() < 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->packages instanceof Collection ? $this->packages->count() : 1;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function split(): ArrayCollection
+    {
+        $queries = ArrayCollection::make();
+        foreach ($this->getPackages() as $package) {
+            // Personal filtering
+            $filter = $this->filter?->collection()->get($package->getId()) ?? $this->filter?->collection() ?? [];
+            $queries[] = new static($this->value, $package, !empty($filter) ? new Filter($filter) : null, $this->params);
+        }
+        return $queries;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPackages(): Collection
+    {
+        return $this->packages instanceof Collection ? $this->packages : Collection::make([$this->packages]);
     }
 
     /**
