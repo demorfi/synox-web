@@ -61,7 +61,7 @@ docker-compose up -d
 Use implementation of the API interface [Synox Web API](https://github.com/demorfi/synox-web-api)
 
 ## Reporting issues
-If you have any issues with with the application please open an issue on [GitHub](https://github.com/demorfi/synox-web/issues).
+If you have any issues with the application please open an issue on [GitHub](https://github.com/demorfi/synox-web/issues).
 
 ## License
 SynoX Web is licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php).
