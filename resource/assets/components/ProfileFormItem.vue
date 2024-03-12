@@ -19,10 +19,11 @@
         label-for="selectPackage"
         floating>
       <b-form-select
-          v-model="selectPackage"
+          :model-value="null"
           :options="optionsSelectPackage"
           id="selectPackage"
-          placeholder="Select the package">
+          placeholder="Select the package"
+          @change="selectPackage($event)">
         <template #first>
           <b-form-select-option
               :value="null"
@@ -90,22 +91,6 @@ export default {
     ...mapState('packages', ['filters']),
     ...mapGetters('packages', ['getPackagesByType', 'getPackageById', 'getFilterById']),
     ...mapGetters('profiles', ['getProfileById']),
-    selectPackage: {
-      get()
-      {
-        return null;
-      },
-
-      set(pkgId)
-      {
-        this.selected.packages[pkgId] = {};
-        const packages = (this.profile !== null && pkgId in this.profile.values) ? this.profile.values[pkgId] : {};
-        for (let filter of this.filters) {
-          this.selected.packages[pkgId][filter.id] = (filter.id in packages) ? [...packages[filter.id]] : [];
-        }
-      }
-    },
-
     optionsSelectPackage()
     {
       const packages = this.getPackagesByType('Search');
@@ -158,6 +143,15 @@ export default {
 
   methods: {
     ...mapActions('profiles', ['createProfile', 'updateProfile', 'removeProfile']),
+    selectPackage(pkgId)
+    {
+      this.selected.packages[pkgId] = {};
+      const packages = (this.profile !== null && pkgId in this.profile.values) ? this.profile.values[pkgId] : {};
+      for (let filter of this.filters) {
+        this.selected.packages[pkgId][filter.id] = (filter.id in packages) ? [...packages[filter.id]] : [];
+      }
+    },
+
     load()
     {
       if (this.id !== undefined) {
@@ -165,7 +159,7 @@ export default {
         if (this.profile !== null) {
           this.selected.id = this.profile.id;
           for (let pkgId in this.profile.values) {
-            this.selectPackage = pkgId;
+            this.selectPackage(pkgId);
           }
         }
       }
