@@ -27,10 +27,7 @@ class Text extends File
     public function create(string $name, string $content): static
     {
         $this->set($content);
-        if ($this->isAvailable()) {
-            parent::create($name, $this->content);
-        }
-
+        parent::create($name, $this->content);
         return $this;
     }
 
