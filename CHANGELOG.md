@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 13-03-2024
+
+### Fixed
+- Fetch text content
+- Reset selected the package in the profile form
+
 ## [1.3.0] - 11-03-2024
 
 ### Added
