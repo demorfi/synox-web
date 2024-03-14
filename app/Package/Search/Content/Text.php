@@ -2,17 +2,10 @@
 
 namespace App\Package\Search\Content;
 
-use App\Package\Search\{Abstracts\File, Enums\Type};
+use App\Package\Search\Enums\Type;
 
-class Text extends File
+class Text extends Base
 {
-    /**
-     * @var string[]
-     */
-    protected static array $defaults = [
-        'diskPath' => ROOT_PATH . '/public/files'
-    ];
-
     /**
      * @inheritdoc
      */

@@ -2,9 +2,7 @@
 
 namespace App\Package\Search\Item;
 
-use App\Package\Search\Abstracts\Item;
-
-class Text extends Item
+class Text extends Base
 {
     /**
      * @var ?string

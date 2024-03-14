@@ -2,9 +2,9 @@
 
 namespace App\Package\Search\Content;
 
-use App\Package\Search\{Abstracts\File, Enums\Type};
+use App\Package\Search\Enums\Type;
 
-class Torrent extends File
+class Torrent extends Base
 {
     /**
      * @var string[]

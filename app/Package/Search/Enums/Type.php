@@ -4,11 +4,13 @@ namespace App\Package\Search\Enums;
 
 use App\Package\Interfaces\BaseEnum;
 use App\Package\Search\Interfaces\Package;
-use App\Package\Search\Item\{Text as TextItem, Torrent as TorrentItem};
-use App\Package\Search\Content\{Text as TextContent, Torrent as TorrentContent};
+use App\Package\Search\Item\{Base as BaseItem, Text as TextItem, Torrent as TorrentItem};
+use App\Package\Search\Content\{Base as BaseContent, Text as TextContent, Torrent as TorrentContent};
 
 enum Type: string implements BaseEnum
 {
+    case BASE = BaseItem::class;
+
     case TORRENT = TorrentItem::class;
 
     case TEXT = TextItem::class;
@@ -45,19 +47,20 @@ enum Type: string implements BaseEnum
 
     /**
      * @param Package $package
-     * @return TextItem|TorrentItem
+     * @return BaseItem|TextItem|TorrentItem
      */
-    public function makeItem(Package $package): TextItem|TorrentItem
+    public function makeItem(Package $package): BaseItem|TextItem|TorrentItem
     {
         return new $this->value($package);
     }
 
     /**
-     * @return TextContent|TorrentContent
+     * @return BaseContent|TextContent|TorrentContent
      */
-    public function makeContent(): TextContent|TorrentContent
+    public function makeContent(): BaseContent|TextContent|TorrentContent
     {
         return match ($this) {
+            self::BASE => new BaseContent,
             self::TEXT => new TextContent,
             self::TORRENT => new TorrentContent
         };
@@ -69,7 +72,7 @@ enum Type: string implements BaseEnum
     public function extension(): FileExtension
     {
         return match ($this) {
-            self::TEXT => FileExtension::TEXT,
+            self::BASE, self::TEXT => FileExtension::TEXT,
             self::TORRENT => FileExtension::TORRENT
         };
     }
