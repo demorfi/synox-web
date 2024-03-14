@@ -45,7 +45,7 @@
             v-if="requires.length"
             class="col-12 mb-0">
           <dt>Requires</dt>
-          <dd>{{ requires.join(',') }}</dd>
+          <dd>{{ requires.join(', ') }}</dd>
         </dl>
       </b-row>
     </template>
