@@ -21,5 +21,9 @@ if (Env::isDev()) {
     $search = [...$search, 'TestTorrent', 'TestText'];
 }
 
-$extension = ['Cache'];
+$extension = [
+    'Cache',
+    'JackettApiHook'
+];
+
 return compact('search', 'extension');

@@ -8,6 +8,8 @@ enum Type: string implements BaseEnum
 {
     case BASE = 'Base';
 
+    case HOOK = 'Hook';
+
     /**
      * @return string
      */

@@ -30,7 +30,8 @@
     "ext-redis": "*",
     "demorfi/digua": "^v1.6.0",
     "scotteh/php-dom-wrapper": "^2.0",
-    "workerman/workerman": "^v4.1"
+    "workerman/workerman": "^v4.1",
+    "demorfi/synox-web-api": "^1.3"
   },
   "autoload": {
     "files": [
