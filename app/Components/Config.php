@@ -12,7 +12,7 @@ class Config extends ConfigBase
     /**
      * @var DataFile
      */
-    private DataFile $storage;
+    protected DataFile $storage;
 
     /**
      * @inheritdoc
@@ -24,20 +24,41 @@ class Config extends ConfigBase
     {
         parent::__construct($name);
         $this->storage = DataFile::create($name . FileExtension::CONFIG->value);
+        $this->load();
+    }
+
+    /**
+     * @return void
+     */
+    protected function load(): void
+    {
         $this->overwrite($this->collection()->merge($this->storage->read())->toArray());
     }
 
     /**
-     * @param string $name
+     * @param int|string $key
+     * @param mixed  $value
+     * @return void
+     */
+    public function set(int|string $key, mixed $value): void
+    {
+        parent::set($key, $value);
+        $this->storage->set($key, $value);
+    }
+
+    /**
+     * @param string $key
      * @param mixed  $value
      * @return bool
-     * @throws StorageException
      */
-    public function update(string $name, mixed $value): bool
+    public function update(string $key, mixed $value): bool
     {
-        $type  = Types::value($this->get($name))->getNameShort();
-        $value = Types::value($value)->to($type)->getValue();
-        $this->storage->set($name, $value);
+        if ($this->has($key)) {
+            $type  = Types::value($this->get($key))->getNameShort();
+            $value = Types::value($value)->to($type)->getValue();
+        }
+
+        $this->set($key, $value);
         return $this->storage->save();
     }
 }
