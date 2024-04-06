@@ -3,8 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Controllers\Base;
-use App\Components\Storage\Profiles as ProfilesStorage;
-use App\Package\Search\Profile as SearchProfile;
+use App\Package\Search\{Profile as SearchProfile, Profiles as ProfilesStorage};
 use Digua\Response;
 use Digua\Attributes\Guardian\RequestPathRequired;
 use Digua\Enums\Headers;

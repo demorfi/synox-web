@@ -2,7 +2,7 @@
 
 namespace App\Package\Search;
 
-use App\Components\Storage\Profiles as ProfilesStorage;
+use App\Package\Search\Profiles as ProfilesStorage;
 use App\Package\Search\{Abstracts\Item, Abstracts\Package, Enums\Category, Interfaces\FilterEnum};
 use Digua\Components\ArrayCollection;
 use JsonSerializable;

@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Storage;
+namespace App\Package\Search;
 
-use App\Package\Search\Profile;
 use Digua\Components\{ArrayCollection, DataFile};
 use Digua\Exceptions\Storage as StorageException;
 
@@ -75,7 +74,6 @@ class Profiles
      * @param Profile $profile
      * @param ?string $id
      * @return array|bool
-     * @throws StorageException
      */
     public function add(Profile $profile, ?string $id): array|bool
     {
@@ -96,7 +94,6 @@ class Profiles
     /**
      * @param string $id
      * @return bool
-     * @throws StorageException
      */
     public function remove(string $id): bool
     {
