@@ -17,6 +17,14 @@ abstract class Package implements PackageInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function isAvailable(): bool

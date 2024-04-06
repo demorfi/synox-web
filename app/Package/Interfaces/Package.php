@@ -29,6 +29,11 @@ interface Package
     /**
      * @return bool
      */
+    public function isActive(): bool;
+
+    /**
+     * @return bool
+     */
     public function isAvailable(): bool;
 
     /**
