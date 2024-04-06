@@ -171,7 +171,7 @@ class Worker
     public function queue(string $token, Query $query): void
     {
         foreach ($query->getPackages() as $package) {
-            $type = $package->instance()->getType()->getName();
+            $type = $package->getType()->getName();
             $name = $package->getName();
 
             $countPayloads = 0;
