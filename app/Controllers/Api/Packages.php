@@ -3,11 +3,14 @@
 namespace App\Controllers\Api;
 
 use App\Controllers\Base;
-use App\Package\Search\Filter;
-use Digua\Response;
+use App\Package\{Update, Search\Filter};
+use Digua\{Response, Env};
 use Digua\Attributes\Guardian\RequestPathRequired;
 use Digua\Enums\Headers;
-use Digua\Exceptions\{Abort as AbortException, Base as BaseException};
+use Digua\Exceptions\{
+    Abort as AbortException,
+    Base as BaseException
+};
 
 class Packages extends Base
 {
@@ -25,6 +28,47 @@ class Packages extends Base
     public function getFiltersAction(): array
     {
         return Filter::usesCollection()->toArray();
+    }
+
+    /**
+     * @param string $name
+     * @return Response
+     * @throws AbortException
+     */
+    #[RequestPathRequired('name')]
+    public function putUpdateAction(string $name): Response
+    {
+        if (!Env::isDev()) {
+            $this->throwAbort(Headers::METHOD_NOT_ALLOWED, 'Updating is allowed only in development mode!');
+        }
+
+        try {
+            return $this->response(['success' => true, 'state' => Update::add($name)]);
+        } catch (BaseException $e) {
+            $this->throwAbort($e->getCode() ?: Headers::EXPECTATION_FAILED, $e->getMessage());
+        }
+    }
+
+    /**
+     * @return Response
+     * @throws AbortException
+     * @uses putUpdateAction
+     */
+    public function postUploadAction(): Response
+    {
+        if (!Env::isDev()) {
+            $this->throwAbort(Headers::METHOD_NOT_ALLOWED, 'Uploading is allowed only in development mode!');
+        }
+
+        try {
+            $files = $this->dataRequest()->files();
+            if ($files->size() <> 1) {
+                $this->throwAbort(Headers::NOT_ACCEPTABLE, 'Only one file can be uploaded at a time!');
+            }
+            return $this->response(['success' => true, 'name' => Update::upload($files->collection()->first())]);
+        } catch (BaseException $e) {
+            $this->throwAbort($e->getCode() ?: Headers::EXPECTATION_FAILED, $e->getMessage());
+        }
     }
 
     /**

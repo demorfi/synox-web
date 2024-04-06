@@ -66,5 +66,28 @@ export default {
                     reject(message);
                 });
         });
+    },
+
+    uploadPackage({dispatch, commit}, fileData)
+    {
+        return new Promise((resolve, reject) => {
+            const notification = dispatch('notifications/addInfo', 'Uploading...', {root: true});
+            packages.uploadPackage(fileData)
+                .then(({data}) => packages.updatePackage(data.name))
+                .then(({data}) => {
+                    commit('addPackage', data.state);
+                    notification.then(({id}) => {
+                        const message = 'Package uploading successfully';
+                        commit('notifications/setNotification', {id, message, type: 'success'}, {root: true});
+                    });
+                    resolve(data);
+                })
+                .catch(({message}) => {
+                    notification.then(({id}) => {
+                        commit('notifications/setNotification', {id, message, type: 'danger'}, {root: true});
+                    });
+                    reject(message);
+                });
+        });
     }
 }

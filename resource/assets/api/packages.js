@@ -1,4 +1,4 @@
-import {get, update} from './http-common';
+import {get, post, update} from './http-common';
 
 export default {
     getPackages()
@@ -37,5 +37,15 @@ export default {
     updateSettings(id, settings)
     {
         return update('packages', `updateSettings/id/${id}`, {settings});
+    },
+
+    uploadPackage(fileData)
+    {
+        return post('packages/upload', fileData);
+    },
+
+    updatePackage(fileName)
+    {
+        return update('packages', 'update', {name: fileName});
     }
 }
