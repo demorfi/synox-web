@@ -40,7 +40,14 @@ class RedisLists implements Storage
         try {
             if (!self::$connection?->isConnected()) {
                 self::$connection = new Redis;
-                self::$connection->connect($config->get('host', 'localhost'), (int)$config->get('port', 6379));
+                self::$connection->connect(
+                    (string)$config->get('host', 'localhost'),
+                    (int)$config->get('port', 6379),
+                    (float)$config->get('timeout', 1.5),
+                    null,
+                    0,
+                    (float)$config->get('timeout', 1.5)
+                );
                 self::$connection->auth($config->get('pass'));
                 self::$expiration = (int)$config->get('expire', 0);
             }
