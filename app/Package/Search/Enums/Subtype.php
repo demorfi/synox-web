@@ -7,7 +7,7 @@ use App\Package\Search\Interfaces\Package;
 use App\Package\Search\Item\{Base as BaseItem, Text as TextItem, Torrent as TorrentItem};
 use App\Package\Search\Content\{Base as BaseContent, Text as TextContent, Torrent as TorrentContent};
 
-enum Type: string implements BaseEnum
+enum Subtype: string implements BaseEnum
 {
     case BASE = BaseItem::class;
 

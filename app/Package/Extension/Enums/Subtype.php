@@ -4,7 +4,7 @@ namespace App\Package\Extension\Enums;
 
 use App\Package\Interfaces\BaseEnum;
 
-enum Type: string implements BaseEnum
+enum Subtype: string implements BaseEnum
 {
     case BASE = 'Base';
 

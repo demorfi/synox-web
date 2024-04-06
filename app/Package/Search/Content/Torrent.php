@@ -2,7 +2,7 @@
 
 namespace App\Package\Search\Content;
 
-use App\Package\Search\Enums\Type;
+use App\Package\Search\Enums\Subtype;
 
 class Torrent extends Base
 {
@@ -26,9 +26,9 @@ class Torrent extends Base
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getType(): Subtype
     {
-        return Type::TORRENT;
+        return Subtype::TORRENT;
     }
 
     /**

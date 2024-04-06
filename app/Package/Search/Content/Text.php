@@ -2,16 +2,16 @@
 
 namespace App\Package\Search\Content;
 
-use App\Package\Search\Enums\Type;
+use App\Package\Search\Enums\Subtype;
 
 class Text extends Base
 {
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getType(): Subtype
     {
-        return Type::TEXT;
+        return Subtype::TEXT;
     }
 
     /**

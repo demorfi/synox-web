@@ -2,7 +2,7 @@
 
 namespace App\Package\Search\Content;
 
-use App\Package\Search\{Abstracts\File, Enums\Type};
+use App\Package\Search\{Abstracts\File, Enums\Subtype};
 
 class Base extends File
 {
@@ -16,8 +16,8 @@ class Base extends File
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getType(): Subtype
     {
-        return Type::BASE;
+        return Subtype::BASE;
     }
 }

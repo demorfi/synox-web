@@ -2,7 +2,7 @@
 
 namespace App\Components\Packages\Extension;
 
-use App\Package\Extension\{Abstracts\Package, Enums\Type};
+use App\Package\Extension\{Abstracts\Package, Enums\Subtype};
 use App\Package\Search\Relay;
 use App\Package\Search\Interfaces\{Item as PackageItemInterface, Content as PackageContentInterface};
 use App\Components\Storage\{Journal, RedisLists};
@@ -13,9 +13,9 @@ use Digua\Exceptions\Base as BaseException;
 class Cache extends Package
 {
     /**
-     * @var Type
+     * @var Subtype
      */
-    private Type $type = Type::BASE;
+    private Subtype $subtype = Subtype::BASE;
 
     /**
      * @var string
@@ -35,9 +35,9 @@ class Cache extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**

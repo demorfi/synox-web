@@ -2,7 +2,7 @@
 
 namespace App\Package\Search\Abstracts;
 
-use App\Package\Search\{Interfaces\Content as PackageContentInterface, Enums\Type};
+use App\Package\Search\{Interfaces\Content as PackageContentInterface, Enums\Subtype};
 
 abstract class Content implements PackageContentInterface
 {
@@ -73,7 +73,7 @@ abstract class Content implements PackageContentInterface
     /**
      * @inheritdoc
      */
-    abstract public function getType(): Type;
+    abstract public function getType(): Subtype;
 
     /**
      * @inheritdoc

@@ -5,21 +5,21 @@ namespace App\Package\Enums;
 use App\Components\Settings;
 use App\Package\Interfaces\BaseEnum;
 use App\Package\Extension\{
-    Enums\Type as ExtensionType,
+    Enums\Subtype as ExtensionSubtype,
     Interfaces\Package as ExtensionPackageInterface,
     Relay as ExtensionRelay
 };
 use App\Package\Search\{
-    Enums\Type as SearchType,
+    Enums\Subtype as SearchSubtype,
     Interfaces\Package as SearchPackageInterface,
     Relay as SearchRelay
 };
 
 enum Type: string implements BaseEnum
 {
-    case SEARCH = SearchType::class;
+    case SEARCH = SearchSubtype::class;
 
-    case EXTENSION = ExtensionType::class;
+    case EXTENSION = ExtensionSubtype::class;
 
     /**
      * @inheritdoc
@@ -49,6 +49,18 @@ enum Type: string implements BaseEnum
             }
         }
         return null;
+    }
+
+    /**
+     * @param string $name
+     * @return ExtensionSubtype|SearchSubtype|null
+     */
+    public function trySubtypeName(string $name): ExtensionSubtype|SearchSubtype|null
+    {
+        return match ($this) {
+            self::EXTENSION => ExtensionSubtype::tryName($name),
+            self::SEARCH => SearchSubtype::tryName($name)
+        };
     }
 
     /**

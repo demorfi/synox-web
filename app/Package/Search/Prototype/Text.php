@@ -3,7 +3,7 @@
 namespace App\Package\Search\Prototype;
 
 use App\Package\Search\Abstracts\Package;
-use App\Package\Search\Enums\Type;
+use App\Package\Search\Enums\Subtype;
 use App\Package\Search\Content\Text as TextContent;
 use App\Package\Search\Item\Text as TextItem;
 use App\Package\Search\Query;
@@ -16,9 +16,9 @@ use Exception;
 abstract class Text extends Package
 {
     /**
-     * @var Type
+     * @var Subtype
      */
-    protected Type $type = Type::TEXT;
+    protected Subtype $subtype = Subtype::TEXT;
 
     /**
      * @var string
@@ -43,9 +43,9 @@ abstract class Text extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**
@@ -85,7 +85,7 @@ abstract class Text extends Package
      */
     public function makeItem(): TextItem
     {
-        return $this->getType()->makeItem($this);
+        return $this->subtype->makeItem($this);
     }
 
     /**
@@ -158,7 +158,7 @@ abstract class Text extends Package
         if (!$this->hasAuth() || ($this->hasCredentials() && $this->isAvailableAccount())) {
             $client = $this->client();
             $client->useCookie($this->getId());
-            return $this->getType()->makeContent()
+            return $this->subtype->makeContent()
                 ->create(md5($query->value), $this->searchItemContent($this->getPage($client, $this->buildFetchUrl($query->value))));
         }
 

@@ -3,7 +3,7 @@
 namespace App\Components\Packages\Search;
 
 use App\Package\Search\Abstracts\Package;
-use App\Package\Search\Enums\{Type, Category};
+use App\Package\Search\Enums\{Subtype, Category};
 use App\Package\Search\{Query, Filter};
 use App\Package\Search\Item\Torrent as TorrentItem;
 use App\Package\Search\Content\Torrent as TorrentContent;
@@ -11,9 +11,9 @@ use App\Package\Search\Content\Torrent as TorrentContent;
 class TestTorrent extends Package
 {
     /**
-     * @var Type
+     * @var Subtype
      */
-    private Type $type = Type::TORRENT;
+    private Subtype $subtype = Subtype::TORRENT;
 
     /**
      * @var string
@@ -41,9 +41,9 @@ class TestTorrent extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**
@@ -110,6 +110,6 @@ class TestTorrent extends Package
         $content = 'ZDEzOmNyZWF0aW9uIGRhdGVpMTQ0OTczMDI4Nzg0MmU4OmVuY29kaW5nNTpVVEYtODQ6aW5mb2Q1OmZpbGVzbGQ2Omxlbmd0aGkxZTQ6cGF0aGw1O'
             . 'jEudHh0ZWVkNjpsZW5ndGhpMmU0OnBhdGhsNToyLnR4dGVlZDY6bGVuZ3RoaTNlNDpwYXRobDU6My50eHRlZWU0Om5hbWU3Om51bWJlcn'
             . 'MxMjpwaWVjZSBsZW5ndGhpMTYzODRlNjpwaWVjZXMyMDofdGSOUKamcI7FSrMnoWPVU2t87WVl';
-        return $this->getType()->makeContent()->create('', base64_decode($content));
+        return $this->subtype->makeContent()->create('', base64_decode($content));
     }
 }

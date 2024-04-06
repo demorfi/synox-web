@@ -3,7 +3,7 @@
 namespace App\Components\Packages\Search;
 
 use App\Package\Search\Abstracts\Package;
-use App\Package\Search\Enums\{Type, Category};
+use App\Package\Search\Enums\{Subtype, Category};
 use App\Package\Search\{Query, Filter};
 use App\Package\Search\Item\Text as TextItem;
 use App\Package\Search\Content\Text as TextContent;
@@ -11,9 +11,9 @@ use App\Package\Search\Content\Text as TextContent;
 class TestText extends Package
 {
     /**
-     * @var Type
+     * @var Subtype
      */
-    private Type $type = Type::TEXT;
+    private Subtype $subtype = Subtype::TEXT;
 
     /**
      * @var string
@@ -33,9 +33,9 @@ class TestText extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**
@@ -107,7 +107,7 @@ class TestText extends Package
      */
     public function fetch(Query $query): TextContent
     {
-        return $this->getType()->makeContent()
+        return $this->subtype->makeContent()
             ->create(md5($query->value), sprintf("test \n №%d content", rand(1, 100)));
     }
 }

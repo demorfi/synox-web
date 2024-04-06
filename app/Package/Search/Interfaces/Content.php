@@ -2,7 +2,7 @@
 
 namespace App\Package\Search\Interfaces;
 
-use App\Package\Search\Enums\Type;
+use App\Package\Search\Enums\Subtype;
 use JsonSerializable;
 
 interface Content extends JsonSerializable
@@ -30,7 +30,7 @@ interface Content extends JsonSerializable
     public function isAvailable(): bool;
 
     /**
-     * @return Type
+     * @return Subtype
      */
-    public function getType(): Type;
+    public function getType(): Subtype;
 }

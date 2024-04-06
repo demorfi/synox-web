@@ -4,7 +4,7 @@ namespace App\Components\Packages\Search;
 
 use App\Package\Search\Abstracts\Package;
 use App\Package\Search\Filter;
-use App\Package\Search\Enums\{Type, Category};
+use App\Package\Search\Enums\{Subtype, Category};
 use App\Package\Search\Query;
 use App\Package\Search\Item\Torrent as TorrentItem;
 use App\Package\Search\Content\Torrent as TorrentContent;
@@ -20,9 +20,9 @@ class Tpb extends Package
     const SITE_URL = 'https://thepiratebay.org';
 
     /**
-     * @var Type
+     * @var Subtype
      */
-    private Type $type = Type::TORRENT;
+    private Subtype $subtype = Subtype::TORRENT;
 
     /**
      * @var string
@@ -62,9 +62,9 @@ class Tpb extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**
@@ -181,6 +181,6 @@ class Tpb extends Package
         $client->useCookie($this->getId());
 
         $content = $this->sendGet($client, sprintf($this->urlFetch, $query->value));
-        return $this->getType()->makeContent()->create('', $content);
+        return $this->subtype->makeContent()->create('', $content);
     }
 }

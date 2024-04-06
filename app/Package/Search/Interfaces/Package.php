@@ -3,14 +3,14 @@
 namespace App\Package\Search\Interfaces;
 
 use App\Package\Interfaces\Package as PackageInterface;
-use App\Package\Search\{Enums\Type, Query};
+use App\Package\Search\{Enums\Subtype, Query};
 
 interface Package extends PackageInterface
 {
     /**
-     * @return Type
+     * @return Subtype
      */
-    public function getType(): Type;
+    public function getSubtype(): Subtype;
 
     /**
      * @return bool

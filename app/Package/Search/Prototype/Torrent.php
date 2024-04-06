@@ -3,7 +3,7 @@
 namespace App\Package\Search\Prototype;
 
 use App\Package\Search\Abstracts\Package;
-use App\Package\Search\Enums\Type;
+use App\Package\Search\Enums\Subtype;
 use App\Package\Search\Content\Torrent as TorrentContent;
 use App\Package\Search\Item\Torrent as TorrentItem;
 use App\Package\Search\Query;
@@ -17,9 +17,9 @@ use SplObjectStorage;
 abstract class Torrent extends Package
 {
     /**
-     * @var Type
+     * @var Subtype
      */
-    protected Type $type = Type::TORRENT;
+    protected Subtype $subtype = Subtype::TORRENT;
 
     /**
      * @var string
@@ -54,9 +54,9 @@ abstract class Torrent extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**
@@ -96,7 +96,7 @@ abstract class Torrent extends Package
      */
     public function makeItem(): TorrentItem
     {
-        return $this->getType()->makeItem($this);
+        return $this->subtype->makeItem($this);
     }
 
     /**
@@ -229,7 +229,7 @@ abstract class Torrent extends Package
             $client->useCookie($this->getId());
 
             $content = $this->sendGet($client, $this->buildFetchUrl($query->value));
-            return $this->getType()->makeContent()->create('', $content);
+            return $this->subtype->makeContent()->create('', $content);
         }
 
         return null;

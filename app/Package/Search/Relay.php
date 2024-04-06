@@ -43,7 +43,7 @@ final class Relay extends RelayAbstract
         });
 
         foreach ($event() as $result) {
-            yield is_a($result, $this->package->getType()->value) ? $result : null;
+            yield is_a($result, $this->package->getSubtype()->value) ? $result : null;
         }
     }
 

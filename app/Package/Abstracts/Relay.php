@@ -47,7 +47,7 @@ abstract class Relay implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'subtype'     => $this->package->getType()->getName(),
+            'subtype'     => $this->package->getSubtype()->getName(),
             'name'        => $this->package->getName(),
             'description' => $this->package->getDescription(),
             'version'     => $this->package->getVersion(),

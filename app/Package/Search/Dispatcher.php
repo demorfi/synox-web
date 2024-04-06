@@ -109,7 +109,7 @@ final class Dispatcher
             LateEvent::notify(__CLASS__, $package->getName() . ': ' . $e->getMessage());
         }
 
-        $type   = $package->instance()->getType()->getName();
+        $type   = $package->instance()->getSubtype()->getName();
         $access = $content?->isAvailable() ? 'available' : 'unable';
 
         LateEvent::notify(

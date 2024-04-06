@@ -8,7 +8,7 @@ use App\Package\{
     Adapter,
     Search\Enums\Category,
     Extension\Abstracts\Package,
-    Extension\Enums\Type,
+    Extension\Enums\Subtype,
     Exceptions\Package as PackageException
 };
 use Digua\{
@@ -29,9 +29,9 @@ use Exception;
 class JackettApiHook extends Package
 {
     /**
-     * @var Type
+     * @var Subtype
      */
-    private Type $type = Type::HOOK;
+    private Subtype $subtype = Subtype::HOOK;
 
     /**
      * @var string
@@ -72,9 +72,9 @@ class JackettApiHook extends Package
     /**
      * @inheritdoc
      */
-    public function getType(): Type
+    public function getSubtype(): Subtype
     {
-        return $this->type;
+        return $this->subtype;
     }
 
     /**

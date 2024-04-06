@@ -4,7 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\Base;
 use App\Components\Storage\Journal;
-use App\Package\Search\{Dispatcher, Enums\Type};
+use App\Package\Search\{Dispatcher, Enums\Subtype};
 use Digua\{LateEvent, Response};
 use Digua\Attributes\Guardian\RequestPathRequired;
 use Digua\Enums\Headers;
@@ -59,7 +59,7 @@ class Content extends Base
     #[RequestPathRequired('name', 'type')]
     public function getDownloadAction(string $name, string $type): Response
     {
-        $content = Type::tryName($type)?->makeContent();
+        $content = Subtype::tryName($type)?->makeContent();
         if (empty($content)) {
             $this->throwAbort(Headers::UNPROCESSABLE_ENTITY, 'Invalid content type!');
         }

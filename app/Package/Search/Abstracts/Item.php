@@ -80,8 +80,8 @@ abstract class Item implements PackageItemInterface
     {
         $this->package = $package->getName();
         $this->id      = $package->getId();
-        $this->type    = $package->getType()->getName();
-        $this->typeId  = $package->getType()->getId();
+        $this->type    = $package->getSubtype()->getName();
+        $this->typeId  = $package->getSubtype()->getId();
     }
 
     /**

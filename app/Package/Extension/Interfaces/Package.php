@@ -3,12 +3,12 @@
 namespace App\Package\Extension\Interfaces;
 
 use App\Package\Interfaces\Package as PackageInterface;
-use App\Package\Extension\Enums\Type;
+use App\Package\Extension\Enums\Subtype;
 
 interface Package extends PackageInterface
 {
     /**
-     * @return Type
+     * @return Subtype
      */
-    public function getType(): Type;
+    public function getSubtype(): Subtype;
 }
