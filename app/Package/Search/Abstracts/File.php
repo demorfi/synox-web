@@ -41,7 +41,7 @@ abstract class File extends Content
     /**
      * @return ?string
      */
-    public function getBaseName(): ?string
+    public function getBasename(): ?string
     {
         return !empty($this->name) ? $this->name . $this->extension : null;
     }
@@ -89,7 +89,7 @@ abstract class File extends Content
     public function fetch(): ?string
     {
         if ($this->available && !empty($this->name)) {
-            $filePath      = self::getDiskPath(Helper::filterFileName($this->getBaseName()));
+            $filePath      = self::getDiskPath(Helper::filterFileName($this->getBasename()));
             $this->content = file_get_contents($filePath) ?: null;
             return $this->content;
         }
@@ -103,7 +103,7 @@ abstract class File extends Content
     public function getPath(): ?string
     {
         if ($this->available && !empty($this->name)) {
-            $filePath = self::getDiskPath(Helper::filterFileName($this->getBaseName()));
+            $filePath = self::getDiskPath(Helper::filterFileName($this->getBasename()));
             return substr($filePath, strlen(DOCUMENT_ROOT));
         }
 
@@ -116,6 +116,6 @@ abstract class File extends Content
     public function jsonSerialize(): array
     {
         $data = parent::jsonSerialize();
-        return [...$data, 'baseName' => $this->getBaseName(), 'path' => $this->getPath()];
+        return [...$data, 'baseName' => $this->getBasename(), 'path' => $this->getPath()];
     }
 }
