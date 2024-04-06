@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Search;
+namespace App\Components\Packages;
 
 use App\Package\Search\Abstracts\Package;
 use App\Package\Search\Filter;

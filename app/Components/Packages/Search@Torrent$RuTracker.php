@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Search;
+namespace App\Components\Packages;
 
 use App\Package\Search\{Filter, Prototype\Torrent, Enums\Category, Item\Torrent as TorrentItem};
 use Digua\Components\Client\Curl as CurlClient;

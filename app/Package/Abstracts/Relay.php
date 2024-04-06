@@ -2,10 +2,10 @@
 
 namespace App\Package\Abstracts;
 
-use App\Components\Settings;
 use App\Package\Enums\Type;
 use App\Package\Extension\Interfaces\Package as ExtensionPackageInterface;
 use App\Package\Search\Interfaces\Package as SearchPackageInterface;
+use App\Package\State;
 use BadMethodCallException;
 use JsonSerializable;
 
@@ -17,11 +17,11 @@ abstract class Relay implements JsonSerializable
 {
     /**
      * @param SearchPackageInterface|ExtensionPackageInterface $package
-     * @param Settings                                         $settings
+     * @param State                                            $state
      */
     public function __construct(
         protected readonly SearchPackageInterface|ExtensionPackageInterface $package,
-        protected readonly Settings $settings
+        protected readonly State $state
     ) {
     }
 
@@ -34,11 +34,19 @@ abstract class Relay implements JsonSerializable
     }
 
     /**
+     * @return State
+     */
+    public function state(): State
+    {
+        return $this->state;
+    }
+
+    /**
      * @return string
      */
     public function getId(): string
     {
-        return $this->settings->getId();
+        return $this->state->getId();
     }
 
     /**

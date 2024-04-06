@@ -2,9 +2,7 @@
 
 namespace App\Package;
 
-use App\Components\Settings;
 use App\Package\Abstracts\Relay;
-use Digua\Exceptions\Storage as StorageException;
 use JsonSerializable;
 
 /**
@@ -13,11 +11,16 @@ use JsonSerializable;
 final readonly class Adapter implements JsonSerializable
 {
     /**
-     * @param Relay    $relay
-     * @param Settings $settings
+     * @var Settings
      */
-    public function __construct(private Relay $relay, private Settings $settings)
+    private Settings $settings;
+
+    /**
+     * @param Relay $relay
+     */
+    public function __construct(private Relay $relay)
     {
+        $this->settings = $this->relay->state()->getSettings();
     }
 
     /**
@@ -25,7 +28,7 @@ final readonly class Adapter implements JsonSerializable
      */
     public function getId(): string
     {
-        return $this->settings->getId();
+        return $this->relay->getId();
     }
 
     /**
@@ -38,9 +41,8 @@ final readonly class Adapter implements JsonSerializable
             'type'        => $this->relay->getType()->getName(),
             'enabled'     => $this->isEnabled(),
             'settings'    => $this->settings->collection()
-                ->except('enabled')
                 ->replaceValue('password', fn($v) => !empty($v) ? 'password' : ''),
-            'pkgSettings' => $this->settings->collection()->except('enabled', 'password', 'username')->getKeys(),
+            'pkgSettings' => $this->settings->collection()->except('password', 'username')->getKeys(),
             ...$this->relay->jsonSerialize(),
         ];
     }
@@ -88,7 +90,6 @@ final readonly class Adapter implements JsonSerializable
 
     /**
      * @return void
-     * @throws StorageException
      */
     public function saveSettings(): void
     {
@@ -102,6 +103,6 @@ final readonly class Adapter implements JsonSerializable
      */
     public function isEnabled(): bool
     {
-        return (bool)$this->settings->get('enabled', false);
+        return (bool)$this->relay->state()->get('enabled', false);
     }
 }

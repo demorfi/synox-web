@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Extension;
+namespace App\Components\Packages;
 
 use App\Package\Extension\{Abstracts\Package, Enums\Subtype};
 use App\Package\Search\Relay;

@@ -1,30 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Extension;
+namespace App\Components\Packages;
 
 use App\Controllers\Base as BaseController;
-use App\Components\Settings;
-use App\Package\{
-    Adapter,
-    Search\Enums\Category,
-    Extension\Abstracts\Package,
-    Extension\Enums\Subtype,
-    Exceptions\Package as PackageException
-};
-use Digua\{
-    Enums\Headers,
-    LateEvent,
-    Request,
-    RouteDispatcher,
-    Response,
-    Components\Event,
-    Interfaces\Route as RouteInterface,
-    Interfaces\Guardian as GuardianInterface,
-    Exceptions\Abort as AbortException,
-    Exceptions\Storage as StorageException
-};
-use SynoxWebApi;
+use App\Package\Adapter;
+use App\Package\Exceptions\Package as PackageException;
+use App\Package\Extension\{Abstracts\Package, Enums\Subtype};
+use App\Package\Search\Enums\Category;
+use App\Package\Settings;
+use Digua\{LateEvent, Request, Response, RouteDispatcher};
+use Digua\Components\Event;
+use Digua\Enums\Headers;
+use Digua\Interfaces\{Guardian as GuardianInterface, Route as RouteInterface};
+use Digua\Exceptions\Abort as AbortException;
 use Exception;
+use SynoxWebApi;
 
 class JackettApiHook extends Package
 {
@@ -60,7 +50,6 @@ class JackettApiHook extends Package
 
     /**
      * @param Settings $settings
-     * @throws StorageException
      */
     public function __construct(private readonly Settings $settings)
     {
@@ -217,7 +206,7 @@ class _JackettApi_ extends BaseController implements GuardianInterface
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->package = $this->repository->getPackages()->find('extension-jackettapihook');
+        $this->package = $this->repository->getPackages()->find('extension@jackettapihook');
     }
 
     /**

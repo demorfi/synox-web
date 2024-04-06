@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Search;
+namespace App\Components\Packages;
 
 use App\Package\Search\Abstracts\Package;
 use App\Package\Search\Enums\{Subtype, Category};
 use App\Package\Search\{Query, Filter};
 use App\Package\Search\Item\Text as TextItem;
 use App\Package\Search\Content\Text as TextContent;
+use Digua\Env;
 
 class TestText extends Package
 {
@@ -65,9 +66,9 @@ class TestText extends Package
     /**
      * @inheritdoc
      */
-    public function hasAuth(): bool
+    public function isActive(): bool
     {
-        return false;
+        return Env::isDev();
     }
 
     /**

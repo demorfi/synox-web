@@ -36,18 +36,18 @@ class Packages extends Base
     public function putChangeStateAction(string $id): Response
     {
         try {
-            $package = $this->repository->getPackages()->find($id);
-            if (is_null($package)) {
+            $state = $this->repository->getPackages()->find($id)?->state();
+            if (is_null($state)) {
                 $this->throwAbort(Headers::UNPROCESSABLE_ENTITY);
             }
 
             $enabled = $this->dataRequest()->post()->getFixedTypeValue('enabled', 'bool');
-            if ($package->enabled == $enabled) {
+            if ($state->get('enabled') == $enabled) {
                 $this->throwAbort(Headers::NOT_MODIFIED);
             }
 
-            $package->enabled = $enabled;
-            $package->saveSettings();
+            $state->setStateValue('enabled', $enabled);
+            $state->save();
             return $this->response(['success' => true, 'enabled' => $enabled], Headers::ACCEPTED);
         } catch (BaseException $e) {
             $this->throwAbort($e->getCode() ?: Headers::EXPECTATION_FAILED, $e->getMessage());
@@ -68,10 +68,7 @@ class Packages extends Base
                 $this->throwAbort(Headers::UNPROCESSABLE_ENTITY);
             }
 
-            $settings = $this->dataRequest()->post()->collection()
-                ->collapse('settings')
-                ->except('enabled');
-
+            $settings = $this->dataRequest()->post()->collection()->collapse('settings');
             if ($settings->isEmpty()) {
                 $this->throwAbort(Headers::BAD_REQUEST);
             }

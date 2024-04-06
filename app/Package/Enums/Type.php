@@ -2,18 +2,10 @@
 
 namespace App\Package\Enums;
 
-use App\Components\Settings;
+use App\Package\Extension\{Enums\Subtype as ExtensionSubtype, Interfaces\Package as ExtensionPackageInterface, Relay as ExtensionRelay};
 use App\Package\Interfaces\BaseEnum;
-use App\Package\Extension\{
-    Enums\Subtype as ExtensionSubtype,
-    Interfaces\Package as ExtensionPackageInterface,
-    Relay as ExtensionRelay
-};
-use App\Package\Search\{
-    Enums\Subtype as SearchSubtype,
-    Interfaces\Package as SearchPackageInterface,
-    Relay as SearchRelay
-};
+use App\Package\Search\{Enums\Subtype as SearchSubtype, Interfaces\Package as SearchPackageInterface, Relay as SearchRelay};
+use App\Package\State;
 
 enum Type: string implements BaseEnum
 {
@@ -76,14 +68,14 @@ enum Type: string implements BaseEnum
 
     /**
      * @param ExtensionPackageInterface|SearchPackageInterface $package
-     * @param Settings $settings
+     * @param State $state
      * @return ExtensionRelay|SearchRelay
      */
-    public function makeRelay(ExtensionPackageInterface|SearchPackageInterface $package, Settings $settings): ExtensionRelay|SearchRelay
+    public function makeRelay(ExtensionPackageInterface|SearchPackageInterface $package, State $state): ExtensionRelay|SearchRelay
     {
         return match ($this) {
-            self::EXTENSION => new ExtensionRelay($package, $settings),
-            self::SEARCH => new SearchRelay($package, $settings),
+            self::EXTENSION => new ExtensionRelay($package, $state),
+            self::SEARCH => new SearchRelay($package, $state),
         };
     }
 }

@@ -1,21 +1,21 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Search;
+namespace App\Components\Packages;
 
 use App\Package\Search\{Filter, Prototype\Text, Enums\Category, Item\Text as TextItem};
 use DOMWrap\{Document, Element};
 
-class SongLyrics extends Text
+class Bananan extends Text
 {
     /**
      * @var string
      */
-    const SITE_URL = 'https://www.songlyrics.com';
+    const SITE_URL = 'https://bananan.org';
 
     /**
      * @inheritdoc
      */
-    protected string $name = 'SongLyrics';
+    protected string $name = 'Bananan';
 
     /**
      * @inheritdoc
@@ -25,7 +25,7 @@ class SongLyrics extends Text
     /**
      * @inheritdoc
      */
-    protected string $urlSearch = self::SITE_URL . '/index.php?searchW={query}&section=search';
+    protected string $urlSearch = self::SITE_URL . '/search?q={query}';
 
     /**
      * @inheritdoc
@@ -41,7 +41,9 @@ class SongLyrics extends Text
     protected function searchItems(Document $page): iterable
     {
         $total = 20;
-        foreach ($page->find('.wrapper-inner .serpresult:not(.noresults)')->slice(0, $total) as $item) {
+        foreach ($page->find('.songs.songs_b > h5')->slice(0, $total) as $item) {
+            $item->wrapInner('<span class="b-title"></span>');
+            $item->appendWith($item->following('p')->wrapInner('<span class="b-content"></span>'));
             yield $item;
         }
     }
@@ -61,16 +63,23 @@ class SongLyrics extends Text
     {
         $item = $this->makeItem();
 
-        $item->setPageUrl($element->find('h3 a')->attr('href'));
-        $item->setFetchId(parse_url($item->getPageUrl())['path']);
+        $item->setFetchId($element->find('.b-content a')->attr('href'));
+        $item->setPageUrl(self::SITE_URL . $item->getFetchId());
         $item->setCategory(Category::TEXT);
-        $item->setTitle(trim($element->find('h3 a')->text()));
+
+        // Clean trash content
+        $element->find('.b-title .number')->destroy();
+        $element->find('.b-content a, .b-content small')->destroy();
+
+        // Title lyrics
+        $title = preg_replace(['/[\r\n\t]+/', '/\s+/'], ' ', $element->find('.b-title')->text());
+        $item->setTitle(trim($title));
 
         // Short lyrics
-        $item->setDescription(trim((string)$element->find('.serpdesc-2 p + p')->last()?->text()));
+        $item->setDescription(trim($element->find('.b-content')->text()));
 
         // Artist lyrics
-        $item->addProperty('Artist', trim((string)$element->find('.serpdesc-2 p a')->first()?->text()));
+        $item->addProperty('Artist', trim($element->find('.b-title > a')->text()));
         $item->addProperty('Category', Category::AUDIO->value);
 
         return $item;
@@ -81,6 +90,9 @@ class SongLyrics extends Text
      */
     protected function searchItemContent(Document $page): string
     {
-        return $page->find('#songLyricsDiv')->text();
+        $text = $page->find('#text_or, #text_tr')
+            ->map(fn($node) => trim(str_replace("\t", '', $node->text())))
+            ->toArray();
+        return implode("\n\n", $text);
     }
 }

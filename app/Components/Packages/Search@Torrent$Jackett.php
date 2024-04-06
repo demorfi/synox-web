@@ -1,18 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Search;
+namespace App\Components\Packages;
 
+use App\Components\{Storage\Journal};
 use App\Package\Search\Abstracts\Package;
-use App\Package\Search\Filter;
-use App\Package\Search\Enums\{Subtype, Category};
-use App\Package\Search\Query;
-use App\Package\Search\Item\Torrent as TorrentItem;
 use App\Package\Search\Content\Torrent as TorrentContent;
-use App\Components\{Settings, Storage\Journal};
-use Digua\Exceptions\{
-    Storage as StorageException,
-    Path as PathException
-};
+use App\Package\Search\Enums\{Category, Subtype};
+use App\Package\Search\Filter;
+use App\Package\Search\Item\Torrent as TorrentItem;
+use App\Package\Search\Query;
+use App\Package\Settings;
+use Digua\Exceptions\Path as PathException;
 use Exception;
 
 class Jackett extends Package
@@ -56,7 +54,6 @@ class Jackett extends Package
 
     /**
      * @param Settings $settings
-     * @throws StorageException
      */
     public function __construct(private readonly Settings $settings)
     {

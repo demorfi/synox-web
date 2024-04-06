@@ -2,41 +2,64 @@
 
 namespace App\Package;
 
-use App\Components\{Helper, Settings};
-use App\Package\Enums\Type;
+use App\Components\{Directory, File, Storage\Journal};
+use App\Package\Exceptions\Package as PackageException;
+use Digua\Traits\{Singleton, DiskPath};
 use Digua\Exceptions\{Path as PathException, Storage as StorageException};
-use Digua\Traits\Singleton;
 
 class Repository
 {
-    use Singleton;
+    use Singleton, DiskPath;
+
+    /**
+     * @var array|string[]
+     */
+    protected static array $defaults = [
+        'diskPath' => ROOT_PATH . '/app/Components/Packages'
+    ];
 
     /**
      * @var Collection
      */
-    private Collection $packages;
+    private readonly Collection $packages;
 
     /**
      * @throws PathException
-     * @throws StorageException
      */
     private function __construct()
     {
+        self::throwIsBrokenDiskPath();
         $this->packages = new Collection;
+        $this->load();
+    }
 
-        foreach (Helper::config('packages')->collection() as $type => $packages) {
-            if (empty($packages) || is_null($type = Type::tryName($type))) {
-                continue;
+    /**
+     * @return void
+     * @throws PathException
+     */
+    private function load(): void
+    {
+        (new Directory(self::getDiskPath()))->each(function (File $fileInfo) {
+            try {
+                $this->addPackage(new State(new Source($fileInfo)));
+            } catch (PackageException|StorageException $e) {
+                Journal::staticPush($e->getMessage());
             }
+        });
+    }
 
-            foreach ($packages as $package) {
-                $class = 'App\Components\Packages\\' . $type->getName() . '\\' . $package;
-                if (is_subclass_of($class, $type->getInterface())) {
-                    $settings = Settings::create($type->getId() . '-' . strtolower($package));
-                    $this->packages->append(new Adapter($type->makeRelay(new $class($settings), $settings), $settings));
-                }
-            }
+    /**
+     * @param State $package
+     * @return bool
+     * @throws PackageException
+     */
+    public function addPackage(State $package): bool
+    {
+        if (($adapter = $package->getAdapter()) !== null && $adapter->isActive()) {
+            $this->packages->append($adapter);
+            return true;
         }
+        return false;
     }
 
     /**

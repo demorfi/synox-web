@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace App\Components\Packages\Search;
+namespace App\Components\Packages;
 
 use App\Package\Search\Abstracts\Package;
 use App\Package\Search\Enums\{Subtype, Category};
 use App\Package\Search\{Query, Filter};
 use App\Package\Search\Item\Torrent as TorrentItem;
 use App\Package\Search\Content\Torrent as TorrentContent;
+use Digua\Env;
 
 class TestTorrent extends Package
 {
@@ -65,9 +66,9 @@ class TestTorrent extends Package
     /**
      * @inheritdoc
      */
-    public function hasAuth(): bool
+    public function isActive(): bool
     {
-        return false;
+        return Env::isDev();
     }
 
     /**

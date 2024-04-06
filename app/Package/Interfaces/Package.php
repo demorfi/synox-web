@@ -2,7 +2,7 @@
 
 namespace App\Package\Interfaces;
 
-use App\Components\Settings;
+use App\Package\Settings;
 
 interface Package
 {

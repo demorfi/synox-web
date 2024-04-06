@@ -2,10 +2,9 @@
 
 namespace App\Package\Abstracts;
 
-use App\Components\Settings;
 use App\Package\Interfaces\Package as PackageInterface;
+use App\Package\Settings;
 use Digua\Components\ArrayCollection;
-use Digua\Exceptions\Storage as StorageException;
 
 abstract class Package implements PackageInterface
 {
@@ -71,7 +70,6 @@ abstract class Package implements PackageInterface
      * @param string $name
      * @param mixed  $value
      * @return self
-     * @throws StorageException
      */
     final protected function setSetting(string $name, mixed $value): self
     {
@@ -87,7 +85,6 @@ abstract class Package implements PackageInterface
      * @param string $label
      * @param array  $params
      * @return self
-     * @throws StorageException
      */
     final protected function addSetting(string $type, string $name, mixed $value, string $label, array $params = []): self
     {
