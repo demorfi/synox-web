@@ -32,6 +32,14 @@ abstract class Package extends PackageAbstract implements SearchPackageInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function hasAuth(): bool
+    {
+        return false;
+    }
+
+    /**
      * @return Filter
      */
     public function onlyAllowed(): Filter
