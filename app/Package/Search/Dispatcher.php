@@ -27,15 +27,16 @@ final class Dispatcher
     /**
      * @param ?array  $onlyPackages
      * @param ?Filter $filter
+     * @param bool    $onlyEnabled
      * @return bool
      */
-    private function usePackages(array $onlyPackages = null, ?Filter $filter = null): bool
+    private function usePackages(array $onlyPackages = null, ?Filter $filter = null, bool $onlyEnabled = true): bool
     {
         $onlyPackages   ??= $filter?->collection()->get('packages') ?: [];
         $extraFilters   = $filter?->collection()->except('packages')->toArray() ?: [];
         $this->packages = Repository::getInstance()->getPackages()
             ->getByType(PackageType::SEARCH)
-            ->getByEnabled()
+            ->callWrapIfTrue(fn($instance) => $instance->getByEnabled(), $onlyEnabled)
             ->getByAvailable()
             ->filterByType(static function ($item) use ($onlyPackages, $extraFilters, $filter): bool {
                 return (empty($onlyPackages) || in_array($item->getId(), $onlyPackages))
@@ -89,14 +90,14 @@ final class Dispatcher
     /**
      * @param string $packageId
      * @param string $fetchId
-     * @param array $params
+     * @param array  $params
      * @return ?Content
      * @throws PackageDispatcherException
      * @uses LateEvent::notify
      */
     public function fetch(string $packageId, string $fetchId, array $params = []): ?Content
     {
-        if (!$this->usePackages([$packageId])) {
+        if (!$this->usePackages([$packageId], onlyEnabled: false)) {
             throw new PackageDispatcherException('The requested package was not found!');
         }
 
