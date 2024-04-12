@@ -244,7 +244,7 @@ export default {
       }
 
       // Add magnet link info
-      if (typeof this.content === 'object' && 'magnet' in this.content && this.content.magnet !== null) {
+      if (this.content !== null && this.content?.magnet !== null) {
         list.push({name: 'Magnet', value: this.content.magnet, type: 'link'});
       }
       return list;
