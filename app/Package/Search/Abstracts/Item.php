@@ -9,24 +9,24 @@ use DateTime;
 abstract class Item implements PackageItemInterface
 {
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $type;
+    protected ?string $type = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $typeId;
+    protected ?string $typeId = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $package;
+    protected ?string $package = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $id;
+    protected ?string $id = null;
 
     /**
      * @var string
@@ -54,14 +54,14 @@ abstract class Item implements PackageItemInterface
     protected string $weight = '0b';
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected string $fetchId;
+    protected ?string $fetchId = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected string $pageUrl;
+    protected ?string $pageUrl = null;
 
     /**
      * @var array
@@ -69,9 +69,9 @@ abstract class Item implements PackageItemInterface
     protected array $properties = [];
 
     /**
-     * @var PackageContentInterface
+     * @var ?PackageContentInterface
      */
-    protected PackageContentInterface $content;
+    protected ?PackageContentInterface $content = null;
 
     /**
      * @param Package $package
@@ -94,7 +94,7 @@ abstract class Item implements PackageItemInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getCategory(): string
     {
@@ -102,8 +102,7 @@ abstract class Item implements PackageItemInterface
     }
 
     /**
-     * @param Category $category
-     * @return void
+     * @inheritdoc
      */
     public function setCategory(Category $category): void
     {
@@ -111,8 +110,7 @@ abstract class Item implements PackageItemInterface
     }
 
     /**
-     * @param string $name
-     * @return string|int|null
+     * @inheritdoc
      */
     public function getProperty(string $name): string|int|null
     {
@@ -120,13 +118,21 @@ abstract class Item implements PackageItemInterface
     }
 
     /**
-     * @param string     $name
-     * @param string|int $value
-     * @return void
+     * @inheritdoc
      */
     public function addProperty(string $name, string|int $value): void
     {
         $this->properties[$name] = $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delProperty(string $name): void
+    {
+        if (isset($this->properties[$name])) {
+            unset($this->properties[$name]);
+        }
     }
 
     /**
@@ -140,7 +146,7 @@ abstract class Item implements PackageItemInterface
     /**
      * @inheritdoc
      */
-    public function getContent(): PackageContentInterface
+    public function getContent(): ?PackageContentInterface
     {
         return $this->content;
     }
@@ -241,7 +247,7 @@ abstract class Item implements PackageItemInterface
     /**
      * @inheritdoc
      */
-    public function getFetchId(): string
+    public function getFetchId(): ?string
     {
         return $this->fetchId;
     }
@@ -257,7 +263,7 @@ abstract class Item implements PackageItemInterface
     /**
      * @inheritdoc
      */
-    public function getPageUrl(): string
+    public function getPageUrl(): ?string
     {
         return $this->pageUrl;
     }
@@ -284,8 +290,11 @@ abstract class Item implements PackageItemInterface
      */
     public function __unserialize(array $data): void
     {
+        $vars = get_object_vars($this);
         foreach ($data as $key => $value) {
-            $this->{$key} = $value;
+            if (array_key_exists($key, $vars)) {
+                $this->{$key} = $value;
+            }
         }
     }
 

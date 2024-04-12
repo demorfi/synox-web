@@ -2,6 +2,7 @@
 
 namespace App\Package\Search\Interfaces;
 
+use App\Package\Search\Enums\Category;
 use DateTime;
 use JsonSerializable;
 use Stringable;
@@ -52,9 +53,9 @@ interface Item extends Stringable, JsonSerializable
     public function setSize(string|float $size): void;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getFetchId(): string;
+    public function getFetchId(): ?string;
 
     /**
      * @param string $id
@@ -63,9 +64,9 @@ interface Item extends Stringable, JsonSerializable
     public function setFetchId(string $id): void;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getPageUrl(): string;
+    public function getPageUrl(): ?string;
 
     /**
      * @param string $url
@@ -80,7 +81,37 @@ interface Item extends Stringable, JsonSerializable
     public function setContent(Content $content): void;
 
     /**
-     * @return Content
+     * @return ?Content
      */
-    public function getContent(): Content;
+    public function getContent(): ?Content;
+
+    /**
+     * @return string
+     */
+    public function getCategory(): string;
+
+    /**
+     * @param Category $category
+     * @return void
+     */
+    public function setCategory(Category $category): void;
+
+    /**
+     * @param string $name
+     * @return string|int|null
+     */
+    public function getProperty(string $name): string|int|null;
+
+    /**
+     * @param string     $name
+     * @param string|int $value
+     * @return void
+     */
+    public function addProperty(string $name, string|int $value): void;
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function delProperty(string $name): void;
 }
