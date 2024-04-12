@@ -67,6 +67,18 @@ enum Subtype: string implements BaseEnum
     }
 
     /**
+     * @return string
+     */
+    public function content(): string
+    {
+        return match ($this) {
+            self::BASE => BaseContent::class,
+            self::TEXT => TextContent::class,
+            self::TORRENT => TorrentContent::class
+        };
+    }
+
+    /**
      * @return FileExtension
      */
     public function extension(): FileExtension
