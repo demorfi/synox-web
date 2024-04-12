@@ -7,24 +7,24 @@ use App\Package\Search\{Interfaces\Content as PackageContentInterface, Enums\Sub
 abstract class Content implements PackageContentInterface
 {
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $type;
+    protected ?string $type = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $extension;
+    protected ?string $extension = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected readonly string $typeId;
+    protected ?string $typeId = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected string $content;
+    protected ?string $content = null;
 
     /**
      * @var bool
@@ -57,7 +57,7 @@ abstract class Content implements PackageContentInterface
     /**
      * @inheritdoc
      */
-    public function get(): string
+    public function get(): ?string
     {
         return $this->content;
     }
@@ -80,6 +80,36 @@ abstract class Content implements PackageContentInterface
      */
     public function jsonSerialize(): array
     {
+        return $this->__serialize();
+    }
+
+    /**
+     * @return array
+     */
+    public function __serialize(): array
+    {
         return get_object_vars($this);
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $vars = get_object_vars($this);
+        foreach ($data as $key => $value) {
+            if (array_key_exists($key, $vars)) {
+                $this->{$key} = $value;
+            }
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString(): string
+    {
+        return json_encode($this->jsonSerialize());
     }
 }

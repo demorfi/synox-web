@@ -4,8 +4,9 @@ namespace App\Package\Search\Interfaces;
 
 use App\Package\Search\Enums\Subtype;
 use JsonSerializable;
+use Stringable;
 
-interface Content extends JsonSerializable
+interface Content extends JsonSerializable, Stringable
 {
     /**
      * @param string $content
@@ -20,9 +21,9 @@ interface Content extends JsonSerializable
     public function is(string $content): bool;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function get(): string;
+    public function get(): ?string;
 
     /**
      * @return bool
