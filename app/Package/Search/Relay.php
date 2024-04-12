@@ -28,22 +28,46 @@ final class Relay extends RelayAbstract
     }
 
     /**
+     * @param Query $query
+     * @return Event
+     */
+    private function newEvent(Query $query): Event
+    {
+        return new Event(
+            ['query' => $query, 'package' => $this->package],
+            sprintf('%s:%s', $this->getId(), $query->value)
+        );
+    }
+
+    /**
+     * @param Event  $event
+     * @param string $name
+     * @param mixed  $data
+     * @return void
+     */
+    private function voidEvent(Event $event, string $name, mixed $data): void
+    {
+        LateEvent::notify(self::class . '::' . $name, $event);
+        $event($data);
+    }
+
+    /**
      * @inheritdoc
      */
     public function search(Query $query): iterable
     {
-        $event = new Event(
-            ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->getId(), $query->value)
-        );
-
+        $event = $this->newEvent($query);
         LateEvent::notify(__METHOD__, $event);
+
         $event->addHandler(function (Event $event, mixed $previous) {
             return is_iterable($previous) && $previous->valid() ? $previous : $this->result($event->query);
         });
 
         foreach ($event() as $result) {
-            yield is_a($result, $this->package->getSubtype()->value) ? $result : null;
+            if (is_a($result, $this->package->getSubtype()->value)) {
+                $this->voidEvent($this->newEvent($query), 'searchReturn', $result);
+                yield $result;
+            }
         }
     }
 
@@ -53,12 +77,9 @@ final class Relay extends RelayAbstract
      */
     private function result(Query $query): iterable
     {
-        $event = new Event(
-            ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->getId(), $query->value)
-        );
-
+        $event = $this->newEvent($query);
         LateEvent::notify(__METHOD__, $event);
+
         $event->addHandler(function (Event $event, mixed $previous, mixed $result) {
             return $previous ?? $result;
         });
@@ -73,31 +94,31 @@ final class Relay extends RelayAbstract
      */
     public function fetch(Query $query): ?Content
     {
-        $event = new Event(
-            ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->getId(), $query->value)
-        );
-
+        $event = $this->newEvent($query);
         LateEvent::notify(__METHOD__, $event);
+
         $event->addHandler(function (Event $event, mixed $previous) {
             return $previous ?? $this->fetched($event->query);
         });
 
-        return $event();
+        $result = $event();
+        if (is_a($result, $this->package->getSubtype()->content())) {
+            $this->voidEvent($this->newEvent($query), 'fetchReturn', $result);
+            return $result;
+        }
+
+        return null;
     }
 
     /**
      * @param Query $query
-     * @return ?Content
+     * @return mixed
      */
-    private function fetched(Query $query): ?Content
+    private function fetched(Query $query): mixed
     {
-        $event = new Event(
-            ['query' => $query, 'package' => $this->package],
-            sprintf('%s:%s', $this->getId(), $query->value)
-        );
-
+        $event = $this->newEvent($query);
         LateEvent::notify(__METHOD__, $event);
+
         $event->addHandler(function (Event $event, mixed $previous, mixed $result) {
             return $previous ?? $result;
         });
