@@ -30,7 +30,7 @@ class Cache extends Package
     /**
      * @var string
      */
-    private string $version = '1.0';
+    private string $version = '1.1';
 
     /**
      * @inheritdoc
@@ -69,7 +69,15 @@ class Cache extends Package
      */
     public function isAvailable(): bool
     {
-        return class_exists('Redis');
+        try {
+            if (class_exists('Redis')) {
+                Storage::make(RedisLists::class, '');
+                return true;
+            }
+        } catch (BaseException) {
+        }
+
+        return false;
     }
 
     /**
@@ -165,7 +173,10 @@ class Cache extends Package
             try {
                 $storage = Storage::make(RedisLists::class, $this->getStorageId($event));
                 if (is_array($result = $storage->read())) {
-                    return unserialize(array_pop($result));
+                    $content = unserialize(array_pop($result));
+                    if ($content instanceof PackageContentInterface) {
+                        return $result;
+                    }
                 }
             } catch (BaseException $e) {
                 Journal::staticPush(sprintf('Cache Read Error: %s', $e->getMessage()));
