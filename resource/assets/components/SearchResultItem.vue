@@ -174,13 +174,13 @@ export default {
     },
 
     seeds: {
-      type    : Number,
+      type    : [Number, String],
       required: false,
       inList  : true
     },
 
     peers: {
-      type    : Number,
+      type    : [Number, String],
       required: false,
       inList  : true
     },
@@ -192,8 +192,8 @@ export default {
     },
 
     content: {
-      type    : Object,
-      required: false
+      type     : Object,
+      required : false
     }
   },
 
