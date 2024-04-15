@@ -36,7 +36,7 @@ export default {
         return new Promise((resolve, reject) => {
             packages.changeState(id, active)
                 .then(({data}) => {
-                    commit('setPackageActivity', {id, active: data.enabled});
+                    commit('updatePackageState', {id, packageState: data.state});
                     resolve(data);
                 })
                 .catch(({message}) => {
