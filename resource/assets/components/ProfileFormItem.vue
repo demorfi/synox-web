@@ -37,7 +37,7 @@
     <BListGroup flush>
       <BListGroupItem v-for="item in packages"
                       :key="item.pkgId"
-                      :class="{'list-group-item-secondary': !item.pkgInfo.enabled, 'list-group-item-danger': !item.pkgInfo.available}">
+                      :class="{'list-group-item-secondary': !item.pkgInfo.enabled, 'list-group-item-danger': item.pkgInfo.available === false}">
         <div class="me-auto">
           <div>{{ item.pkgInfo.name }}</div>
           <BListGroup flush>

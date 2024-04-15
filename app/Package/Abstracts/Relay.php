@@ -59,7 +59,6 @@ abstract class Relay implements JsonSerializable
             'name'        => $this->package->getName(),
             'description' => $this->package->getDescription(),
             'version'     => $this->package->getVersion(),
-            'available'   => $this->package->isAvailable(),
             'requires'    => $this->package->getRequires()
         ];
     }

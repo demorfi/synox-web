@@ -8,17 +8,22 @@ use JsonSerializable;
 /**
  * @mixin Relay
  */
-final readonly class Adapter implements JsonSerializable
+final class Adapter implements JsonSerializable
 {
+    /**
+     * @var array
+     */
+    private array $cache = [];
+
     /**
      * @var Settings
      */
-    private Settings $settings;
+    private readonly Settings $settings;
 
     /**
      * @param Relay $relay
      */
-    public function __construct(private Relay $relay)
+    public function __construct(private readonly Relay $relay)
     {
         $this->settings = $this->relay->state()->getSettings();
     }
@@ -40,6 +45,7 @@ final readonly class Adapter implements JsonSerializable
             'id'          => $this->getId(),
             'type'        => $this->relay->getType()->getName(),
             'enabled'     => $this->isEnabled(),
+            'available'   => $this->isEnabled() ? $this->isAvailable() : null,
             'settings'    => $this->settings->collection()
                 ->replaceValue('password', fn($v) => !empty($v) ? 'password' : ''),
             'pkgSettings' => $this->settings->collection()->except('password', 'username')->getKeys(),
@@ -97,12 +103,18 @@ final readonly class Adapter implements JsonSerializable
     }
 
     /**
-     * Is enabled package.
-     *
      * @return bool
      */
     public function isEnabled(): bool
     {
         return (bool)$this->relay->state()->get('enabled', false);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAvailable(): bool
+    {
+        return $this->cache['available'] ??= $this->relay->isAvailable();
     }
 }

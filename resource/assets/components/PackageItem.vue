@@ -23,7 +23,6 @@
         </b-button>
         <b-button
             :variant="enabled ? 'outline-warning' : 'outline-light'"
-            :disabled="!available"
             size="sm"
             @click="changeActivity">
           {{ enabled ? 'Disable' : 'Enable' }}
@@ -132,7 +131,7 @@ export default {
       if (this.enabled && this.available) {
         return 'dark';
       }
-      return !this.available ? 'danger' : 'secondary';
+      return this.available === false ? 'danger' : 'secondary';
     }
   },
 
