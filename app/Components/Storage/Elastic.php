@@ -37,8 +37,8 @@ class Elastic implements Storage
                     ->setSSLVerification(false)
                     ->setConnectionParams([
                         'client' => [
-                            'timeout'         => $config->getFixedTypeValue('timeout', 'float', 1.5),
-                            'connect_timeout' => $config->getFixedTypeValue('timeout', 'float', 1.5)
+                            'timeout'         => $config->get('timeout', 2),
+                            'connect_timeout' => $config->get('timeout', 2)
                         ]
                     ]);
 

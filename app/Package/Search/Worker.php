@@ -66,11 +66,11 @@ class Worker
         $context              = [];
 
         $ssl = $config->collection()->collapse('ssl');
-        if ($ssl->getFixedTypeValue('use', 'bool', false)) {
+        if ($ssl->get('use', false)) {
             $context['ssl'] = [
                 'local_cert'  => $ssl->get('cert'),
                 'local_pk'    => $ssl->get('key'),
-                'verify_peer' => $ssl->getFixedTypeValue('verify', 'bool', false)
+                'verify_peer' => $ssl->get('verify', false)
             ];
         }
 
