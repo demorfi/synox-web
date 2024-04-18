@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  app:
+    image: demorfi/synox-web:latest
+    restart: always
+    volumes:
+      - storage:/synox-web/storage
+      - files:/synox-web/public/files
+    ports:
+      - '8002:80'
+      - '2346:2346'
+    networks:
+      - net
+
+volumes:
+  storage:
+  files:
+
+networks:
+  net:
+    driver: bridge

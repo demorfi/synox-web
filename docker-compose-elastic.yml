@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+  elastic:
+    image: elasticsearch:7.17.9
+    restart: always
+    volumes:
+      - elastic-data:/elasticsearch/data
+    ports:
+      - '9201:9200'
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      "discovery.type": "single-node"
+      "xpack.security.enabled": "false"
+      "bootstrap.system_call_filter": "false"
+      "ingest.geoip.downloader.enabled": "false"
+      "http.host": "0.0.0.0"
+      "transport.host": "127.0.0.1"
+    networks:
+      - net
+
+  app:
+    image: demorfi/synox-web:latest
+    restart: always
+    volumes:
+      - storage:/synox-web/storage
+      - files:/synox-web/public/files
+    ports:
+      - '8002:80'
+      - '2346:2346'
+    environment:
+      ELASTIC_HOST: elastic:9200
+    networks:
+      - net
+    depends_on:
+      - elastic
+
+volumes:
+  elastic-data:
+  storage:
+  files:
+
+networks:
+  net:
+    driver: bridge
