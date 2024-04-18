@@ -212,6 +212,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/sass/mixins';
 
+#profile {
+  min-width: 8rem;
+}
+
 .progress {
   @include multiple((left, right, bottom), 1px);
   position: absolute;
