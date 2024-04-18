@@ -11,7 +11,25 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-secret}
       REDIS_PORT_NUMBER: 6379
     networks:
-        - net
+      - net
+
+  elastic:
+    image: elasticsearch:7.17.9
+    restart: always
+    volumes:
+      - elastic-data:/elasticsearch/data
+    ports:
+      - '9201:9200'
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      "discovery.type": "single-node"
+      "xpack.security.enabled": "false"
+      "bootstrap.system_call_filter": "false"
+      "ingest.geoip.downloader.enabled": "false"
+      "http.host": "0.0.0.0"
+      "transport.host": "127.0.0.1"
+    networks:
+      - net
 
   app:
     image: demorfi/synox-web:latest
@@ -26,13 +44,16 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-secret}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      ELASTIC_HOST: elastic:9200
     networks:
       - net
     depends_on:
       - redis
+      - elastic
 
 volumes:
   redis-data:
+  elastic-data:
   storage:
   files:
 

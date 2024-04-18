@@ -16,6 +16,11 @@ ARG REDIS_HOST=localhost
 ARG REDIS_PORT=6379
 ARG REDIS_PASSWORD=secret
 ARG CACHE_EXPIRE=86400
+ARG ELASTIC_HOST=localhost:9201
+ARG ELASTIC_API_ID=null
+ARG ELASTIC_API_KEY=null
+ARG ELASTIC_CLOUD_ID=null
+ARG ELASTIC_TIMEOUT=1.5
 ARG WORKER_BROADCAST_HOST=0.0.0.0
 ARG WORKER_BROADCAST_PORT=2346
 ARG WORKER_USE_SSL=false
@@ -28,6 +33,11 @@ ENV REDIS_HOST=${REDIS_HOST}
 ENV REDIS_PORT=${REDIS_PORT}
 ENV REDIS_PASSWORD=${REDIS_PASSWORD}
 ENV CACHE_EXPIRE=${CACHE_EXPIRE}
+ENV ELASTIC_HOST=${ELASTIC_HOST}
+ENV ELASTIC_API_ID=${ELASTIC_API_ID}
+ENV ELASTIC_API_KEY=${ELASTIC_API_KEY}
+ENV ELASTIC_CLOUD_ID=${ELASTIC_CLOUD_ID}
+ENV ELASTIC_TIMEOUT=${ELASTIC_TIMEOUT}
 ENV WORKER_BROADCAST_HOST=${WORKER_BROADCAST_HOST}
 ENV WORKER_BROADCAST_PORT=${WORKER_BROADCAST_PORT}
 ENV WORKER_USE_SSL=${WORKER_USE_SSL}
@@ -39,7 +49,8 @@ COPY --from=build /usr/src/app/public/assets ./public/assets
 
 RUN rm -rf /app
 RUN ln -s /synox-web/public /app
-RUN echo "chown -R application:application /synox-web" > /opt/docker/provision/entrypoint.d/20-synox-web.sh
+RUN echo "mkdir -p /synox-web/storage/packages /synox-web/storage/settings /synox-web/storage/states" > /opt/docker/provision/entrypoint.d/20-synox-web.sh
+RUN echo "chown -R application:application /synox-web" >> /opt/docker/provision/entrypoint.d/20-synox-web.sh
 RUN composer install --optimize-autoloader --no-interaction --no-progress
 EXPOSE 80 2346
 VOLUME ["/synox-web/storage", "/synox-web/public/files"]
