@@ -38,7 +38,7 @@ docker run -d --name synox-web \
   -v /synox-web/files:/synox-web/public/files \
   synox-web:latest
 ```
-or docker compose (*Redis included!)
+or docker-compose (*default profile includes redis and elastic)
 ```bash
 docker-compose up -d
 ```
@@ -49,6 +49,7 @@ docker-compose up -d
 * PHP 8.2 or greater
 * Node & NPM
 * Redis (*optional)
+* Elasticsearch (*optional)
 
 ### Installation
 * Clone the repository to your webserver and set root mount point for you webserver to `/public` directory
