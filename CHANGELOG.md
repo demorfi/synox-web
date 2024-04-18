@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.4.0] - 19-04-2024
+
+### Fixed
+- (Vue) separator for "Requires" list (*Visual)
+- (Vue) not enough space for empty profile selector (*Visual)
+- (Vue) props type seeds and peers in search result item
+- (Vue) validation magnet link in search result item
+
+### Added
+- JackettApiHook extension package
+- Indexer extension package (*Elastic)
+- Indexer search extension package (*Elastic)
+- Base validation package
+- Ability to upload/update package by gui (*Only in dev mode)
+- Ability to define the activity (use) of the package (*Extension)
+- Elasticsearch service (*docker-compose)
+- Additional compose profiles (*docker-compose)
+
+### Changed
+- Package load style is now dynamic. all packages look like (Type@Subtype$Name)
+- There is no longer any need to enable the package to process a (fetch) request
+- Package availability is checked only if the package is enabled
+- Timeout connection for redis default set by 1.5 sec
+- Digua updated to version 1.7
+- Cache extension updated to version 1.1
+
 ## [1.3.1] - 13-03-2024
 
 ### Fixed
