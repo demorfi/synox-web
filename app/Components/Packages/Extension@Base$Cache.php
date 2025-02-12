@@ -175,7 +175,7 @@ class Cache extends Package
                 if (is_array($result = $storage->read())) {
                     $content = unserialize(array_pop($result));
                     if ($content instanceof PackageContentInterface) {
-                        return $result;
+                        return $content;
                     }
                 }
             } catch (BaseException $e) {
