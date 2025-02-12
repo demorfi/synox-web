@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1] - 13-02-2025
+
+### Fixed
+- Extension cache could return an empty result
+- Search engine "Kinozal" generated notice when he could not find a date
+
 ## [1.4.0] - 19-04-2024
 
 ### Fixed
