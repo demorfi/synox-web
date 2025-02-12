@@ -186,7 +186,7 @@ class Kinozal extends Torrent
 
         // Date created torrent
         preg_match('/(?P<date>\d{2}\.\d{2}\.\d{4})/i', $itemPage->find('td.sl_p + td.s')->text(), $matches);
-        $item->setDate((int)strtotime($matches['date'] ?: '0'));
+        $item->setDate((int)strtotime($matches['date'] ?? '0'));
 
         return $item;
     }
