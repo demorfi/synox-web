@@ -6,7 +6,7 @@ use App\Package\Extension\{Abstracts\Package, Enums\Subtype};
 use App\Package\Search\Relay;
 use App\Package\Search\Interfaces\{Item as PackageItemInterface, Content as PackageContentInterface};
 use App\Components\Storage\{Journal, Elastic};
-use Digua\LateEvent;
+use Digua\{Env, LateEvent};
 use Digua\Components\{Event, Storage};
 use Digua\Exceptions\Base as BaseException;
 
@@ -70,7 +70,7 @@ class Indexer extends Package
     public function isAvailable(): bool
     {
         try {
-            if (class_exists('Elasticsearch\Client')) {
+            if (Env::get('ELASTIC_USE') && class_exists('Elasticsearch\Client')) {
                 Storage::make(Elastic::class, '');
                 return true;
             }

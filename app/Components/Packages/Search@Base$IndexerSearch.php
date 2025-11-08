@@ -4,6 +4,7 @@ namespace App\Components\Packages;
 
 use App\Components\Storage\{Journal, Elastic};
 use App\Package\Search\{Abstracts\Package, Enums\Subtype, Query, Item\Base as BaseItem, Content\Base as BaseContent};
+use Digua\Env;
 use Digua\Components\Storage;
 use Digua\Exceptions\Base as BaseException;
 use Exception;
@@ -68,7 +69,7 @@ class IndexerSearch extends Package
     public function isAvailable(): bool
     {
         try {
-            if (class_exists('Elasticsearch\Client')) {
+            if (Env::get('ELASTIC_USE') && class_exists('Elasticsearch\Client')) {
                 Storage::make(Elastic::class, '');
                 return true;
             }

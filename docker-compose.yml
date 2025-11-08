@@ -40,9 +40,11 @@ services:
       - '8002:80'
       - '2346:2346'
     environment:
+      REDIS_USE: true
       REDIS_PASSWORD: ${REDIS_PASSWORD:-secret}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      ELASTIC_USE: true
       ELASTIC_HOST: elastic:9200
     networks:
       - net

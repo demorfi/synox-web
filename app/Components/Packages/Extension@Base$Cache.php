@@ -6,7 +6,7 @@ use App\Package\Extension\{Abstracts\Package, Enums\Subtype};
 use App\Package\Search\Relay;
 use App\Package\Search\Interfaces\{Item as PackageItemInterface, Content as PackageContentInterface};
 use App\Components\Storage\{Journal, RedisLists};
-use Digua\LateEvent;
+use Digua\{Env, LateEvent};
 use Digua\Components\{Event, Storage};
 use Digua\Exceptions\Base as BaseException;
 
@@ -70,7 +70,7 @@ class Cache extends Package
     public function isAvailable(): bool
     {
         try {
-            if (class_exists('Redis')) {
+            if (Env::get('REDIS_USE') && class_exists('Redis')) {
                 Storage::make(RedisLists::class, '');
                 return true;
             }
