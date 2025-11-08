@@ -2,10 +2,7 @@
 .idea
 vendor/
 node_modules/
-*.d.ts
-*.lock
 *.tsbuildinfo
-*-lock.json
 Dockerfile
 docker-*.yml
 .dockerignore

@@ -1,7 +1,7 @@
 FROM node:21.1-alpine as build
 WORKDIR /usr/src/app
 
-COPY package.json vite.config.js ./
+COPY package.json package-lock.json vite.config.js ./
 COPY ./resource ./resource
 
 RUN npm install
