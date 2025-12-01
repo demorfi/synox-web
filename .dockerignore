@@ -1,5 +1,6 @@
 .git
 .idea
+.run
 vendor/
 node_modules/
 *.tsbuildinfo

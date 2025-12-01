@@ -1,4 +1,5 @@
 .idea/
+.run/
 vendor/
 node_modules/
 phpstorm.*
