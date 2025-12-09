@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {reactive, computed, nextTick, useTemplateRef, defineAsyncComponent} from 'vue';
+import {reactive, computed, inject, nextTick, useTemplateRef, defineAsyncComponent} from 'vue';
 import {useStore} from 'vuex';
 import IconElement from '@/components/elements/Icon.vue';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const PackageAuthForm = defineAsyncComponent(() => import('@/components/forms/PackageAuth.vue'));
 const PackageSettingsForm = defineAsyncComponent(() => import('@/components/forms/PackageSettings.vue'));
@@ -36,6 +37,7 @@ const forms = reactive({
   }
 });
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const bgVariant = computed(() => {
   if (props.enabled && props.available) {
     return 'text-bg-dark';
@@ -56,7 +58,7 @@ const saveForm = (name) => forms[name].ref.saveForm();
 </script>
 
 <template>
-  <BCard :header-class="[bgVariant, 'rounded-0']" bg-variant="light" footer-class="rounded-0 fs-8"
+  <BCard :header-class="[bgVariant, 'rounded-0']" :bg-variant="pScheme.color" footer-class="rounded-0 fs-8"
          class="h-100 border-0 rounded-0 border-bottom">
 
     <template #header>

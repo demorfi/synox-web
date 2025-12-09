@@ -20,10 +20,10 @@ const clearJournal = () => store.dispatch('journal/clearJournal');
 <template>
   <div>
     <h1 class="display-6">
-    <span class="position-relative">
-      <IconElement name="journal"/>
-      <BadgeElement class="fs-9" variant="dark" textIndicator>{{ journalState.length }}</BadgeElement>
-    </span>
+      <span class="position-relative">
+        <IconElement name="journal"/>
+        <BadgeElement class="fs-9" textIndicator>{{ journalState.length }}</BadgeElement>
+      </span>
       Journal
     </h1>
 

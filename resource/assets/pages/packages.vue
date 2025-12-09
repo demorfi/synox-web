@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {reactive, computed, nextTick, defineAsyncComponent, useTemplateRef} from 'vue';
+import {reactive, computed, inject, nextTick, defineAsyncComponent, useTemplateRef} from 'vue';
 import {useStore} from 'vuex';
 import IconElement from '@/components/elements/Icon.vue';
 import BadgeElement from '@/components/elements/Badge.vue';
 import PackageItem from '@/components/items/Package.vue';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const PackageAddForm = defineAsyncComponent(() => import('@/components/forms/PackageAdd.vue'));
 
@@ -15,6 +16,7 @@ const form = reactive({
   ref: useTemplateRef('form')
 });
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const packages = computed(() => store.state.packages.packages);
 
 const resolveForm = () => {
@@ -41,12 +43,12 @@ const eventForm = (callable) => {
     <h1 class="display-6">
       <span class="position-relative">
         <IconElement name="box-seam"/>
-        <BadgeElement class="fs-9" variant="dark" textIndicator>{{ packages.length }}</BadgeElement>
+        <BadgeElement class="fs-9" textIndicator>{{ packages.length }}</BadgeElement>
       </span>
       Packages
     </h1>
 
-    <BButton size="sm" variant="outline-dark" @click="showForm()">
+    <BButton size="sm" :variant="'outline-' + pScheme.invert" @click="showForm()">
       <IconElement name="plus-square-fill"/>
       Add Package
     </BButton>

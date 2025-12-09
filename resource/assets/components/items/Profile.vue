@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {reactive, useTemplateRef, nextTick, defineAsyncComponent, computed, getCurrentInstance} from 'vue';
+import {reactive, computed, inject, useTemplateRef, nextTick, defineAsyncComponent} from 'vue';
 import {useStore} from 'vuex';
 import IconElement from '@/components/elements/Icon.vue';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const ProfileForm = defineAsyncComponent(() => import('@/components/forms/Profile.vue'));
 
 const store = useStore();
-const props = defineProps({id: String, values: Object, testm: {type: [Number, String],
-    inList: true}});
+const props = defineProps({id: String, values: Object});
 const form = reactive({
   use: false,
   show: false,
@@ -15,6 +15,7 @@ const form = reactive({
   ref: useTemplateRef('form')
 });
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const selectedPackages = computed(() => {
   const packages = [];
   for (let [pkgId, pkgValues] of Object.entries(props.values)) {
@@ -60,7 +61,8 @@ const clipboard = () => {
 </script>
 
 <template>
-  <BCard class="h-100 border-0 rounded-0 border-bottom" bg-variant="light" header-class="text-bg-dark rounded-0"
+  <BCard class="h-100 border-0 rounded-0 border-bottom" :bg-variant="pScheme.color"
+         header-class="text-bg-dark rounded-0"
          body-class="rounded-0 fs-8" footer-class="rounded-0 fs-8">
 
     <template #header>
@@ -77,7 +79,8 @@ const clipboard = () => {
           <dt>ID</dt>
           <dd class="m-0">
             <button
-                class="btn btn-link fs-8 text-start p-0 link-dark link-offset-2 link-underline-opacity-25 border-0 link-underline-opacity-100-hover"
+                :class="'link-' + pScheme.invert"
+                class="btn btn-link fs-8 text-start p-0 link-offset-2 link-underline-opacity-25 border-0 link-underline-opacity-100-hover"
                 @click="clipboard">{{ id }}
             </button>
           </dd>

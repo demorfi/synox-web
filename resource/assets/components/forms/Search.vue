@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import {reactive, computed, useTemplateRef, useAttrs, onBeforeMount, onActivated, defineAsyncComponent} from 'vue';
+import {
+  reactive,
+  computed,
+  inject,
+  useTemplateRef,
+  useAttrs,
+  onBeforeMount,
+  onActivated,
+  defineAsyncComponent
+} from 'vue';
 import {useStore} from 'vuex';
 import IconElement from '@/components/elements/Icon.vue';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const SearchFiltersForm = defineAsyncComponent(() => import('@/components/forms/SearchFilters.vue'));
 
@@ -44,6 +54,7 @@ onActivated(() => {
   }
 });
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const profiles = computed(() => store.state.profiles.profiles);
 const optionsProfiles = computed(() => {
   const options = [];
@@ -107,7 +118,7 @@ defineExpose({stopSubmitForm});
 
             <BButton :disabled="form.submitted" type="reset" variant="outline-secondary">Reset</BButton>
 
-            <BButton variant="outline-dark" aria-controls="filters"
+            <BButton :variant="'outline-' + pScheme.invert" aria-controls="filters"
                      :disabled="form.submitted" :class="[!filters.show && 'collapsed']"
                      :aria-expanded="filters.show ? 'true' : 'false'" @click="showFilters">
               <BSpinner v-show="filters.loading" type="grow" small/>

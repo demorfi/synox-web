@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import {ref, computed, watchEffect, inject} from 'vue';
 import {useStore} from 'vuex';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const store = useStore();
 const props = defineProps({
@@ -12,7 +13,15 @@ const props = defineProps({
   variant: String
 });
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const content = computed(() => props.payload(store));
+const variant = ref(props.variant);
+
+watchEffect(() => {
+  if (props.variant === undefined) {
+    variant.value = pScheme.invert;
+  }
+});
 </script>
 
 <template>

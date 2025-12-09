@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {reactive, computed, useTemplateRef, onBeforeMount, nextTick, defineAsyncComponent} from 'vue';
+import {reactive, computed, inject, useTemplateRef, onBeforeMount, nextTick, defineAsyncComponent} from 'vue';
 import {useStore} from 'vuex';
 import IconElement from '@/components/elements/Icon.vue';
 import BadgeElement from '@/components/elements/Badge.vue';
 import ProfileItem from '@/components/items/Profile.vue';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const ProfileForm = defineAsyncComponent(() => import('@/components/forms/Profile.vue'));
 
@@ -15,6 +16,7 @@ const form = reactive({
   ref: useTemplateRef('form')
 });
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const profilesState = computed(() => store.state.profiles.profiles);
 
 onBeforeMount(() => store.dispatch('profiles/getProfiles'));
@@ -43,12 +45,12 @@ const eventForm = (callable) => {
     <h1 class="display-6">
       <span class="position-relative">
         <IconElement name="collection"/>
-        <BadgeElement class="fs-9" variant="dark" textIndicator>{{ profilesState.length }}</BadgeElement>
+        <BadgeElement class="fs-9" textIndicator>{{ profilesState.length }}</BadgeElement>
       </span>
       Profiles
     </h1>
 
-    <BButton size="sm" variant="outline-dark" @click="showForm()">
+    <BButton size="sm" :variant="'outline-' + pScheme.invert" @click="showForm()">
       <IconElement name="plus-square-fill"/>
       Add Profile
     </BButton>

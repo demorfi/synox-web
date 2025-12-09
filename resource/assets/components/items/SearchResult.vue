@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import {ref, computed} from 'vue';
+import {ref, computed, inject} from 'vue';
 import {useStore} from 'vuex';
+import {prefersSchemeInjectionKey} from '@/store/keys';
 
 const store = useStore();
 const props = defineProps({
@@ -61,6 +62,7 @@ const fetching = ref(false);
 const downloading = ref(false);
 const showModal = ref(false);
 
+const pScheme = inject(prefersSchemeInjectionKey);
 const background = computed(() => {
   let hash = 0;
   for (let i = 0; i < props.package.length; i++) {
@@ -89,7 +91,7 @@ const listProps = computed(() => {
         }
       } else {
         let name = propName.charAt(0).toUpperCase() + propName.slice(1);
-        list.push({name, value:propValue, type});
+        list.push({name, value: propValue, type});
       }
     }
   }
@@ -117,7 +119,7 @@ const download = (fetched) => {
 </script>
 
 <template>
-  <BCard no-body bg-variant="light" footer-class="fs-8" class="border-0 border-bottom shadow-sm">
+  <BCard no-body :bg-variant="pScheme.color" footer-class="fs-8" class="border-0 border-bottom shadow-sm">
     <BCardBody :style="background">
       <BCardTitle :text="title" class="mb-0" tag="h5">
         <a v-if="pageUrl" :href="pageUrl" target="_blank">{{ title }}</a>
@@ -131,7 +133,7 @@ const download = (fetched) => {
           <BRow v-if="!!fetchId">
             <BCol cols="12">
               <BButton v-if="!fetched || !fetched?.available" @click="fetch(id, fetchId)"
-                       size="sm" variant="outline-dark" class="m-2">
+                       size="sm" :variant="'outline-' + pScheme.invert" class="m-2">
                 <BSpinner v-show="fetching" type="grow" small/>
                 Fetch
               </BButton>
