@@ -120,6 +120,14 @@ class Jackett extends Package
 
     /**
      * @inheritdoc
+     */
+    public function getRequires(): array
+    {
+        return ['API Results URL'];
+    }
+
+    /**
+     * @inheritdoc
      * @throws PathException
      */
     public function search(Query $query): iterable
