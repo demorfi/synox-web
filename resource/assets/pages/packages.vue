@@ -41,7 +41,7 @@ const eventForm = (callable) => {
     <h1 class="display-6">
       <span class="position-relative">
         <IconElement name="box-seam"/>
-        <BadgeElement class="fs-9" variant="dark" extIndicator>{{ packages.length }}</BadgeElement>
+        <BadgeElement class="fs-9" variant="dark" textIndicator>{{ packages.length }}</BadgeElement>
       </span>
       Packages
     </h1>
