@@ -45,7 +45,7 @@ final class Adapter implements JsonSerializable
             'id'          => $this->getId(),
             'type'        => $this->relay->getType()->getName(),
             'enabled'     => $this->isEnabled(),
-            'available'   => $this->isEnabled() ? $this->isAvailable() : null,
+            'available'   => $this->isAvailable(),
             'settings'    => $this->settings->collection()
                 ->replaceValue('password', fn($v) => !empty($v) ? 'password' : ''),
             'pkgSettings' => $this->settings->collection()->except('password', 'username')->getKeys(),
