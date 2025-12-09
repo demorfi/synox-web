@@ -1,102 +1,64 @@
+<script setup lang="ts">
+import {computed} from 'vue';
+import {useRouter} from 'vue-router';
+import IconElement from '@/components/elements/Icon.vue';
+import BadgeElement from '@/components/elements/Badge.vue';
+
+const router = useRouter();
+const routes = computed(() => router.getRoutes());
+</script>
+
 <template>
-  <b-collapse
-      tag="nav"
-      id="sidebar"
-      class="col-md-auto sticky-top bg-dark"
-      horizontal>
+  <BCollapse tag="nav" id="sidebar" class="col-md-auto sticky-top bg-dark" horizontal>
     <div class="items sticky-top d-flex flex-md-column flex-row flex-nowrap align-items-center text-center">
       <div class="top-items">
         <ul class="nav nav-pills nav-flush flex-md-column flex-row flex-nowrap mb-auto mx-auto">
           <li class="first nav-item">
-            <img v-b-toggle.sidebar src="@/images/logo.svg" class="logo" alt="SynoX" width="32" height="32"
-                 title="SynoX" aria-expanded="false" aria-controls="sidebar" aria-hidden="true"/>
+            <img src="@/images/logo.svg" class="logo" alt="SynoX" width="32" height="32" title="SynoX"
+                 aria-expanded="false"
+                 aria-controls="sidebar" aria-hidden="true" v-b-toggle.sidebar/>
             <span class="title">SynoX</span>
           </li>
 
-          <router-link
-              v-for="route in routes"
-              :key="route.path"
-              :to="route.path"
-              v-slot="{href, navigate, isActive}"
-              custom>
+          <RouterLink v-for="route in routes" :key="route.path" :to="route.path"
+                      v-slot="{href, navigate, isActive}" custom>
             <li class="nav-item" :class="[isActive && 'active']">
-              <a class="nav-link" :title="route.name" :href="href" @click="navigate">
-                <AppIcon :name="route.meta.icon"/>
+              <a class="nav-link" :title="route.name" :href @click="navigate">
+                <IconElement v-if="route.meta.icon" :name="route.meta.icon"/>
                 <span class="title">{{ route.name }}</span>
-                <b-badge
-                    v-if="route.meta.badge && route.meta.badge.id in badges && badges[route.meta.badge.id]"
-                    v-bind="route.meta.badge"
-                    pill>
-                  {{ badges[route.meta.badge.id] }}
-                </b-badge>
+                <BadgeElement v-if="route.meta.badge" v-bind="route.meta.badge"/>
               </a>
             </li>
-          </router-link>
+          </RouterLink>
         </ul>
       </div>
 
       <div class="bottom-items">
         <div class="last nav-item">
           <a href="https://github.com/demorfi/synox-web" target="_blank" class="nav-link" title="Github">
-            <AppIcon name="github"/>
+            <IconElement name="github"/>
             <span class="title fs-8">
-              <AppIcon name="code-slash"/> with <AppIcon name="heart-fill"/> in Siberia
+              <IconElement name="code-slash"/> with <IconElement name="heart-fill"/> in Siberia
             </span>
           </a>
         </div>
       </div>
 
     </div>
-  </b-collapse>
+  </BCollapse>
 </template>
-
-<script>
-import {mapGetters} from 'vuex';
-import AppIcon from '@/components/AppIcon.vue';
-
-export default {
-  components: {
-    AppIcon
-  },
-
-  data: () => ({
-    badges: {
-      search  : 0,
-      packages: 0
-    }
-  }),
-
-  watch: {
-    getPackagesEnabled: {
-      immediate: true,
-      handler()
-      {
-        this.badges.packages = this.getPackagesEnabled.length;
-      }
-    }
-  },
-
-  computed: {
-    ...mapGetters('packages', ['getPackagesEnabled']),
-    routes()
-    {
-      return this.$router.getRoutes();
-    }
-  }
-}
-</script>
 
 <style lang="scss">
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/mixins';
 
-$sidebar-closed-width: 4rem;
-$sidebar-opened-width: 8rem;
-$sidebar-color-links: rgb(169, 169, 169);
-$sidebar-color-links-active: rgb(255, 255, 255);
+$sidebar-closed-width:          4rem;
+$sidebar-opened-width:          8rem;
+$sidebar-color-links:           rgb(169, 169, 169);
+$sidebar-color-links-active:    rgb(255, 255, 255);
 $sidebar-color-active-selected: rgb(212, 108, 0);
-$sidebar-bg-active-selected: rgba(62, 62, 62, .8);
+$sidebar-bg-active-selected:    rgba(62, 62, 62, .8);
 
 #sidebar {
   padding: 0;
@@ -111,7 +73,7 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
 
   &.collapsing {
     transition: none !important;
-    width: 100% !important;
+    width:      100% !important;
   }
 
   .items {
@@ -119,8 +81,8 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
   }
 
   .nav-link {
-    color: $sidebar-color-links;
-    padding: .7rem 1rem;
+    color:    $sidebar-color-links;
+    padding:  .7rem 1rem;
     position: relative;
 
     &:hover,
@@ -129,11 +91,11 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
     }
 
     .badge {
-      display: inline-block;
-      position: absolute;
+      display:   inline-block;
+      position:  absolute;
       font-size: .5rem;
-      top: 1rem;
-      right: 0;
+      top:       1rem;
+      right:     0;
       transform: translate(-25%, -50%);
     }
   }
@@ -142,7 +104,7 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
     position: relative;
 
     &.first {
-      color: $sidebar-color-links-active;
+      color:   $sidebar-color-links-active;
       padding: .5rem 1rem;
     }
 
@@ -154,13 +116,13 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
       }
 
       &::before {
-        height: .4rem;
-        right: 0;
+        height:           .4rem;
+        right:            0;
         background-color: $sidebar-color-active-selected;
-        content: '';
-        top: 0;
-        left: 0;
-        position: absolute;
+        content:          '';
+        top:              0;
+        left:             0;
+        position:         absolute;
       }
     }
 
@@ -176,7 +138,7 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
   @include media-breakpoint-up(md) {
     &.collapsing {
       transition: inherit !important;
-      width: inherit !important;
+      width:      inherit !important;
     }
 
     .nav-item {
@@ -189,8 +151,8 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
 
     .items {
       transition: .3s;
-      width: $sidebar-closed-width;
-      overflow: hidden;
+      width:      $sidebar-closed-width;
+      overflow:   hidden;
       min-height: 100vh;
 
       > div {
@@ -199,27 +161,27 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
     }
 
     .top-items {
-      padding-top: .5rem;
+      padding-top:   .5rem;
       margin-bottom: auto;
-      margin-right: inherit;
+      margin-right:  inherit;
     }
 
     .nav-item:not(.last) {
       margin-bottom: 1.5rem;
 
       &.active::before {
-        width: .4rem;
-        top: 0;
+        width:  .4rem;
+        top:    0;
         bottom: 0;
         height: inherit;
-        right: inherit;
+        right:  inherit;
       }
     }
 
     &.show {
       .nav-item {
         &.first {
-          display: block;
+          display:       block;
           margin-bottom: 1rem;
 
           span {
@@ -233,9 +195,9 @@ $sidebar-bg-active-selected: rgba(62, 62, 62, .8);
       }
 
       .nav-link {
-        display: grid;
-        align-items: center;
-        column-gap: 1rem;
+        display:               grid;
+        align-items:           center;
+        column-gap:            1rem;
         grid-template-columns: max-content max-content;
 
         .title {

@@ -1,5 +1,6 @@
 import {httpCommon, bootstrapVueNext, vueProgressBar, router, store} from './bootstrap';
 import {createApp} from 'vue';
+import {progressBarInjectionKey} from './store/keys';
 import App from './App.vue';
 
 const app = createApp(App)
@@ -9,4 +10,5 @@ const app = createApp(App)
     .use(router)
     .use(store);
 
+app.provide(progressBarInjectionKey, app.config.globalProperties.$Progress);
 app.mount('#app');

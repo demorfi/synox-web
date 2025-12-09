@@ -1,5 +1,7 @@
 {
+  "name": "synox-web",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "watch": "vite build --watch",
@@ -13,7 +15,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-vue-next": "^0.12.0",
     "lodash": "^4.17.21",
-    "vue": "^3.3.4",
+    "vue": "^3.5.24",
     "vue-router": "^4.2.4",
     "vuex": "^4.1.0"
   },
