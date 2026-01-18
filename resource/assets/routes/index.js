@@ -1,4 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router';
+import {usePackagesStore} from '@/stores/usePackagesStore';
+import {useSearchStore} from '@/stores/useSearchStore';
 
 const routes = [
     {
@@ -6,8 +8,9 @@ const routes = [
         name: 'Search',
         meta: {
             icon: 'search', badge: {
-                id: 'search', variant: 'primary', payload: (store) => {
-                    return store.state.search.payloads.length || false;
+                id: 'search', variant: 'primary', payload: () => {
+                    const store = useSearchStore();
+                    return store.payloads.length || false;
                 }
             }
         },
@@ -24,8 +27,9 @@ const routes = [
         name: 'Packages',
         meta: {
             icon: 'box-seam', badge: {
-                id: 'packages', variant: 'light', payload: (store) => {
-                    return store.getters["packages/getPackagesEnabled"].length || false;
+                id: 'packages', variant: 'light', payload: () => {
+                    const store = usePackagesStore();
+                    return store.getEnabled().length || false;
                 }
             }
         },

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import {reactive, computed, inject, nextTick, defineAsyncComponent, useTemplateRef} from 'vue';
-import {useStore} from 'vuex';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 import IconElement from '@/components/elements/Icon.vue';
 import BadgeElement from '@/components/elements/Badge.vue';
 import PackageItem from '@/components/items/Package.vue';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
 const PackageAddForm = defineAsyncComponent(() => import('@/components/forms/PackageAdd.vue'));
 
-const store = useStore();
+const pkgStore = usePackagesStore();
 const form = reactive({
   use: false,
   show: false,
@@ -17,7 +17,7 @@ const form = reactive({
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
-const packages = computed(() => store.state.packages.packages);
+const packages = computed(() => pkgStore.packages);
 
 const resolveForm = () => {
   nextTick(() => form.show = true);

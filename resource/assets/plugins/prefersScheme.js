@@ -1,5 +1,5 @@
 import {ref, readonly} from 'vue';
-import {prefersSchemeInjectionKey} from '@/store/keys.js';
+import {prefersSchemeInjectionKey} from '@/stores/keys.js';
 
 const pScheme = ref(null);
 const pSchemeInv = ref(null);

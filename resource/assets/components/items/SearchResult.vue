@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {ref, computed, inject} from 'vue';
-import {useStore} from 'vuex';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {useEntriesStore} from '@/stores/useEntriesStore';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
-const store = useStore();
+const entriesStore = useEntriesStore();
 const props = defineProps({
   type: {
     type: String,
@@ -76,7 +76,7 @@ const background = computed(() => {
 });
 
 const fetched = computed(() => {
-  return store.getters["content/getEntry"]({packageId: props.id, fetchId: props.fetchId})
+  return entriesStore.get(props.id, props.fetchId)
       || props.content;
 });
 
@@ -105,7 +105,7 @@ const listProps = computed(() => {
 
 const fetch = (packageId, fetchId) => {
   fetching.value = true;
-  store.dispatch('content/fetchEntry', {packageId, fetchId, params: props.content})
+  entriesStore.fetch(packageId, fetchId, props.content)
       .finally(() => fetching.value = false);
 };
 
@@ -113,7 +113,7 @@ const show = () => showModal.value = true;
 
 const download = (fetched) => {
   downloading.value = true;
-  store.dispatch('content/downloadEntry', fetched)
+  entriesStore.download(fetched.name, fetched.typeId, fetched.baseName)
       .finally(() => downloading.value = false);
 };
 </script>

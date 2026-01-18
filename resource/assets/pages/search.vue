@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import {ref, computed, watch, useTemplateRef} from 'vue';
-import {useStore} from 'vuex';
+import {useSearchStore} from '@/stores/useSearchStore';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 import SearchResultItem from '@/components/items/SearchResult.vue';
 import IconElement from '@/components/elements/Icon.vue';
 import SearchForm from '@/components/forms/Search.vue';
 
-const store = useStore();
+const searchStore = useSearchStore();
+const pkgStore = usePackagesStore();
 const searching = ref(false);
 const firstSearch = ref(true);
 const searchFormRef = useTemplateRef('search-form');
 
-const connected = computed(() => store.state.search.connected);
-const payloads = computed(() => store.state.search.payloads);
-const limitPayloads = computed(() => store.state.search.limitPayloads);
-const progressToLimit = computed(() => store.state.search.progressToLimit);
-const packages = computed(() => store.getters["packages/getPackagesEnabledByType"]('Search'));
+const connected = computed(() => searchStore.connected);
+const payloads = computed(() => searchStore.payloads);
+const limitPayloads = computed(() => searchStore.limitPayloads);
+const progressToLimit = computed(() => searchStore.progressToLimit);
+const packages = computed(() => pkgStore.getEnabledByType('Search'));
 
 watch(searching, (status) => {
   if (!status) {
@@ -30,7 +32,7 @@ watch(connected, (status) => {
 
 const search = (query, profile, filters) => {
   searching.value = true;
-  store.dispatch('search/connection', {query, profile, filters})
+  searchStore.connect(query, profile, filters)
       .then(() => {
         if (!searching.value) {
           throw new Error('Search terminated!');
@@ -44,10 +46,10 @@ const search = (query, profile, filters) => {
 
 const abortSearch = () => {
   searching.value = false;
-  store.dispatch('search/disconnection');
+  searchStore.disconnect();
 };
 
-const resetResults = () => store.commit('search/clearPayloads');
+const resetResults = () => searchStore.clearPayloads();
 </script>
 
 <template>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import {reactive, computed, inject, useTemplateRef, onBeforeMount, nextTick, defineAsyncComponent} from 'vue';
-import {useStore} from 'vuex';
+import {reactive, inject, useTemplateRef, onBeforeMount, nextTick, defineAsyncComponent} from 'vue';
+import {useProfilesStore} from '@/stores/useProfilesStore';
 import IconElement from '@/components/elements/Icon.vue';
 import BadgeElement from '@/components/elements/Badge.vue';
 import ProfileItem from '@/components/items/Profile.vue';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
 const ProfileForm = defineAsyncComponent(() => import('@/components/forms/Profile.vue'));
 
-const store = useStore();
+const profilesStore = useProfilesStore();
 const form = reactive({
   use: false,
   show: false,
@@ -17,9 +17,8 @@ const form = reactive({
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
-const profilesState = computed(() => store.state.profiles.profiles);
 
-onBeforeMount(() => store.dispatch('profiles/getProfiles'));
+onBeforeMount(() => profilesStore.load());
 
 const resolveForm = () => {
   nextTick(() => form.show = true);
@@ -45,7 +44,7 @@ const eventForm = (callable) => {
     <h1 class="display-6">
       <span class="position-relative">
         <IconElement name="collection"/>
-        <BadgeElement class="fs-9" textIndicator>{{ profilesState.length }}</BadgeElement>
+        <BadgeElement class="fs-9" textIndicator>{{ profilesStore.profiles.length }}</BadgeElement>
       </span>
       Profiles
     </h1>
@@ -57,7 +56,7 @@ const eventForm = (callable) => {
 
     <hr class="my-3">
     <BRow class="row-cols-1 row-cols-md-3 row-cols-lg-4 row-cols-xxl-6 g-4">
-      <BCol v-for="profile in profilesState" :key="profile.id">
+      <BCol v-for="profile in profilesStore.profiles" :key="profile.id">
         <ProfileItem v-bind="profile"/>
       </BCol>
     </BRow>

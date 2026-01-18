@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {ref, computed, onBeforeMount} from 'vue';
-import {useStore} from 'vuex';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 
-const store = useStore();
+const pkgStore = usePackagesStore();
 const props = defineProps({
   id: {
     type: String,
@@ -10,8 +10,8 @@ const props = defineProps({
   }
 });
 
-const pkg = computed(() => store.getters["packages/getPackageById"](props.id));
-const settings = computed(() => store.getters["packages/getPackageSettings"](props.id));
+const pkg = computed(() => pkgStore.getById(props.id));
+const settings = computed(() => pkgStore.getSettings(props.id));
 const pkgSettings = ref([]);
 
 onBeforeMount(() => {
@@ -34,7 +34,7 @@ const saveForm = () => {
   }
 
   if (Object.keys(formData).length) {
-    store.dispatch('packages/updatePackageSettings', {id: props.id, settings: formData});
+    pkgStore.updateSettings(props.id, formData);
   }
 };
 

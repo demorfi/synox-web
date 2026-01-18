@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import {reactive, computed, inject, useTemplateRef, nextTick, defineAsyncComponent} from 'vue';
-import {useStore} from 'vuex';
+import {useFiltersStore} from '@/stores/useFiltersStore';
+import {usePackagesStore} from '@/stores/usePackagesStore';
+import {useNotificationsStore} from '@/stores/useNotificationsStore';
 import IconElement from '@/components/elements/Icon.vue';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
 const ProfileForm = defineAsyncComponent(() => import('@/components/forms/Profile.vue'));
 
-const store = useStore();
+const pkgStore = usePackagesStore();
+const filtersStore = useFiltersStore();
+const notificationsStore = useNotificationsStore();
 const props = defineProps({id: String, values: Object});
 const form = reactive({
   use: false,
@@ -19,11 +23,11 @@ const pScheme = inject(prefersSchemeInjectionKey);
 const selectedPackages = computed(() => {
   const packages = [];
   for (let [pkgId, pkgValues] of Object.entries(props.values)) {
-    const pkgInfo = store.getters["packages/getPackageById"](pkgId);
+    const pkgInfo = pkgStore.getById(pkgId);
     if (pkgInfo !== undefined) {
       const filters = {};
       for (let [filterId, filterValues] of Object.entries(pkgValues)) {
-        const filter = store.getters["packages/getFilterById"](filterId);
+        const filter = filtersStore.getById(filterId);
         if (filter !== undefined) {
           filters[filterId] = {name: filter.name, cases: filterValues};
         }
@@ -53,9 +57,9 @@ const eventForm = (callable) => {
 
 const clipboard = () => {
   navigator.clipboard?.writeText(props.id).then(() => {
-    store.dispatch('notifications/addInfo', 'ID copied to clipboard');
+    notificationsStore.addInfo('ID copied to clipboard');
   }, () => {
-    store.dispatch('notifications/addError', 'ID failed to copy');
+    notificationsStore.addError('ID failed to copy');
   });
 }
 </script>

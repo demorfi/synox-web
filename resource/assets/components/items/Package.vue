@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {reactive, computed, inject, nextTick, useTemplateRef, defineAsyncComponent} from 'vue';
-import {useStore} from 'vuex';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 import IconElement from '@/components/elements/Icon.vue';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
 const PackageAuthForm = defineAsyncComponent(() => import('@/components/forms/PackageAuth.vue'));
 const PackageSettingsForm = defineAsyncComponent(() => import('@/components/forms/PackageSettings.vue'));
 
-const store = useStore();
+const pkgStore = usePackagesStore();
 const props = defineProps({
   id: String,
   name: String,
@@ -45,7 +45,7 @@ const bgVariant = computed(() => {
   return !props.available ? 'text-bg-danger' : 'text-bg-secondary';
 });
 
-const changeActivity = () => store.dispatch('packages/changePackageActivity', {id: props.id, active: !props.enabled});
+const changeActivity = () => pkgStore.changeActivity(props.id, !props.enabled);
 
 const resolveForm = (name) => {
   nextTick(() => forms[name].show = true);

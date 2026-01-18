@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import {ref, computed, onBeforeMount} from 'vue';
-import {useStore} from 'vuex';
+import {ref, onBeforeMount} from 'vue';
+import {useJournalStore} from '@/stores/useJournalStore';
 import IconElement from '@/components/elements/Icon.vue';
 import BadgeElement from '@/components/elements/Badge.vue';
 
-const store = useStore();
+const journalStore = useJournalStore();
 const fields = ref(['message', 'date']);
 const busy = ref(true);
-const journalState = computed(() => store.state.journal.journal);
 
 onBeforeMount(async () => {
-  await store.dispatch('journal/getJournal');
+  await journalStore.load();
   busy.value = false;
 });
-
-const clearJournal = () => store.dispatch('journal/clearJournal');
 </script>
 
 <template>
@@ -22,18 +19,18 @@ const clearJournal = () => store.dispatch('journal/clearJournal');
     <h1 class="display-6">
       <span class="position-relative">
         <IconElement name="journal"/>
-        <BadgeElement class="fs-9" textIndicator>{{ journalState.length }}</BadgeElement>
+        <BadgeElement class="fs-9" textIndicator>{{ journalStore.records.length }}</BadgeElement>
       </span>
       Journal
     </h1>
 
-    <BButton size="sm" variant="outline-danger" @click="clearJournal">
+    <BButton size="sm" variant="outline-danger" @click="journalStore.clear">
       <IconElement name="trash"/>
       Clear Journal
     </BButton>
 
     <hr class="my-3">
-    <BTable :items="journalState" :fields :busy striped show-empty/>
+    <BTable :items="journalStore.records" :fields :busy striped show-empty/>
   </div>
 </template>
 

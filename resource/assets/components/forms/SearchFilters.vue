@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import {ref, computed, watch} from 'vue';
-import {useStore} from 'vuex';
+import {useFiltersStore} from '@/stores/useFiltersStore';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 
-const store = useStore();
+const pkgStore = usePackagesStore();
+const filtersStore = useFiltersStore();
 const emit = defineEmits(['selected']);
 const selected = ref({});
 
-const filters = computed(() => store.state.packages.filters);
-const packages = computed(() => store.getters["packages/getPackagesEnabledByType"]('Search'));
+const filters = computed(() => filtersStore.filters);
+const packages = computed(() => pkgStore.getEnabledByType('Search'));
 const selects = computed(() => {
   const list = [];
 

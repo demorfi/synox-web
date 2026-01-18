@@ -4,7 +4,7 @@ import {
     VueProgressBar,
     VueProgressBarExt,
     Router,
-    Store,
+    Stores,
     PrefersScheme
 } from './bootstrap';
 import {createApp} from 'vue';
@@ -16,7 +16,7 @@ const app = createApp(App)
     .use(VueProgressBar)
     .use(VueProgressBarExt)
     .use(Router)
-    .use(Store)
+    .use(Stores)
     .use(PrefersScheme);
 
 app.mount('#app');

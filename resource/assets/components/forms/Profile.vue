@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import {ref, computed, watchEffect} from 'vue';
-import {useStore} from 'vuex';
+import {useProfilesStore} from '@/stores/useProfilesStore';
+import {usePackagesStore} from '@/stores/usePackagesStore';
+import {useFiltersStore} from '@/stores/useFiltersStore';
 
-const store = useStore();
+const pkgStore = usePackagesStore();
+const filtersStore = useFiltersStore();
+const profilesStore = useProfilesStore();
 const props = defineProps({id: String});
 const selected = ref({id: '', packages: {}});
 
-const filtersState = computed(() => store.state.packages.filters);
+const filtersState = computed(() => filtersStore.filters);
 const selectPackageState = ref(null);
 const profile = ref(null);
 
 const optionsSelectPackage = computed(() => {
-  const packages = store.getters["packages/getPackagesByType"]('Search');
+  const packages = pkgStore.getByType('Search');
   const options = [];
   for (let pkg of packages) {
     if (!(pkg.id in selected.value.packages)) {
@@ -24,7 +28,7 @@ const optionsSelectPackage = computed(() => {
 const selectedPackages = computed(() => {
   const packages = [];
   for (let [pkgId] of Object.entries(selected.value.packages)) {
-    const pkgInfo = store.getters["packages/getPackageById"](pkgId);
+    const pkgInfo = pkgStore.getById(pkgId);
     if (pkgInfo !== undefined) {
       const filters = {};
 
@@ -38,7 +42,7 @@ const selectedPackages = computed(() => {
 
       if (pkgInfo.onlyAllowed !== undefined && Object.keys(pkgInfo.onlyAllowed).length) {
         for (let [filterId, filterValues] of Object.entries(pkgInfo.onlyAllowed)) {
-          const filter = store.getters["packages/getFilterById"](filterId);
+          const filter = filtersStore.getById(filterId);
           if (filter !== undefined) {
             addToFilter(filterId, filter.name, filterValues);
           }
@@ -68,7 +72,7 @@ const selectPackage = (pkgId) => {
 
 watchEffect(() => {
   if (props.id) {
-    profile.value = store.getters['profiles/getProfileById'](props.id) ?? null;
+    profile.value = profilesStore.getById(props.id) ?? null;
     if (profile.value !== null) {
       selected.value.id = profile.value.id;
       for (let pkgId of Object.keys(profile.value.values)) {
@@ -101,13 +105,13 @@ const validate = () => {
 const save = () => {
   if (validate()) {
     return props.id !== undefined
-        ? store.dispatch('profiles/updateProfile', selected.value)
-        : store.dispatch('profiles/createProfile', selected.value);
+        ? profilesStore.update(selected.value.id, selected.value.packages)
+        : profilesStore.create(selected.value.id, selected.value.packages);
   }
   return new Promise((resolve, reject) => reject());
 }
 
-const remove = () => store.dispatch('profiles/removeProfile', selected.value);
+const remove = () => profilesStore.remove(selected.value.id);
 
 defineExpose({reset, validate, save, remove});
 </script>

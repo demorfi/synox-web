@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import {inject, onBeforeMount, onMounted} from 'vue';
-import {useStore} from 'vuex';
-import {progressBarInjectionKey} from './store/keys';
+import {usePackagesStore} from './stores/usePackagesStore';
+import {useFiltersStore} from './stores/useFiltersStore';
+import {progressBarInjectionKey} from './stores/keys';
 import TheNotifications from './components/TheNotifications.vue';
 import TheSidebar from './components/TheSidebar.vue';
 
-const store = useStore();
+const pkgStore = usePackagesStore();
+const filtersStore = useFiltersStore();
 const progressBar = inject(progressBarInjectionKey);
 
 onBeforeMount(async () => {
   progressBar.start();
-  await store.dispatch('packages/getPackages');
-  await store.dispatch('packages/getPackagesFilters');
+  await pkgStore.load();
+  await filtersStore.load();
 });
 
 onMounted(() => progressBar.finish());

@@ -9,14 +9,14 @@ import {
   onActivated,
   defineAsyncComponent
 } from 'vue';
-import {useStore} from 'vuex';
+import {useProfilesStore} from '@/stores/useProfilesStore';
 import IconElement from '@/components/elements/Icon.vue';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
 const SearchFiltersForm = defineAsyncComponent(() => import('@/components/forms/SearchFilters.vue'));
 
 const attrs = useAttrs();
-const store = useStore();
+const profilesStore = useProfilesStore();
 const emit = defineEmits(['submit', 'abort', 'reset']);
 const props = defineProps({
   progressMax: {
@@ -47,15 +47,15 @@ const filters = reactive({
   loading: false
 });
 
-onBeforeMount(async () => await store.dispatch('profiles/getProfiles'));
+onBeforeMount(async () => await profilesStore.load());
 onActivated(() => {
-  if (form.profile !== null && store.getters["profiles/getProfileById"](form.profile) === undefined) {
+  if (form.profile !== null && profilesStore.getById(form.profile) === undefined) {
     form.profile = null;
   }
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
-const profiles = computed(() => store.state.profiles.profiles);
+const profiles = computed(() => profilesStore.profiles);
 const optionsProfiles = computed(() => {
   const options = [];
   for (let profile of profiles.value) {

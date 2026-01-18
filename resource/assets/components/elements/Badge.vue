@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import {ref, computed, watchEffect, inject} from 'vue';
-import {useStore} from 'vuex';
-import {prefersSchemeInjectionKey} from '@/store/keys';
+import {prefersSchemeInjectionKey} from '@/stores/keys';
 
-const store = useStore();
 const props = defineProps({
   id: String,
   payload: {
@@ -14,7 +12,7 @@ const props = defineProps({
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
-const content = computed(() => props.payload(store));
+const content = computed(() => props.payload());
 const variant = ref(props.variant);
 
 watchEffect(() => {

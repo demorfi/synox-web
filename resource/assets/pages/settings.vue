@@ -1,53 +1,73 @@
 <script setup lang="ts">
 import {reactive, computed, onBeforeMount} from 'vue';
-import {useStore} from 'vuex';
+import {useSettingsStore} from '@/stores/useSettingsStore';
 import IconElement from '@/components/elements/Icon.vue';
 
-const store = useStore();
-const appFields = reactive({
-  limitPerPackage: {
-    isValid: null,
-    isDisabled: false
-  },
-  maxJournalRecords: {
-    isValid: null,
-    isDisabled: false
-  },
-  useJournal: {
-    isDisabled: false,
-    options: [
-      {value: null, text: 'Choose one of the options', disabled: true},
-      {value: 'true', text: 'Yes'},
-      {value: 'false', text: 'No'}
-    ]
+const settingsStore = useSettingsStore();
+const fields = reactive({
+  app: {
+    limitPerPackage: {
+      type: 'Input',
+      struct: {
+        type: 'number',
+        id: 'appLimitPerPackage',
+        label: 'Limit per package',
+        placeholder: 'Enter number limit per package',
+        state: null,
+        disabled: false,
+        value: computed(() => settingsStore.settings.app?.limitPerPackage),
+      },
+      change: (value) => {
+        update('app', 'limitPerPackage', value, (value) => /^\d+$/.test(value));
+      }
+    },
+    maxJournalRecords: {
+      type: 'Input',
+      struct: {
+        type: 'number',
+        id: 'appMaxJournalRecords',
+        label: 'Store only the last number of records',
+        placeholder: 'Enter the number of recent log entries to keep',
+        state: null,
+        disabled: false,
+        value: computed(() => settingsStore.settings.app?.maxJournalRecords),
+      },
+      change: (value) => {
+        update('app', 'maxJournalRecords', value, (value) => /^[1-9]\d*$/.test(value));
+      }
+    },
+    useJournal: {
+      type: 'Select',
+      struct: {
+        id: 'appUseJournal',
+        label: 'Use Journal',
+        placeholder: 'Choose to use journal or not',
+        disabled: false,
+        options: [
+          {value: null, text: 'Choose one of the options', disabled: true},
+          {value: 'true', text: 'Yes'},
+          {value: 'false', text: 'No'}
+        ],
+        value: computed(() => settingsStore.settings.app?.useJournal)
+      },
+      change: (value) => {
+        update('app', 'useJournal', value);
+      }
+    }
   }
 });
 
-const appState = computed(() => store.state.settings.app);
+onBeforeMount(() => settingsStore.load());
 
-onBeforeMount(() => store.dispatch('settings/getSettings'));
-
-const __updateAppSetting = (name, value, validator) => {
-  appFields[name].isValid = (validator === undefined || validator(value)) ? null : false;
-  if (appFields[name].isValid !== false) {
-    appFields[name].isDisabled = true;
-    return store.dispatch('settings/updateSetting', {type: 'app', name, value})
+const update = (type, name, value, validator) => {
+  fields[type][name].struct.state = (validator === undefined || validator(value)) ? null : false;
+  if (fields[type][name].struct.state !== false) {
+    fields[type][name].struct.disabled = true;
+    return settingsStore.update(type, name, value)
         .finally(() => {
-          appFields[name].isDisabled = false;
+          fields[type][name].struct.disabled = false;
         });
   }
-}
-
-const updateAppLimitPerPackage = (value) => {
-  __updateAppSetting('limitPerPackage', value, (value) => /^\d+$/.test(value));
-}
-
-const updateAppMaxJournalRecords = (value) => {
-  __updateAppSetting('maxJournalRecords', value, (value) => /^[1-9]\d*$/.test(value));
-}
-
-const updateAppUseJournal = (value) => {
-  __updateAppSetting('useJournal', value);
 }
 </script>
 
@@ -60,25 +80,13 @@ const updateAppUseJournal = (value) => {
 
     <hr class="my-3">
     <BForm>
-      <BFormGroup class="mb-3" label="Limit per package" label-for="appLimitPerPackage" floating>
-        <BFormInput type="number" id="appLimitPerPackage" placeholder="Enter number limit per package"
-                    :model-value="appState.limitPerPackage" :state="appFields.limitPerPackage.isValid"
-                    :disabled="appFields.limitPerPackage.isDisabled" @change="updateAppLimitPerPackage"
-                    lazy number required/>
-      </BFormGroup>
-
-      <BFormGroup class="mb-3" label="Store only the last number of records" label-for="appMaxJournalRecords" floating>
-        <BFormInput type="number" id="appMaxJournalRecords" placeholder="Enter the number of recent log entries to keep"
-                    :model-value="appState.maxJournalRecords" :state="appFields.maxJournalRecords.isValid"
-                    :disabled="appFields.maxJournalRecords.isDisabled" @change="updateAppMaxJournalRecords"
-                    lazy number required/>
-      </BFormGroup>
-
-      <BFormGroup class="mb-3" label="Use Journal" label-for="appUseJournal" floating>
-        <BFormSelect id="appUseJournal" placeholder="Choose to use journal or not"
-                     :model-value="appState.useJournal" :options="appFields.useJournal.options"
-                     :disabled="appFields.useJournal.isDisabled" @change="updateAppUseJournal"/>
-      </BFormGroup>
+      <template v-for="(type, key) in fields" :key="key">
+        <BFormGroup v-for="(field, key) in type" :key="key" class="mb-3" :label="field.struct.label"
+                    :label-for="field.struct.id" floating>
+          <component :is="'BForm' + field.type" v-bind="field.struct" :model-value="field.struct.value"
+                     @change="field.change"></component>
+        </BFormGroup>
+      </template>
     </BForm>
   </div>
 </template>

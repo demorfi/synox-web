@@ -1,4 +1,4 @@
-import {progressBarInjectionKey} from '@/store/keys.js';
+import {progressBarInjectionKey} from '@/stores/keys.js';
 
 export default {
     install(app) {

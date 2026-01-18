@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {ref, watch} from 'vue';
-import {useStore} from 'vuex';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 
-const store = useStore();
+const pkgStore = usePackagesStore();
 const file = ref(null);
 const state = ref(null);
 
@@ -22,7 +22,7 @@ const upload = () => {
   if (validate()) {
     const formData = new FormData();
     formData.append('package', file.value);
-    return store.dispatch('packages/uploadPackage', formData)
+    return pkgStore.upload(formData)
         .catch((message) => {
           state.value = false;
           throw new Error(message);

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {reactive, computed} from 'vue';
-import {useStore} from 'vuex';
+import {usePackagesStore} from '@/stores/usePackagesStore';
 
-const store = useStore();
+const pkgStore = usePackagesStore();
 const props = defineProps({
   id: {
     type: String,
@@ -10,7 +10,7 @@ const props = defineProps({
   }
 });
 
-const settings = computed(() => store.getters["packages/getPackageSettings"](props.id));
+const settings = computed(() => pkgStore.getSettings(props.id));
 const form = reactive({
   username: settings.value.username,
   password: settings.value.password,
@@ -28,12 +28,12 @@ const saveForm = () => {
   }
 
   if (Object.keys(formData).length) {
-    store.dispatch('packages/updatePackageSettings', {id: props.id, settings: formData})
+    pkgStore.updateSettings(props.id, formData)
         // The password is always returned as the string "password". Force a new password value
         .then(({id, state: packageState}) => {
           if ('password' in formData) {
             packageState.settings.password = formData.password;
-            store.commit('packages/updatePackageState', {id, packageState});
+            pkgStore.updateState(id, packageState);
           }
         });
   }

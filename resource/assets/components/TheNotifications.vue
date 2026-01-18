@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import {computed} from 'vue';
-import {useStore} from 'vuex';
+import {useNotificationsStore} from '@/stores/useNotificationsStore';
 import NotificationItem from '@/components/items/Notification.vue';
 
-const store = useStore();
-const notifications = computed(() => store.state.notifications.notifications);
-const isEmpty = computed(() => !Object.keys(notifications.value).length);
-
-const delNotification = (id) => store.commit('notifications/delNotification', id);
+const notificationsStore = useNotificationsStore();
+const isEmpty = computed(() => !Object.keys(notificationsStore.notifications).length);
 </script>
 
 <template>
   <Teleport to="body">
     <TransitionGroup name="notification" tag="div" class="notifications" :class="{'is-empty': isEmpty}">
-      <NotificationItem v-for="notification in notifications" :key="notification.id" :variant="notification.type"
-                        :message="notification.message" @closed="delNotification(notification.id)"/>
+      <NotificationItem v-for="notification in notificationsStore.notifications" :key="notification.id" :variant="notification.type"
+                        :message="notification.message" @closed="notificationsStore.delNotification(notification.id)"/>
     </TransitionGroup>
   </Teleport>
 </template>
