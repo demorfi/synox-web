@@ -61,8 +61,8 @@ readonly class Query
         $queries = ArrayCollection::make();
         foreach ($this->getPackages() as $package) {
             // Personal filtering
-            $filter = $this->filter?->collection()->get($package->getId()) ?? $this->filter?->collection() ?? [];
-            $queries[] = new static($this->value, $package, !empty($filter) ? new Filter($filter) : null, $this->params);
+            $filter    = $this->filter?->collection()->get($package->getId()) ?? $this->filter?->collection() ?? [];
+            $queries[] = new static($this->value, $package, !empty($filter) ? new Filter((array)$filter) : null, $this->params);
         }
         return $queries;
     }
