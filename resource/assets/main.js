@@ -1,6 +1,6 @@
 import {
     HttpCommon,
-    BootstrapVueNext,
+    createBootstrap,
     VueProgressBar,
     VueProgressBarExt,
     Router,
@@ -12,7 +12,7 @@ import App from './App.vue';
 
 const app = createApp(App)
     .use(HttpCommon)
-    .use(BootstrapVueNext)
+    .use(createBootstrap())
     .use(VueProgressBar)
     .use(VueProgressBarExt)
     .use(Router)

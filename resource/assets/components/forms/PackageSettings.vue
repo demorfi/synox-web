@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref, computed, onBeforeMount} from 'vue';
+import {BFormInput, BFormSelect} from 'bootstrap-vue-next';
 import {usePackagesStore} from '@/stores/usePackagesStore';
 
 const pkgStore = usePackagesStore();
@@ -22,7 +23,7 @@ onBeforeMount(() => {
   }
 });
 
-const component = (type) => type === 'select' ? 'BFormSelect' : 'BFormInput';
+const component = (type) => type === 'select' ? BFormSelect : BFormInput;
 
 const saveForm = () => {
   const formData = {};
@@ -47,7 +48,7 @@ defineExpose({saveForm});
                 class="mb-3" floating>
       <component :is="component(setting.type)" :model-value="setting.value" :type="setting.type"
                  :id="setting.name" :options="setting.params" :placeholder="setting.label"
-                 @input="setting.value = $event" @change="setting.value = $event"/>
+                 @update:model-value="setting.value = $event"/>
     </BFormGroup>
   </BForm>
 </template>

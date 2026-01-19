@@ -13,7 +13,7 @@ const form = reactive({
   use: false,
   show: false,
   okDisabled: false,
-  ref: useTemplateRef('form')
+  ref: useTemplateRef('profile-form')
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
@@ -65,7 +65,7 @@ const eventForm = (callable) => {
       <BModal size="md" title="New profile" ok-title="Create" cancel-title="Close"
               v-model="form.show" :ok-disabled="form.okDisabled"
               @ok.prevent="eventForm(form.ref.save)" @cancel="form.ref.reset()" centered>
-        <ProfileForm ref="form"/>
+        <ProfileForm ref="profile-form"/>
       </BModal>
     </Suspense>
   </div>

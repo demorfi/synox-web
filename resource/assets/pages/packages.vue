@@ -13,7 +13,7 @@ const form = reactive({
   use: false,
   show: false,
   okDisabled: false,
-  ref: useTemplateRef('form')
+  ref: useTemplateRef('package-add-form')
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
@@ -64,7 +64,7 @@ const eventForm = (callable) => {
       <BModal size="md" title="Add package" ok-title="Upload" cancel-title="Close"
               v-model="form.show" :ok-disabled="form.okDisabled"
               @ok.prevent="eventForm(form.ref.upload)" @cancel="form.ref.reset()" centered>
-        <PackageAddForm ref="form"/>
+        <PackageAddForm ref="package-add-form"/>
       </BModal>
     </Suspense>
   </div>

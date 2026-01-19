@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import {reactive, computed, onBeforeMount} from 'vue';
+import {BFormInput, BFormSelect} from 'bootstrap-vue-next';
 import {useSettingsStore} from '@/stores/useSettingsStore';
 import IconElement from '@/components/elements/Icon.vue';
 
 const settingsStore = useSettingsStore();
+const componentMap = {
+  Input: BFormInput,
+  Select: BFormSelect
+};
 const fields = reactive({
   app: {
     limitPerPackage: {
@@ -14,9 +19,9 @@ const fields = reactive({
         label: 'Limit per package',
         placeholder: 'Enter number limit per package',
         state: null,
-        disabled: false,
-        value: computed(() => settingsStore.settings.app?.limitPerPackage),
+        disabled: false
       },
+      value: computed(() => settingsStore.settings.app?.limitPerPackage),
       change: (value) => {
         update('app', 'limitPerPackage', value, (value) => /^\d+$/.test(value));
       }
@@ -29,9 +34,9 @@ const fields = reactive({
         label: 'Store only the last number of records',
         placeholder: 'Enter the number of recent log entries to keep',
         state: null,
-        disabled: false,
-        value: computed(() => settingsStore.settings.app?.maxJournalRecords),
+        disabled: false
       },
+      value: computed(() => settingsStore.settings.app?.maxJournalRecords),
       change: (value) => {
         update('app', 'maxJournalRecords', value, (value) => /^[1-9]\d*$/.test(value));
       }
@@ -47,9 +52,9 @@ const fields = reactive({
           {value: null, text: 'Choose one of the options', disabled: true},
           {value: 'true', text: 'Yes'},
           {value: 'false', text: 'No'}
-        ],
-        value: computed(() => settingsStore.settings.app?.useJournal)
+        ]
       },
+      value: computed(() => settingsStore.settings.app?.useJournal),
       change: (value) => {
         update('app', 'useJournal', value);
       }
@@ -83,8 +88,8 @@ const update = (type, name, value, validator) => {
       <template v-for="(type, key) in fields" :key="key">
         <BFormGroup v-for="(field, key) in type" :key="key" class="mb-3" :label="field.struct.label"
                     :label-for="field.struct.id" floating>
-          <component :is="'BForm' + field.type" v-bind="field.struct" :model-value="field.struct.value"
-                     @change="field.change"></component>
+          <component :is="componentMap[field.type]" v-bind="field.struct" :model-value="field.value"
+                     @update:model-value="field.change"></component>
         </BFormGroup>
       </template>
     </BForm>

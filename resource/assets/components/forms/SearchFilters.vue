@@ -54,7 +54,7 @@ defineExpose({reset});
     <BCol v-for="select in selects" :key="select.id" cols="12" lg="6">
       <BCard :header="select.name" header-class="border-0" body-class="p-0" class="border-0">
         <BFormSelect v-model="select.selected" :options="select.options" select-size="4"
-                     @change="selected[select.id] = $event" multiple/>
+                     @update:model-value="selected[select.id] = $event" multiple/>
       </BCard>
     </BCol>
   </BRow>

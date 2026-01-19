@@ -62,6 +62,7 @@ $sidebar-bg-active-selected:    rgba(62, 62, 62, .8);
 
 #sidebar {
   padding: 0;
+  display: block !important; /* NOTE: Fixed for bootstrap-vue-next > 0.12.0 */
 
   svg {
     vertical-align: sub;

@@ -106,33 +106,31 @@ defineExpose({stopSubmitForm});
                        variant="primary" striped animated/>
           </BFormGroup>
 
-          <BInputGroupAppend>
-            <BFormGroup label="Search profile" label-for="profile" floating>
-              <BFormSelect v-model="form.profile" :options="optionsProfiles" :disabled="!profiles.length"
-                           id="profile" placeholder="Search profile">
-                <template #first>
-                  <BFormSelectOption :value="null">None</BFormSelectOption>
-                </template>
-              </BFormSelect>
-            </BFormGroup>
+          <BFormGroup label="Search profile" label-for="profile" floating>
+            <BFormSelect v-model="form.profile" :options="optionsProfiles" :disabled="!profiles.length"
+                         id="profile" placeholder="Search profile">
+              <template #first>
+                <BFormSelectOption :value="null">None</BFormSelectOption>
+              </template>
+            </BFormSelect>
+          </BFormGroup>
 
-            <BButton :disabled="form.submitted" type="reset" variant="outline-secondary">Reset</BButton>
+          <BButton :disabled="form.submitted" type="reset" variant="outline-secondary">Reset</BButton>
 
-            <BButton :variant="'outline-' + pScheme.invert" aria-controls="filters"
-                     :disabled="form.submitted" :class="[!filters.show && 'collapsed']"
-                     :aria-expanded="filters.show ? 'true' : 'false'" @click="showFilters">
-              <BSpinner v-show="filters.loading" type="grow" small/>
-              Filters
-              <IconElement :name="filters.show ? 'caret-up-fill' : 'caret-down-fill'"/>
-            </BButton>
+          <BButton :variant="'outline-' + pScheme.invert" aria-controls="filters"
+                   :disabled="form.submitted" :class="[!filters.show && 'collapsed']"
+                   :aria-expanded="filters.show ? 'true' : 'false'" @click="showFilters">
+            <BSpinner v-show="filters.loading" type="grow" small/>
+            Filters
+            <IconElement :name="filters.show ? 'caret-up-fill' : 'caret-down-fill'"/>
+          </BButton>
 
-            <BButton v-if="!form.submitted" type="submit" variant="outline-primary">Search</BButton>
+          <BButton v-if="!form.submitted" type="submit" variant="outline-primary">Search</BButton>
 
-            <BButton v-else type="button" variant="outline-danger" @click="abortSubmittedForm">
-              <BSpinner type="grow" small/>
-              Searching
-            </BButton>
-          </BInputGroupAppend>
+          <BButton v-else type="button" variant="outline-danger" @click="abortSubmittedForm">
+            <BSpinner type="grow" small/>
+            Searching
+          </BButton>
         </BInputGroup>
       </BCol>
     </BFormGroup>

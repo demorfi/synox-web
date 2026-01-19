@@ -125,7 +125,7 @@ defineExpose({reset, validate, save, remove});
 
     <BFormGroup class="mb-3" label="Select the package" label-for="selectPackage" floating>
       <BFormSelect id="selectPackage" placeholder="Select the package" :model-value="null"
-                   :options="optionsSelectPackage" :state="selectPackageState" @change="selectPackage($event)">
+                   :options="optionsSelectPackage" :state="selectPackageState" @update:model-value="selectPackage($event)">
         <template #first>
           <BFormSelectOption :value="null" disabled>Select the package for added</BFormSelectOption>
         </template>

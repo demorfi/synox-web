@@ -16,7 +16,7 @@ const form = reactive({
   use: false,
   show: false,
   okDisabled: false,
-  ref: useTemplateRef('form')
+  ref: useTemplateRef('profile-form')
 });
 
 const pScheme = inject(prefersSchemeInjectionKey);
@@ -130,7 +130,7 @@ const clipboard = () => {
         <BButton variant="secondary" @click="cancel">Cancel</BButton>
         <BButton variant="primary" :disabled="form.okDisabled" @click="eventForm(form.ref.save)">Save</BButton>
       </template>
-      <ProfileForm ref="form" :id/>
+      <ProfileForm ref="profile-form" :id/>
     </BModal>
   </Suspense>
 </template>
