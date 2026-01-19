@@ -71,7 +71,7 @@ class Source
             throw new SourceException(sprintf('Package name (%s) is not valid!', $baseName));
         }
 
-        $content = $this->file->getContent();
+        $content = str_replace("\r", '', $this->file->getContent());
         preg_match('/^namespace\s+(?P<namespace>.+?);.*class\s+(?P<class>\w+).+;$/sm', $content, $source);
         $results['namespace'] = $source['namespace'] ?? '';
         return array_intersect_key($results, array_flip(['name', 'namespace', 'type', 'subtype']));
