@@ -40,6 +40,6 @@ defineExpose({reset, validate, upload});
       <h6 class="alert-heading">Attention!</h6>
       <p class="mb-0">Upload package from trusted sources and only at your own risk!</p>
     </BAlert>
-    <BFormFile v-model="file" :state="state" accept="application/x-php" required/>
+    <BFormFile v-model="file" :state="state" accept=".php" required/>
   </BForm>
 </template>
