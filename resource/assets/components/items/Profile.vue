@@ -56,10 +56,15 @@ const eventForm = (callable) => {
 };
 
 const clipboard = () => {
+  if (!navigator.clipboard) {
+    notificationsStore.addError('ID failed to copy: Unsecure context (HTTP)');
+    return;
+  }
   navigator.clipboard?.writeText(props.id).then(() => {
     notificationsStore.addInfo('ID copied to clipboard');
-  }, () => {
+  }, (error) => {
     notificationsStore.addError('ID failed to copy');
+    console.error('Clipboard error:', error);
   });
 }
 </script>
