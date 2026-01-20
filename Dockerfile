@@ -1,4 +1,4 @@
-FROM node:21.1-alpine AS build
+FROM node:22.12.0-alpine AS build
 WORKDIR /usr/src/app
 
 COPY package.json package-lock.json vite.config.js ./
