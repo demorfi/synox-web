@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0] - 21-01-2026
+
+### Fixed
+- (Vue) BadgeElement for the packages page (*Visual)
+- Error when using search filtering
+- It was impossible to load a package (plugin) if it was written under the Windows environment
+- All user files were displayed in the selection of the upload package (plugin)
+
+### Added
+- Support (prefers-color-scheme) Dark and Light themes
+- Notification if it is impossible to copy the profile ID
+- REDIS_USE and ELASTIC_USE env
+- Dockerfile for development
+
+### Changed
+- The package availability definition changed
+- Search@Torrent$Jackett reports his requirements
+- Migrate from (Vue Options API) to (Vue Composition API)
+- Migrate stores from (Vuex) to (Pinia)
+- Dependencies
+
 ## [1.4.1] - 13-02-2025
 
 ### Fixed
