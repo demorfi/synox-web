@@ -27,3 +27,9 @@ watchEffect(() => {
     <slot>{{ content }}</slot>
   </BBadge>
 </template>
+
+<style scoped>
+.badge {
+  vertical-align: top;
+}
+</style>
