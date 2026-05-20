@@ -22,10 +22,17 @@ services:
       - '8002:80'
       - '2346:2346'
     environment:
+      APP_MODE: ${APP_MODE:-prod}
+      CACHE_EXPIRE: ${CACHE_EXPIRE:-86400}
       REDIS_USE: true
       REDIS_PASSWORD: ${REDIS_PASSWORD:-secret}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      WORKER_BROADCAST_HOST: ${WORKER_BROADCAST_HOST:-0.0.0.0}
+      WORKER_BROADCAST_PORT: 2346
+      WORKER_USE_SSL: ${WORKER_USE_SSL:-false}
+      WORKER_SSL_CERT_PATH: ${WORKER_SSL_CERT_PATH:-null}
+      WORKER_SSL_KEY_PATH: ${WORKER_SSL_KEY_PATH:-null}
     networks:
       - net
     depends_on:
