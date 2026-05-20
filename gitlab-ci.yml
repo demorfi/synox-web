@@ -1,0 +1,58 @@
+stages:
+  - build
+  - deploy
+
+build-job:
+  stage: build
+  image: docker:29
+  tags:
+    - docker-build
+  before_script:
+    - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - VERSION=$(echo "$CI_COMMIT_TAG" | sed 's/^v//')
+
+    - docker build -t synox-web:$VERSION .
+
+    - docker tag synox-web:$VERSION $CI_REGISTRY_IMAGE:$VERSION
+    - docker tag synox-web:$VERSION $CI_REGISTRY_IMAGE:latest
+    - docker tag synox-web:$VERSION $DOCKER_HUB_USER/synox-web:$VERSION
+    - docker tag synox-web:$VERSION $DOCKER_HUB_USER/synox-web:latest
+    - docker tag synox-web:$VERSION ghcr.io/$GHCR_USER/synox-web:$VERSION
+    - docker tag synox-web:$VERSION ghcr.io/$GHCR_USER/synox-web:latest
+
+    - docker push $CI_REGISTRY_IMAGE:$VERSION
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker push $DOCKER_HUB_USER/synox-web:$VERSION
+    - docker push $DOCKER_HUB_USER/synox-web:latest
+    - docker push ghcr.io/$GHCR_USER/synox-web:$VERSION
+    - docker push ghcr.io/$GHCR_USER/synox-web:latest
+
+    - docker rmi synox-web:$VERSION || true
+    - docker rmi $CI_REGISTRY_IMAGE:$VERSION || true
+    - docker rmi $DOCKER_HUB_USER/synox-web:$VERSION || true
+    - docker rmi ghcr.io/$GHCR_USER/synox-web:$VERSION || true
+
+    - docker volume prune -f
+  rules:
+    - if: '$CI_COMMIT_TAG'
+
+deploy-job:
+  stage: deploy
+  tags:
+    - docker-deploy
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - rm -f .env docker-compose.override.yml
+    - cp "$DOTENV_FILE" .env
+    - cp "$DOCKER_OVERRIDE_CONFIG" docker-compose.override.yml
+    - mkdir -p storage/certs
+    - cp "$SSL_CERT_FILE" storage/certs/cert.crt
+    - cp "$SSL_KEY_FILE" storage/certs/cert.key
+    - docker compose pull
+    - docker compose up -d
+  rules:
+    - if: '$CI_COMMIT_TAG'
